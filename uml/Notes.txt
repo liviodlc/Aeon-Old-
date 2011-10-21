@@ -1,0 +1,23 @@
+LevelHud in LEVEL_START phase:
+	-show title
+	-show level zoomed out
+	-show author?
+	-have link to quit
+	-show attempts count.
+	-figure out how big to make the level so that it fits on screen
+	-allow zooming in and out, with mins and maxs options
+	-allow players to move preview around if it doesn't all fit on screen
+	-press space to start
+
+LevelHud in LEVEL_PLAY phase:
+	-show attempts count
+	-number of treasures collected / total number needed to open door
+	-amount of air left
+
+LevelHud in LEVEL_END phase:
+	-show time taken
+	-number of attempts used
+	-congrats for finding x gems!
+	-congrats for finding x extra treasures!
+	-you found a secret exit!
+
