@@ -24,7 +24,11 @@
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_agent.swc" useDefaultLinkType="false"/>
         </excludedEntries>
       </libraryPathEntry>
+<<<<<<< HEAD
       <libraryPathEntry kind="3" linkType="1" path="v3.swc" useDefaultLinkType="false"/>
+=======
+      <libraryPathEntry kind="3" linkType="1" path="V3 Component Dump/v3.swc" useDefaultLinkType="false"/>
+>>>>>>> c66d525926de1a3ce7fd4b6bf4dba41696888b6d
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
