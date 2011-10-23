@@ -16,7 +16,24 @@ package org.interguild.resize {
 		// this JavaScript code will be injected first into the page
 		// developement will be done in swfSelfResize.js file -> compressed -> pasted here
 		// ### will be replaced by the swfId
-		private const JS_CODE:String = "function swfSelfResizeGetNode(){var nodeId='###';return document.getElementById(nodeId)}function swfSelfResizeResize(height,width){window.resizeTo(width,height);}function swfSelfResizeAddHeight(addValue){swfSelfResizeResize((swfSelfResizeGetHeight()+parseInt(addValue)),swfSelfResizeGetWidth())}function swfSelfResizeAddWidth(addValue){swfSelfResizeResize(swfSelfResizeGetHeight(),(swfSelfResizeGetWidth()+parseInt(addValue)))}function swfSelfResizeGetHeight(){var node=swfSelfResizeGetNode();if(node.currentStyle)var height=node.currentStyle['height'];else if(window.getComputedStyle)var height=document.defaultView.getComputedStyle(node,null).getPropertyValue('height');return parseInt(height,10)}function swfSelfResizeGetWidth(){var node=swfSelfResizeGetNode();if(node.currentStyle)var width=node.currentStyle['width'];else if(window.getComputedStyle)var width=document.defaultView.getComputedStyle(node,null).getPropertyValue('width');return parseInt(width,10)}";
+		private const JS_CODE:String = "function swfSelfResizeGetNode()" +
+									   "{var nodeId='###';return document.getElementById(nodeId)}" +
+									   "function swfSelfResizeResize(height,width)" +
+									   "{window.resizeTo(width,height);}" +
+									   "function swfSelfResizeAddHeight(addValue)" +
+									   "{swfSelfResizeResize((swfSelfResizeGetHeight()+parseInt(addValue)),swfSelfResizeGetWidth())}" +
+									   "function swfSelfResizeAddWidth(addValue)" +
+									   "{swfSelfResizeResize(swfSelfResizeGetHeight(),(swfSelfResizeGetWidth()+parseInt(addValue)))}" +
+									   "function swfSelfResizeGetHeight(){var node=swfSelfResizeGetNode();" +
+									   "if(node.currentStyle)var height=node.currentStyle['height'];" +
+									   "else if(window.getComputedStyle)" +
+									   "var height=document.defaultView.getComputedStyle(node,null).getPropertyValue('height');" +
+									   "return parseInt(height,10)}function swfSelfResizeGetWidth(){var node=swfSelfResizeGetNode();" +
+									   "if(node.currentStyle)var width=node.currentStyle['width'];" +
+									   "else if(window.getComputedStyle)" +
+									   "var width=document.defaultView.getComputedStyle(node,null).getPropertyValue('width');" +
+									   "return parseInt(width,10)}";
+		
 		private const JS_PATTERN:RegExp = /###/g;
 
 		private var latestHeight:int;
