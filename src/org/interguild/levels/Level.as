@@ -235,9 +235,9 @@ package org.interguild.levels {
 			
 			//testing KeyMan
 			if(_keys.isActionDown(KeyMan.JUMP,true))
-				trace("A	"+Math.round(flash.utils.getTimer()/1000));
+				trace("A	"+flash.utils.getTimer());
 			if(_keys.isKeyDown(32,true))
-				trace("K	"+Math.round(flash.utils.getTimer()/1000));
+				trace("K	"+flash.utils.getTimer());
 		}
 	}
 }
