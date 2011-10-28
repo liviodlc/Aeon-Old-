@@ -175,7 +175,7 @@ package org.interguild.levels {
 					level.addError("The Esc key is reserved. You cannot map an action to it.");
 				}
 				if (action <= actions.length - 2 && key <= LARGEST_KEYCODE) {
-					keys[key] = action;
+					keys[key - SMALLEST_KEYCODE] = action;
 				}
 			}
 		}
