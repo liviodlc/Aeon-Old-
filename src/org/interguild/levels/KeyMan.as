@@ -137,7 +137,6 @@ package org.interguild.levels {
 		//if you add another action, remember to increment ACTIONS_NUM!!
 
 		private static const ACTIONS_NUM:uint = 9;
-//		private static const KEY_UP:uint = ACTIONS_NUM;
 		private static const KEY_UP:uint = 0; //because it's the default value
 		private static const KEY_DOWN:uint = ACTIONS_NUM;// + 1;
 		private static const KEY_HOLD_DOWN:uint = ACTIONS_NUM + 1;// + 2;
@@ -220,14 +219,8 @@ package org.interguild.levels {
 			var pos:uint = evt.keyCode - SMALLEST_KEYCODE;
 			var point:uint = keys[pos];
 			if (point < ACTIONS_NUM && point > 0) {
-//				if (actions[point] == KEY_UP || actions[point] == KEY_HOLD_UP)
-//					actions[point] = KEY_HOLD_UP;
-//				else
 				actions[point] = KEY_UP;
 			} else {
-//				if (keys[pos] == KEY_UP || keys[pos] == KEY_HOLD_UP)
-//					keys[pos] = KEY_HOLD_UP;
-//				else
 				keys[pos] = KEY_UP;
 			}
 		}
