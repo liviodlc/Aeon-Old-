@@ -2,15 +2,12 @@ package org.interguild.levels.objects {
 	import flash.display.Sprite;
 
 	/**
-	 * GameObject is an abstract class, not meant to be instantiated.
+	 * GameObject represents any object in the games, such as tiles, players, enemies, etc.
 	 */
 	public class GameObject extends Sprite {
 
-		/**
-		 * Do not instantiate this class! Read the documentation!
-		 */
 		public function GameObject() {
-			
+			super();
 		}
 	}
 }
