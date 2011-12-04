@@ -24,6 +24,8 @@ package org.interguild {
 		private var curPage:uint;
 
 		private static var thisInstance:Aeon = null;
+
+
 		public static function get instance():Aeon {
 			return thisInstance;
 		}
@@ -43,9 +45,9 @@ package org.interguild {
 			initPages();
 			finishLoading();
 		}
-		
-		
-		private function allowStageResize():void{
+
+
+		private function allowStageResize():void {
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 		}
@@ -101,6 +103,7 @@ package org.interguild {
 			}
 		}
 
+
 		/**
 		 * Hides the current page and displays the credits page
 		 */
@@ -122,6 +125,7 @@ package org.interguild {
 			}
 		}
 
+
 		/**
 		 * Hides the current page and displays the user-levels page
 		 */
@@ -142,7 +146,8 @@ package org.interguild {
 				levels.open();
 			}
 		}
-		
+
+
 		/**
 		 * Hides the current page and displays the game page
 		 */

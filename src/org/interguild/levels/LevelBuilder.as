@@ -37,6 +37,7 @@ package org.interguild.levels {
 			gamepage = GamePage.instance;
 			loader = BulkLoader.getLoader("gamepage");
 			level = myLvl;
+			trace(level.levelCode);
 			try {
 				xml = new XML(level.levelCode);
 			} catch (error:TypeError) {
