@@ -9,6 +9,7 @@ package org.interguild.levels {
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
 	
+	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.events.EventMan;
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.GamePage;
@@ -181,7 +182,7 @@ package org.interguild.levels {
 		/**
 		 * If there's an error while loading the level, use this function to add it to this level's Error Log.
 		 */
-		internal function addError(txt:String):void {
+		public function addError(txt:String):void {
 			_errorLog += txt + "\n\n";
 		}
 
@@ -235,9 +236,9 @@ package org.interguild.levels {
 			
 			//testing KeyMan
 			if(_keys.isActionDown(KeyMan.JUMP,true))
-				trace("A	"+flash.utils.getTimer());
+				trace("A	"+Math.round(flash.utils.getTimer()/1000));
 			if(_keys.isKeyDown(32,true))
-				trace("K	"+flash.utils.getTimer());
+				trace("K	"+Math.round(flash.utils.getTimer()/1000));
 		}
 	}
 }

@@ -1,0 +1,33 @@
+<level>
+
+<title><![CDATA[Aeon Test Level]]></title>
+<size width="40" height="50" />
+<windowSize width="640" height="480" />
+<framerate>30</framerate>
+
+<assets>
+	<image id="steel">http://img10.imageshack.us/img10/6178/crate2.png</image>
+</assets>
+
+<events>
+	<evt id="0" name="right" />
+</events>
+
+<keys>
+	<key key="37">1</key>
+	<key key="65">1</key>
+	<key key="39">2</key>
+	<key key="68">2</key>
+	<key key="38">3</key>
+	<key key="87">3</key>
+	<key key="40">4</key>
+	<key key="83">4</key>
+	<key key="32">5</key>
+	<key key="81">7</key>
+	<key key="82">8</key>
+	<key key="16">6</key>
+	<key key="80">6</key>
+	<key key="27">6</key>
+</keys>
+
+</level>
