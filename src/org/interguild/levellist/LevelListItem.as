@@ -1,4 +1,4 @@
-package org.interguild.list {
+package org.interguild.levellist {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;

@@ -14,6 +14,7 @@ package org.interguild.levels {
 	import org.interguild.levels.defaults.DefaultHUD;
 	import org.interguild.pages.GamePage;
 	import org.interguild.resize.WindowResizer;
+	import org.interguild.levels.keys.KeyMan;
 
 	/**
 	 * LevelBuilder is in charge of taking the level code, interpreting it, and then building the level.

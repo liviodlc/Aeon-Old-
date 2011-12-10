@@ -19,6 +19,9 @@
 <animation>
 	
 </animation>
+<keys>
+	
+</keys>
 <styles><![CDATA[
 global {
 	gravity: 2.35;

@@ -10,6 +10,7 @@ package org.interguild.levels {
 	import flash.utils.getTimer;
 	
 	import org.interguild.levels.assets.AssetMan;
+	import org.interguild.levels.keys.KeyMan;
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.GamePage;
 
@@ -220,9 +221,9 @@ package org.interguild.levels {
 			
 			//testing KeyMan
 			if(_keys.isActionDown(KeyMan.JUMP,true))
-				trace("A	"+Math.round(flash.utils.getTimer()/1000));
-			if(_keys.isKeyDown(32,true))
-				trace("K	"+Math.round(flash.utils.getTimer()/1000));
+				trace("A	"+Math.round(flash.utils.getTimer()));
+//			if(_keys.isKeyDown(32,true))
+//				trace("K	"+Math.round(flash.utils.getTimer()/1000));
 		}
 	}
 }

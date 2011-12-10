@@ -139,7 +139,7 @@ package org.interguild.levels.assets {
 			}
 		}
 		
-		private function runChecks(id:String, value:Object){
+		private function runChecks(id:String, value:Object):void{
 			if (assets[id] == null) {
 				throw new Error("Asset ID #" + id + " not registered yet.");
 			} else if (assets[id] != false) {
@@ -155,7 +155,7 @@ package org.interguild.levels.assets {
 		 */
 		public function setImage(id:String, value:BitmapData):void {
 			runChecks(id, value);
-			assets[id] = new Asset(id, value, Asset.IMAGE_ASSET);
+			assets[id] = new Asset(/*id,*/ value, Asset.IMAGE_ASSET);
 		}
 
 
@@ -164,7 +164,7 @@ package org.interguild.levels.assets {
 		 */
 		public function setSound(id:String, value:Sound):void {
 			runChecks(id, value);
-			assets[id] = new Asset(id, value, Asset.SOUND_ASSET);
+			assets[id] = new Asset(/*id,*/ value, Asset.SOUND_ASSET);
 		}
 	}
 }

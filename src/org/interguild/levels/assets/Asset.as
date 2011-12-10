@@ -8,12 +8,12 @@ package org.interguild.levels.assets {
 		public static const SOUND_ASSET:uint = 0x1;
 		public static const YOUTUBE_ASSET:uint = 0x2;
 		
-		private var id:String;
+//		private var id:String;
 		private var data:Object;
 		private var type:uint
 		
-		public function Asset(id:String, data:Object, type:uint) {
-			this.id = id;
+		public function Asset(/*id:String, */data:Object, type:uint) {
+//			this.id = id;
 			this.type = type;
 			
 			if(type == IMAGE_ASSET && !(data is BitmapData))

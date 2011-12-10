@@ -19,8 +19,8 @@ package org.interguild.pages {
 	import org.interguild.Aeon;
 	import org.interguild.gui.Btn;
 	import org.interguild.gui.BtnRecSolid;
-	import org.interguild.list.LevelListItem;
-	import org.interguild.list.LevelLister;
+	import org.interguild.levellist.LevelListItem;
+	import org.interguild.levellist.LevelLister;
 
 	/**
 	 * This page allows users to browse through levels in the level database.
