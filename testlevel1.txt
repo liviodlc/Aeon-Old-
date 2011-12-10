@@ -1,0 +1,41 @@
+<level>
+
+<title><![CDATA[Livio's Test Level]]></title>
+
+<assets>
+	<image id="steel" src="http://img10.imageshack.us/img10/6178/crate2.png" />
+	<image id="sprite_sheet" src="http://www.sprites-inc.co.uk/files/X/X/x1sheet.gif" />
+	<sound id="magnetman" src="http://FAKEocrmirror.org/files/music/remixes/Mega_Man_3_Magnetic_Fireworks_OC_ReMix.mp3" />
+	<youtube id="rickroll" src="XZ5TajZYW6Y" />
+</assets>
+<content>
+	<bg id="void">
+		<color keyword="white" />
+	</bg>
+	<bg id="mainbg">
+		<color keyword="gray" />
+	</bg>
+</content>
+<animation>
+	
+</animation>
+<styles><![CDATA[
+global {
+	gravity: 2.35;
+	terminal-Velocity: 20;
+	terminal-Velocity-water: 10;
+	buoyancy: -3;
+}
+level{
+	points-needed-to-open-door: 2;
+	allow-pause: true;
+	sound: magnetman;
+	restart-sound-on-retry: false;
+	background: mainbg
+	void: void;
+	frame-rate: 60;
+	window-size: 600 300;
+}
+]]></styles>
+
+</level>

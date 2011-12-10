@@ -9,7 +9,7 @@ package org.interguild.levels {
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
 	
-	import org.interguild.levels.events.EventMan;
+	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.GamePage;
 
@@ -31,7 +31,6 @@ package org.interguild.levels {
 
 		private var _assets:AssetMan;
 		private var _keys:KeyMan;
-		private var _events:EventMan;
 
 		private var finishedLoading:Boolean;
 		private var _errorLog:String;
@@ -153,20 +152,6 @@ package org.interguild.levels {
 		}
 
 
-		public function get events():EventMan {
-			return _events;
-		}
-
-
-		public function set events(e:EventMan):void {
-			if (_events != null) {
-				throw new Error("EventMan has already been initialized by LevelBuilder");
-			} else {
-				_events = e;
-			}
-		}
-
-
 		/**
 		 * Allows you to set the LevelArea for this level, but only if the LevelArea for this level hasn't been defined yet.
 		 */
@@ -181,7 +166,7 @@ package org.interguild.levels {
 		/**
 		 * If there's an error while loading the level, use this function to add it to this level's Error Log.
 		 */
-		internal function addError(txt:String):void {
+		public function addError(txt:String):void {
 			_errorLog += txt + "\n\n";
 		}
 

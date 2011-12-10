@@ -3,15 +3,15 @@ package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
-	
+
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.ui.Keyboard;
-	
+
 	import org.interguild.Aeon;
+	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.defaults.DefaultHUD;
-	import org.interguild.levels.events.EventMan;
 	import org.interguild.pages.GamePage;
 	import org.interguild.resize.WindowResizer;
 
@@ -37,10 +37,11 @@ package org.interguild.levels {
 			gamepage = GamePage.instance;
 			loader = BulkLoader.getLoader("gamepage");
 			level = myLvl;
+			trace(level.levelCode);
 			try {
 				xml = new XML(level.levelCode);
 			} catch (error:TypeError) {
-				level.addError("Could not parse. Malformed XML.");
+				level.addError("Could not parse level code. Malformed XML.");
 				trace("malformed xml");
 			}
 			if (xml != null) {
@@ -84,15 +85,23 @@ package org.interguild.levels {
 			for each (var asset:XML in xmlAssets.elements()) {
 				var assetName:String = asset.name().toString();
 				var assetID:String = asset.@id.toString();
-				if (assetName == "image") {
-					if (assets.addImageID(assetID)) {
-						loader.add(asset.toString(), {id: assetID, type: BulkLoader.TYPE_IMAGE, preventCache: false});
-						isAny = true;
-					}
-				} else if (assetName == "sound") {
-					if (assets.addSoundID(assetID)) {
-						loader.add(asset.toString(), {id: assetID, type: BulkLoader.TYPE_SOUND, preventCache: false});
-						isAny = true;
+				var assetURL:String = asset.@src.toString();
+				if (assetID == null || assetID == "") {
+					level.addError("You've declared an asset without giving it an ID.");
+				}
+				if (assetURL == null || assetURL == "") {
+					level.addError("You've declared an asset without giving it a src URL");
+				} else {
+					if (assetName == "image") {
+						if (assets.addID(assetID)) {
+							loader.add(assetURL, {id: assetID, type: BulkLoader.TYPE_IMAGE, preventCache: false});
+							isAny = true;
+						}
+					} else if (assetName == "sound") {
+						if (assets.addID(assetID)) {
+							loader.add(assetURL, {id: assetID, type: BulkLoader.TYPE_SOUND, preventCache: false});
+							isAny = true;
+						}
 					}
 				}
 			}
@@ -168,22 +177,12 @@ package org.interguild.levels {
 		private function buildLevel():void {
 			gamepage.loadingText = "Building Level: 1%"
 
-			initEvents();
 			initKeys();
 			initFrameRate();
 			initWindowSize();
 			initLevelSize();
-			
+
 			finishLoading();
-		}
-		
-		
-		/**
-		 * Gets events info from XML and gives them to EventMan
-		 */
-		private function initEvents():void {
-			var events:EventMan = new EventMan();
-			level.events = events;
 		}
 
 
@@ -194,8 +193,8 @@ package org.interguild.levels {
 			var keys:KeyMan = new KeyMan(level, xml.keys);
 			level.keys = keys;
 		}
-		
-		
+
+
 		private function initFrameRate():void {
 			level.frameRate = DEFAULT_FRAME_RATE;
 		}
@@ -206,18 +205,18 @@ package org.interguild.levels {
 			if (xml.windowSize != null) {
 				width = uint(xml.windowSize.@width);
 				height = uint(xml.windowSize.@height);
-				if (width != 0 || height != 0) {
+				if (width > 0 || height > 0) {
 					var resizer:WindowResizer = new WindowResizer();
-					if (width == 0)
+					if (width <= 0)
 						width = resizer.getCurrentWidth();
-					else if (height == 0)
+					else if (height <= 0)
 						height = resizer.getCurrentHeight();
 					resizer.resize(height, width);
 				}
 			}
 		}
-		
-		
+
+
 		private function initLevelSize():void {
 			var width:uint, height:uint;
 			if (xml.size != null) {
@@ -231,12 +230,12 @@ package org.interguild.levels {
 				width = DEFAULT_LEVEL_WIDTH;
 				height = DEFAULT_LEVEL_HEIGHT;
 			}
-			initLevelArea(width,height);
+			initLevelArea(width, height);
 		}
-		
-		
-		private function initLevelArea(width:uint,height:uint):void{
-			level.levelArea = new LevelArea(width,height);
+
+
+		private function initLevelArea(width:uint, height:uint):void {
+			level.levelArea = new LevelArea(width, height);
 		}
 
 

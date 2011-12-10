@@ -1,11 +1,14 @@
 package org.interguild.pages {
 	import br.com.stimuli.loading.BulkLoader;
 	
+	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.net.FileFilter;
+	import flash.net.FileReference;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
@@ -31,11 +34,15 @@ package org.interguild.pages {
 
 		private var desc:TextField;
 		private static const DESC_PADDING:int = 10;
-		
+
 		private var search:Sprite;
-		private var searchBox:TextField
+		private var searchBox:TextField;
 		private var levels:LevelLister;
-		private var exit:Btn
+		private var exit:Btn;
+		private var local:Btn;
+
+		private var file:FileReference;
+		private var fileLoader:Loader;
 
 		private var theStage:Stage;
 
@@ -106,9 +113,15 @@ package org.interguild.pages {
 
 			//initialize exit button
 			exit = new BtnRecSolid("Back to Home");
-			exit.moveTo(sw / 2, sh - exit.height - 10);
+			exit.moveTo2(sw / 2 - exit.width - 10, sh - exit.height - 10);
 			exit.addEventListener(MouseEvent.CLICK, onExitClick, false, 0, true);
 			addChild(exit);
+
+			//initialize local file button
+			local = new BtnRecSolid("Load Local File...");
+			local.moveTo2(sw / 2 + 10, sh - local.height - 10);
+			local.addEventListener(MouseEvent.CLICK, onLocalClick, false, 0, true);
+			addChild(local);
 		}
 
 
@@ -125,7 +138,8 @@ package org.interguild.pages {
 			levels.width = sw;
 			levels.height = sh - levels.y - 50;
 
-			exit.moveTo(sw / 2, sh - exit.height - 10);
+			exit.moveTo2(sw / 2 - exit.width - 10, sh - exit.height - 10);
+			local.moveTo2(sw / 2 + 10, sh - local.height - 10);
 		}
 
 
@@ -138,6 +152,27 @@ package org.interguild.pages {
 
 		private function onExitClick(evt:Event):void {
 			Aeon.instance.gotoHomePage();
+		}
+
+
+		private function onLocalClick(evt:MouseEvent):void {
+			file = new FileReference();
+
+			var imageFileTypes:FileFilter = new FileFilter("Text (*.txt)", "*.txt");
+
+			file.browse([imageFileTypes]);
+			file.addEventListener(Event.SELECT, selectFile);
+		}
+
+
+		private function selectFile(evt:Event):void {
+			file.addEventListener(Event.COMPLETE, playLevel);
+			file.load();
+		}
+
+		
+		private function playLevel(evt:Event):void{
+			GamePage.instance.loadAndPlay(file.data.readUTFBytes(file.data.length));
 		}
 
 
