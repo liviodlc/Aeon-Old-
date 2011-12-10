@@ -5,27 +5,15 @@
    <object id="ClassNode0" class="com.horstmann.violet.ClassNode"> 
     <void property="attributes"> 
      <void property="text"> 
-      <string>&lt;i&gt;//Psuedo Classes Triggers&lt;/i&gt;
-static:Boolean
-destroyed:Boolean
-underwater:Boolean
-onladder:Boolean
-standingOnDown:Boolean
-standingOnUp:Boolean
-standingOnLeft:Boolean
-standingOnRight:Boolean
-crawling:Boolean
-facingRight:Boolean
-facingUp:Boolean
-moveLeft:Boolean
-moveRight:Boolean
-moveUp:Boolean
-moveDown:Boolean
+      <string>[state vars]
+[copy of state vars for level restarts]
  
-[state vars]
-[state reset vars]
+normalTriggers:PseudoClassTriggers
+dynamicTriggers:DynamicTriggers
  
-views:Array</string> 
+normalStyles[]:StyleDefinition
+dynamicStyles[]:StyleDefinition
+views[]:DisplayObject</string> 
      </void> 
     </void> 
     <void property="name"> 
@@ -36,8 +24,8 @@ views:Array</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1287.0</double> 
-     <double>128.0</double> 
+     <double>1239.0</double> 
+     <double>171.62224902509507</double> 
     </void> 
    </object> 
   </void> 
@@ -51,8 +39,8 @@ views:Array</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1320.0</double> 
-     <double>26.0</double> 
+     <double>1377.1625565300599</double> 
+     <double>57.18987037010339</double> 
     </void> 
    </object> 
   </void> 
@@ -102,8 +90,8 @@ getData():Object</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>45.0</double> 
-     <double>240.0</double> 
+     <double>51.0</double> 
+     <double>238.0</double> 
     </void> 
    </object> 
   </void> 
@@ -132,8 +120,8 @@ getData():Object</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>381.0</double> 
-     <double>546.0</double> 
+     <double>379.0</double> 
+     <double>547.0</double> 
     </void> 
    </object> 
   </void> 
@@ -148,7 +136,7 @@ getData():Object</string>
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
      <double>391.0</double> 
-     <double>438.0</double> 
+     <double>439.0</double> 
     </void> 
    </object> 
   </void> 
@@ -162,8 +150,8 @@ getData():Object</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>387.0</double> 
-     <double>330.0</double> 
+     <double>386.0</double> 
+     <double>331.0</double> 
     </void> 
    </object> 
   </void> 
@@ -177,8 +165,8 @@ getData():Object</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>593.0</double> 
-     <double>237.0</double> 
+     <double>591.0</double> 
+     <double>238.0</double> 
     </void> 
    </object> 
   </void> 
@@ -186,13 +174,13 @@ getData():Object</string>
    <object class="com.horstmann.violet.NoteNode"> 
     <void property="text"> 
      <void property="text"> 
-      <string>&lt;------[Low Level: Raw]---------------------------------------[Mid Level: Custom Content]--------------[High Level: Frames]------&gt;</string> 
+      <string>&lt;&lt;------[Low Level: Raw]---------------------------------------[Mid Level: Custom Content]--------------[High Level: Frames]------&gt;&gt;</string> 
      </void> 
     </void> 
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>86.0</double> 
+     <double>80.0</double> 
      <double>99.0</double> 
     </void> 
    </object> 
@@ -201,8 +189,10 @@ getData():Object</string>
    <object id="ClassNode9" class="com.horstmann.violet.ClassNode"> 
     <void property="attributes"> 
      <void property="text"> 
-      <string>[conditions that trigger this style]
-[collection of rules in this style]:StyleRules</string> 
+      <string>pseudoClassConditions:uint
+dynamicConditions:uint
+globalConditions:uint
+rules[]:StyleRules</string> 
      </void> 
     </void> 
     <void property="name"> 
@@ -213,8 +203,8 @@ getData():Object</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1259.0</double> 
-     <double>585.0</double> 
+     <double>1211.4596924950354</double> 
+     <double>423.7301778750679</double> 
     </void> 
    </object> 
   </void> 
@@ -226,6 +216,11 @@ getData():Object</string>
 value:String</string> 
      </void> 
     </void> 
+    <void property="methods"> 
+     <void property="text"> 
+      <string>activate()</string> 
+     </void> 
+    </void> 
     <void property="name"> 
      <void property="text"> 
       <string>StyleRules</string> 
@@ -234,8 +229,8 @@ value:String</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1318.0</double> 
-     <double>708.0</double> 
+     <double>1247.7295146199674</double> 
+     <double>575.8927344051283</double> 
     </void> 
    </object> 
   </void> 
@@ -243,36 +238,18 @@ value:String</string>
    <object class="com.horstmann.violet.NoteNode"> 
     <void property="text"> 
      <void property="text"> 
-      <string>GameObject stores its style definitions
-in order of precedence, which is
-determined by how specific they are.</string> 
+      <string>GameObject stores its
+style definitions in order
+of precedence, which is
+determined by how
+specific they are.</string> 
      </void> 
     </void> 
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1079.0</double> 
-     <double>518.0</double> 
-    </void> 
-   </object> 
-  </void> 
-  <void method="addNode"> 
-   <object class="com.horstmann.violet.NoteNode"> 
-    <void property="text"> 
-     <void property="text"> 
-      <string>Perhaps we can
-optimize this by only
-checking the styles
-when somthing
-happens that might
-change them.</string> 
-     </void> 
-    </void> 
-   </object> 
-   <object class="java.awt.geom.Point2D$Double"> 
-    <void method="setLocation"> 
-     <double>1114.0</double> 
-     <double>596.0</double> 
+     <double>1346.594271929951</double> 
+     <double>488.379077485107</double> 
     </void> 
    </object> 
   </void> 
@@ -280,8 +257,8 @@ change them.</string>
    <object class="com.horstmann.violet.NoteNode"/> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1808.0</double> 
-     <double>957.0</double> 
+     <double>2038.7574917151114</double> 
+     <double>758.5949351850517</double> 
     </void> 
    </object> 
   </void> 
@@ -389,27 +366,6 @@ views for wrap-around.</string>
    </object> 
   </void> 
   <void method="addNode"> 
-   <object class="com.horstmann.violet.NoteNode"> 
-    <void property="text"> 
-     <void property="text"> 
-      <string>These are just the local
-psuedo-class triggers.
-There are also global
-ones:
- 
-previewScreen:Boolean
-doorOpen:Boolean</string> 
-     </void> 
-    </void> 
-   </object> 
-   <object class="java.awt.geom.Point2D$Double"> 
-    <void method="setLocation"> 
-     <double>1457.0</double> 
-     <double>226.0</double> 
-    </void> 
-   </object> 
-  </void> 
-  <void method="addNode"> 
    <object id="ClassNode11" class="com.horstmann.violet.ClassNode"> 
     <void property="attributes"> 
      <void property="text"> 
@@ -424,8 +380,8 @@ doorOpen:Boolean</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1092.0</double> 
-     <double>132.0</double> 
+     <double>1002.0</double> 
+     <double>463.6222490250951</double> 
     </void> 
    </object> 
   </void> 
@@ -445,8 +401,8 @@ have been triggered.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1078.0</double> 
-     <double>207.0</double> 
+     <double>979.0</double> 
+     <double>509.62224902509513</double> 
     </void> 
    </object> 
   </void> 
@@ -460,8 +416,8 @@ have been triggered.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1087.0</double> 
-     <double>24.0</double> 
+     <double>1105.0</double> 
+     <double>235.62224902509507</double> 
     </void> 
    </object> 
   </void> 
@@ -475,8 +431,8 @@ have been triggered.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>911.0</double> 
-     <double>171.0</double> 
+     <double>976.0</double> 
+     <double>299.6222490250951</double> 
     </void> 
    </object> 
   </void> 
@@ -490,8 +446,8 @@ have been triggered.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>908.0</double> 
-     <double>246.0</double> 
+     <double>976.0</double> 
+     <double>376.6222490250951</double> 
     </void> 
    </object> 
   </void> 
@@ -509,8 +465,261 @@ tells GameObjects when and how to move.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>808.0</double> 
-     <double>27.0</double> 
+     <double>856.4323786549918</double> 
+     <double>214.00132651020118</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ClassNode15" class="com.horstmann.violet.ClassNode"> 
+    <void property="attributes"> 
+     <void property="text"> 
+      <string>globalString:uint &lt;i&gt;//2 bits (static)&lt;/i&gt;
+
+binaryString:uint &lt;i&gt;//16 bits&lt;/i&gt;</string> 
+     </void> 
+    </void> 
+    <void property="methods"> 
+     <void property="text"> 
+      <string>get/set preview():Boolean &lt;i&gt;(static)&lt;/i&gt;
+get/set doorOpen():Boolean &lt;i&gt;(static)&lt;/i&gt;
+ 
+get/set static():Boolean
+get/set destroyed():Boolean
+get/set underwater():Boolean
+get/set  onLadder():Boolean
+get/set standingOnDown():Boolean
+get/set standingOnLeft():Boolean
+get/set standingOnRight():Boolean
+get/set standingOnDown():Boolean
+get/set crawling():Boolean
+get facingRight():Boolean
+get facingUp():Boolean
+get/set moveLeft():Boolean
+get/set moveRight():Boolean
+get/set moveUp():Boolean
+get/set moveDown():Boolean</string> 
+     </void> 
+    </void> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>PseudoClassTriggers</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1519.0</double> 
+     <double>98.62224902509519</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="NoteNode1" class="com.horstmann.violet.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>We have a string of binary numbers
+so that we can keep track of all these
+booleans more efficiently.
+ 
+The least significant bit marks if there
+has been any change in any of the
+triggers during the current loop. The
+reset() function restores this value to 0.
+ 
+ActionScript 3.0 does not have a short
+data type.</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1803.0</double> 
+     <double>272.6222490250951</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="PointNode4" class="com.horstmann.violet.PointNode"> 
+    <void id="Rectangle2D$Double4" property="bounds"> 
+     <void method="setRect"> 
+      <double>1663.567621345008</double> 
+      <double>160.62224902509527</double> 
+      <double>0.0</double> 
+      <double>0.0</double> 
+     </void> 
+    </void> 
+    <void property="bounds"> 
+     <object idref="Rectangle2D$Double4"/> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1663.567621345008</double> 
+     <double>160.62224902509527</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object class="com.horstmann.violet.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>These are just the local
+psuedo-class triggers.
+There are also global
+ones:
+ 
+previewScreen:Boolean
+doorOpen:Boolean</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1803.539644249864</double> 
+     <double>126.8933976602286</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ClassNode16" class="com.horstmann.violet.ClassNode"> 
+    <void property="attributes"> 
+     <void property="text"> 
+      <string>binaryString:uint &lt;i&gt;//X bits, 32-bit max&lt;/i&gt;
+n:uint</string> 
+     </void> 
+    </void> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>DynamicTriggers</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1520.0</double> 
+     <double>451.6222490250951</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="PointNode5" class="com.horstmann.violet.PointNode"> 
+    <void id="Rectangle2D$Double5" property="bounds"> 
+     <void method="setRect"> 
+      <double>1372.4323786549917</double> 
+      <double>467.0006632551007</double> 
+      <double>0.0</double> 
+      <double>0.0</double> 
+     </void> 
+    </void> 
+    <void property="bounds"> 
+     <object idref="Rectangle2D$Double5"/> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1372.4323786549917</double> 
+     <double>467.0006632551007</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="PointNode6" class="com.horstmann.violet.PointNode"> 
+    <void id="Rectangle2D$Double6" property="bounds"> 
+     <void method="setRect"> 
+      <double>1673.5942719299512</double> 
+      <double>455.4330419100925</double> 
+      <double>0.0</double> 
+      <double>0.0</double> 
+     </void> 
+    </void> 
+    <void property="bounds"> 
+     <object idref="Rectangle2D$Double6"/> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1673.5942719299512</double> 
+     <double>455.4330419100925</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object class="com.horstmann.violet.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>This keeps track of all of the dynamic
+pseudo classes, such as a[speed-x&gt;2]</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1533.243171539989</double> 
+     <double>516.1625565300598</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="InterfaceNode0" class="com.horstmann.violet.InterfaceNode"> 
+    <void property="methods"> 
+     <void property="text"> 
+      <string>hasChanged()
+reset()
+update()</string> 
+     </void> 
+    </void> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>«interface»
+TriggerTracker</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1729.3784142300055</double> 
+     <double>6.271148635134239</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object class="com.horstmann.violet.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>Some properties, such as those that
+deal with animation, will need to prevent
+rules from activating twice and overwriting
+themselves. This can be done by having
+the GameObject store a reference to the
+StyleRule that is currently in effect for said
+property. Then, whenever the Styles are
+updated, the sensitive styles can check to
+see if they&apos;re already in effect.</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1397.0</double> 
+     <double>587.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object class="com.horstmann.violet.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>Or look into how to make it print the same
+thing multiple times. Maybe with bitmap
+data</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>628.0</double> 
+     <double>535.0</double> 
     </void> 
    </object> 
   </void> 
@@ -765,7 +974,7 @@ tells GameObjects when and how to move.</string>
   <void method="connect"> 
    <object class="com.horstmann.violet.ClassRelationshipEdge"> 
     <void property="bentStyle"> 
-     <object class="com.horstmann.violet.BentStyle" field="VHV"/> 
+     <object class="com.horstmann.violet.BentStyle" field="HV"/> 
     </void> 
     <void property="endArrowHead"> 
      <object class="com.horstmann.violet.ArrowHead" field="TRIANGLE"/> 
@@ -789,7 +998,7 @@ tells GameObjects when and how to move.</string>
   <void method="connect"> 
    <object class="com.horstmann.violet.ClassRelationshipEdge"> 
     <void property="bentStyle"> 
-     <object class="com.horstmann.violet.BentStyle" field="HVH"/> 
+     <object class="com.horstmann.violet.BentStyle" field="HV"/> 
     </void> 
     <void property="endArrowHead"> 
      <object class="com.horstmann.violet.ArrowHead" field="TRIANGLE"/> 
@@ -801,7 +1010,7 @@ tells GameObjects when and how to move.</string>
   <void method="connect"> 
    <object class="com.horstmann.violet.ClassRelationshipEdge"> 
     <void property="bentStyle"> 
-     <object class="com.horstmann.violet.BentStyle" field="HVH"/> 
+     <object class="com.horstmann.violet.BentStyle" field="HV"/> 
     </void> 
     <void property="endArrowHead"> 
      <object class="com.horstmann.violet.ArrowHead" field="TRIANGLE"/> 
@@ -809,6 +1018,87 @@ tells GameObjects when and how to move.</string>
    </object> 
    <object idref="ClassNode14"/> 
    <object idref="ClassNode12"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.ClassRelationshipEdge"> 
+    <void property="bentStyle"> 
+     <object class="com.horstmann.violet.BentStyle" field="HVH"/> 
+    </void> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ClassNode0"/> 
+   <object idref="ClassNode15"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.NoteEdge"/> 
+   <object idref="NoteNode1"/> 
+   <object idref="PointNode4"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.NoteEdge"/> 
+   <object idref="NoteNode1"/> 
+   <object idref="PointNode5"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.ClassRelationshipEdge"> 
+    <void property="bentStyle"> 
+     <object class="com.horstmann.violet.BentStyle" field="HVH"/> 
+    </void> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ClassNode0"/> 
+   <object idref="ClassNode16"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.NoteEdge"/> 
+   <object idref="NoteNode1"/> 
+   <object idref="PointNode6"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.ClassRelationshipEdge"> 
+    <void property="bentStyle"> 
+     <object class="com.horstmann.violet.BentStyle" field="VH"/> 
+    </void> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ClassNode0"/> 
+   <object idref="ClassNode2"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.ClassRelationshipEdge"> 
+    <void property="bentStyle"> 
+     <object class="com.horstmann.violet.BentStyle" field="HV"/> 
+    </void> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="TRIANGLE"/> 
+    </void> 
+    <void property="lineStyle"> 
+     <object class="com.horstmann.violet.LineStyle" field="DOTTED"/> 
+    </void> 
+   </object> 
+   <object idref="ClassNode16"/> 
+   <object idref="InterfaceNode0"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.ClassRelationshipEdge"> 
+    <void property="bentStyle"> 
+     <object class="com.horstmann.violet.BentStyle" field="VH"/> 
+    </void> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="TRIANGLE"/> 
+    </void> 
+    <void property="lineStyle"> 
+     <object class="com.horstmann.violet.LineStyle" field="DOTTED"/> 
+    </void> 
+   </object> 
+   <object idref="ClassNode15"/> 
+   <object idref="InterfaceNode0"/> 
   </void> 
  </object> 
 </java> 
