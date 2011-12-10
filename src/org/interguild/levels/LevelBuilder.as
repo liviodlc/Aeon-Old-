@@ -3,18 +3,19 @@ package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
-
+	
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.ui.Keyboard;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.defaults.DefaultHUD;
+	import org.interguild.levels.keys.KeyMan;
+	import org.interguild.levels.styles.StyleMap;
 	import org.interguild.pages.GamePage;
 	import org.interguild.resize.WindowResizer;
-	import org.interguild.levels.keys.KeyMan;
 
 	/**
 	 * LevelBuilder is in charge of taking the level code, interpreting it, and then building the level.
@@ -28,6 +29,7 @@ package org.interguild.levels {
 		private var gamepage:GamePage;
 		private var level:Level;
 		private var loader:BulkLoader;
+		private var styleMap:StyleMap;
 
 		private var xml:XML;
 
@@ -53,20 +55,6 @@ package org.interguild.levels {
 		}
 
 
-		/**
-		 * Called when the users presses the "Skip" button when loading Assets.
-		 * The game will dumb all external assets and proceed to load the level without them.
-		 */
-		private function stopLoadingAssets(evt:MouseEvent):void {
-			loader.removeEventListener(BulkProgressEvent.COMPLETE, assetsLoadComplete);
-			loader.removeEventListener(BulkProgressEvent.PROGRESS, assetsLoadProgress);
-			loader.removeEventListener(BulkLoader.ERROR, assetsError);
-			gamepage.loadingButton.removeEventListener(MouseEvent.CLICK, stopLoadingAssets);
-
-			assets = null;
-			loader.removeAll();
-			buildHUD();
-		}
 
 
 		/**
@@ -115,6 +103,22 @@ package org.interguild.levels {
 			} else {
 				buildHUD();
 			}
+		}
+
+
+		/**
+		 * Called when the users presses the "Skip" button when loading Assets.
+		 * The game will dumb all external assets and proceed to load the level without them.
+		 */
+		private function stopLoadingAssets(evt:MouseEvent):void {
+			loader.removeEventListener(BulkProgressEvent.COMPLETE, assetsLoadComplete);
+			loader.removeEventListener(BulkProgressEvent.PROGRESS, assetsLoadProgress);
+			loader.removeEventListener(BulkLoader.ERROR, assetsError);
+			gamepage.loadingButton.removeEventListener(MouseEvent.CLICK, stopLoadingAssets);
+
+			assets = null;
+			loader.removeAll();
+			buildHUD();
 		}
 
 
@@ -182,6 +186,7 @@ package org.interguild.levels {
 			initFrameRate();
 			initWindowSize();
 			initLevelSize();
+			initStylesMap();
 
 			finishLoading();
 		}
@@ -232,6 +237,11 @@ package org.interguild.levels {
 				height = DEFAULT_LEVEL_HEIGHT;
 			}
 			initLevelArea(width, height);
+		}
+		
+		
+		private function initStylesMap():void{
+			
 		}
 
 
