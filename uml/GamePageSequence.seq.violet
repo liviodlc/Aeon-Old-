@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.6.0_26" class="java.beans.XMLDecoder"> 
+<java version="1.6.0_29" class="java.beans.XMLDecoder"> 
  <object class="com.horstmann.violet.SequenceDiagramGraph"> 
   <void method="addNode"> 
    <object id="LifelineNode0" class="com.horstmann.violet.ImplicitParameterNode"> 
@@ -730,6 +730,26 @@ by LevelBuilder, not by Level</string>
     <void method="setLocation"> 
      <double>1642.0</double> 
      <double>1443.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object class="com.horstmann.violet.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>IMPORTANT
+The below designs are
+a little outdated. For the
+most up-to-date and
+more detailed diagram:
+levelBuilder.seq.violet</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1159.0</double> 
+     <double>759.0</double> 
     </void> 
    </object> 
   </void> 

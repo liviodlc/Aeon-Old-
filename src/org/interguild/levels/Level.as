@@ -10,7 +10,6 @@ package org.interguild.levels {
 	import flash.utils.getTimer;
 	
 	import org.interguild.levels.assets.AssetMan;
-	import org.interguild.levels.events.EventMan;
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.GamePage;
 
@@ -32,7 +31,6 @@ package org.interguild.levels {
 
 		private var _assets:AssetMan;
 		private var _keys:KeyMan;
-		private var _events:EventMan;
 
 		private var finishedLoading:Boolean;
 		private var _errorLog:String;
@@ -150,20 +148,6 @@ package org.interguild.levels {
 				throw new Error("KeyMan has already been initialized by LevelBuilder");
 			} else {
 				_keys = k;
-			}
-		}
-
-
-		public function get events():EventMan {
-			return _events;
-		}
-
-
-		public function set events(e:EventMan):void {
-			if (_events != null) {
-				throw new Error("EventMan has already been initialized by LevelBuilder");
-			} else {
-				_events = e;
 			}
 		}
 

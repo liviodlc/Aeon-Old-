@@ -12,7 +12,6 @@ package org.interguild.levels {
 	import org.interguild.Aeon;
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.defaults.DefaultHUD;
-	import org.interguild.levels.events.EventMan;
 	import org.interguild.pages.GamePage;
 	import org.interguild.resize.WindowResizer;
 
@@ -42,7 +41,7 @@ package org.interguild.levels {
 			try {
 				xml = new XML(level.levelCode);
 			} catch (error:TypeError) {
-				level.addError("Could not parse. Malformed XML.");
+				level.addError("Could not parse level code. Malformed XML.");
 				trace("malformed xml");
 			}
 			if (xml != null) {
@@ -178,22 +177,12 @@ package org.interguild.levels {
 		private function buildLevel():void {
 			gamepage.loadingText = "Building Level: 1%"
 
-			initEvents();
 			initKeys();
 			initFrameRate();
 			initWindowSize();
 			initLevelSize();
 
 			finishLoading();
-		}
-
-
-		/**
-		 * Gets events info from XML and gives them to EventMan
-		 */
-		private function initEvents():void {
-			var events:EventMan = new EventMan();
-			level.events = events;
 		}
 
 
@@ -216,11 +205,11 @@ package org.interguild.levels {
 			if (xml.windowSize != null) {
 				width = uint(xml.windowSize.@width);
 				height = uint(xml.windowSize.@height);
-				if (width != 0 || height != 0) {
+				if (width > 0 || height > 0) {
 					var resizer:WindowResizer = new WindowResizer();
-					if (width == 0)
+					if (width <= 0)
 						width = resizer.getCurrentWidth();
-					else if (height == 0)
+					else if (height <= 0)
 						height = resizer.getCurrentHeight();
 					resizer.resize(height, width);
 				}
