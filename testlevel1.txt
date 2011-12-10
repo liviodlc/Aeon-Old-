@@ -19,7 +19,7 @@
 <animation>
 	
 </animation>
-<cts><![CDATA[
+<styles><![CDATA[
 global {
 	gravity: 2.35;
 	terminal-Velocity: 20;
@@ -36,6 +36,6 @@ level{
 	frame-rate: 60;
 	window-size: 600 300;
 }
-]]></cts>
+]]></styles>
 
 </level>
