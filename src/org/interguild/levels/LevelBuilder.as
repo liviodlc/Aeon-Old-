@@ -33,9 +33,9 @@ package org.interguild.levels {
 
 		private var xml:XML;
 
-		private var assets:AssetMan;
+		private var  assets:AssetMan;
 
-
+ 
 		public function LevelBuilder(myLvl:Level) {
 			gamepage = GamePage.instance;
 			loader = BulkLoader.getLoader("gamepage");
