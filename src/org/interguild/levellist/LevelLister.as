@@ -1,4 +1,4 @@
-package org.interguild.list {
+package org.interguild.levellist {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
 	

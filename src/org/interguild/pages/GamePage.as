@@ -3,6 +3,7 @@ package org.interguild.pages {
 	import br.com.stimuli.loading.BulkProgressEvent;
 	
 	import flash.display.Stage;
+	import flash.events.MouseEvent;
 	
 	import org.interguild.Aeon;
 	import org.interguild.gui.Btn;
@@ -48,6 +49,8 @@ package org.interguild.pages {
 
 			//create the loading text
 			loadingBox = new LoadingBox(true);
+			
+			loadingBox.cancelButton.addEventListener(MouseEvent.CLICK, onCancel, false, 0, true);
 
 			//create the pause menu
 //			pause = new Pause();
@@ -57,6 +60,12 @@ package org.interguild.pages {
 
 			//initialize level array
 			allLevels = [];
+		}
+		
+		
+		public function onCancel(evt:MouseEvent):void{
+			closeLevel(curLevel);
+			Aeon.instance.gotoLevelsPage();
 		}
 
 
