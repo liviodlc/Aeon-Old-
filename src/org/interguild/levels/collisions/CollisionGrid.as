@@ -3,6 +3,8 @@ package org.interguild.levels.collisions {
 	
 	public class CollisionGrid {
 		
+		private var wrapAround:Boolean;
+		
 		private var width:uint;
 		private var height:uint;
 		

@@ -1,43 +1,29 @@
 package org.interguild.levels.collisions{
 	
+	import org.interguild.levels.objects.GameObject;
+	import flash.geom.Rectangle;
+	
 	public class GridElement{
 		
-		private LinkedNode:class {
-			
-			private next:LinkedNode;
-
-            private stored:Object;
-			
-			private function LinkedNode(){
-                
-                next = null;
-
-				
-			}
-			
-		}
-		
-		private var contains:LinkedNode;
-		private var size:uint;
+		private var area:Rectangle;
 		
 		public function GridElement(){
 			
-			contains = null;
-			size = 0;
+		}
+		
+		public function get gameObjects():Array {
+			return null;
+		}
+		
+		public function set gameObjects():Array {
 			
 		}
 		
-		public function get gridObjects():Array {
-			
-			return contains;
+		public function addGameObject( object:GameObject ): void {
 			
 		}
 		
-		public function addObject( object:GameObject ): void {
-			
-		}
-		
-		public function removeObject( object:GameObject ): void {
+		public function removeGameObject( object:GameObject ): void {
 			
 		}
 		

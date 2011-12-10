@@ -4,9 +4,11 @@ package org.interguild {
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-
+	
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.*;
+	
+	import tests.TestUtils;
 
 	[SWF(width = "640", height = "480", frameRate = "30", backgroundColor = "#222222")]
 
@@ -40,6 +42,10 @@ package org.interguild {
 
 		public function Aeon() {
 			thisInstance = this;
+
+			var testutils:TestUtils;
+			testutils = new TestUtils();
+			
 			allowStageResize();
 			initLoadingText();
 			initPages();
