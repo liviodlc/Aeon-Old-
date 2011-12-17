@@ -236,6 +236,7 @@ package org.interguild.levels {
 				trace("A	" + Math.round(flash.utils.getTimer()));
 //			if(_keys.isKeyDown(32,true))
 //				trace("K	"+Math.round(flash.utils.getTimer()/1000));
+			_keys.onGameLoop();
 		}
 	}
 }

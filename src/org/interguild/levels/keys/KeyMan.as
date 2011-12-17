@@ -5,14 +5,16 @@ package org.interguild.levels.keys {
 	import org.interguild.Aeon;
 	import org.interguild.levels.Level;
 
+	import utils.LinkedList;
+
 	/**
 	 * TODO
 	 * Fix KeyMan. He needs to log initial key-presses in a separate linked list, and then
 	 * Level can call onGameLoop() that will iterate through that list every frame and
 	 * set ON_KEY_DOWN to ON_KEY_HOLD_DOWN
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * Key Man appears! His specialty is... to manage keyboard presses!
 
 					 @@@@                      @@@@@@@@@    @@@@@@@@@@@@@@@@@              @@@@@@@@
@@ -37,10 +39,10 @@ package org.interguild.levels.keys {
 					 @@@@;;;;;;;;;;;;;;;;;@@@@@                 @@@@;;;;;@@@@@@@@;;;;;;;;;:::::@@@@
 					 @@@@;;;;;;;;;;;;;;;;;@@@@@                 @@@@;;;;;@@@@@@@@;;;;;;;;;:::::@@@@
 					 @@@@;;;;;;;;;;;;;;;;;@@@@@                 @@@@;;;;;@@@@@@@@;;;;;;;;;:::::@@@@
-			    @@@@@;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@         @@@@;;;;@@@@@        ;;;;;:::::::::@@@@
-			    @@@@@;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@         @@@@;;;;@@@@@        ;;;;;:::::::::@@@@
-			    @@@@@;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@         @@@@;;;;@@@@@        ;;;;;:::::::::@@@@
-			    @@@@@;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@         @@@@;;;;@@@@@        ;;;;;:::::::::@@@@
+				@@@@@;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@         @@@@;;;;@@@@@        ;;;;;:::::::::@@@@
+				@@@@@;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@         @@@@;;;;@@@@@        ;;;;;:::::::::@@@@
+				@@@@@;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@         @@@@;;;;@@@@@        ;;;;;:::::::::@@@@
+				@@@@@;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@         @@@@;;;;@@@@@        ;;;;;:::::::::@@@@
 					 @@@@@@@@;;;;;;;;;;;;;@@@@@@@@@@@@@@@@@@;;;;@@@@@@@@@        ;;;;;:::::::::@@@@
 					 @@@@@@@@;;;;;;;;;;;;;@@@@@@@@@@@@@@@@@@;;;;@@@@@@@@@        ;;;;;:::::::::@@@@
 					 @@@@@@@@;;;;;;;;;;;;;@@@@@@@@@@@@@@@@@@;;;;@@@@@@@@@        ;;;;;:::::::::@@@@
@@ -50,7 +52,7 @@ package org.interguild.levels.keys {
 						 @@@@@;;;;::::@@@@@::::@@@@.....    @@@@@@@@@    ....;;;;;;;;;:::::@@@@
 						 @@@@@;;;;::::@@@@@::::@@@@.....    @@@@@@@@@    ....;;;;;;;;;:::::@@@@
 						 @@@@@;;;;::::@@@@@::::@@@@.....    @@@@@@@@@    ....;;;;;;;;;:::::@@@@
-				 			@@@@:::::::::@@@@;;;;;;;;;....         ....;;;;;;;;;@@@@@@@@@
+						@@@@:::::::::@@@@;;;;;;;;;....         ....;;;;;;;;;@@@@@@@@@
 							 @@@@:::::::::@@@@;;;;;;;;;....         ....;;;;;;;;;@@@@@@@@@
 							 @@@@:::::::::@@@@;;;;;;;;;....         ....;;;;;;;;;@@@@@@@@@
 							 @@@@:::::::::@@@@;;;;;;;;;....         ....;;;;;;;;;@@@@@@@@@
@@ -98,7 +100,7 @@ package org.interguild.levels.keys {
 					   @@@@;;;;;;;;;@@@@@@@@@@@@@@@@@;;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@;;;;@@@@
 					   @@@@;;;;;;;;;@@@@@@@@@@@@@@@@@;;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@;;;;@@@@
 					   @@@@;;;;;;;;;@@@@@@@@@@@@@@@@@;;;;;;;;;;;;;;;;;;;;;;@@@@@@@@@;;;;@@@@
-				 	   @@@@::::;;;;;;;;;@@@@@@@@@@@@@;;;;;;;;;;;;;;;;;@@@@@@@@@:::::::::@@@@
+					 @@@@::::;;;;;;;;;@@@@@@@@@@@@@;;;;;;;;;;;;;;;;;@@@@@@@@@:::::::::@@@@
 					   @@@@::::;;;;;;;;;@@@@@@@@@@@@@;;;;;;;;;;;;;;;;;@@@@@@@@@:::::::::@@@@
 					   @@@@::::;;;;;;;;;@@@@@@@@@@@@@;;;;;;;;;;;;;;;;;@@@@@@@@@:::::::::@@@@
 					   @@@@::::;;;;;;;;;@@@@@@@@@@@@@;;;;;;;;;;;;;;;;;@@@@@@@@@:::::::::@@@@
@@ -162,6 +164,7 @@ package org.interguild.levels.keys {
 		 * to look up each key on every frame.
 		 */
 		private var actions:Array = new Array(ACTIONS_NUM);
+		private var strictKeys:LinkedList;
 		private var theStage:Stage;
 		private var level:Level;
 
@@ -174,6 +177,7 @@ package org.interguild.levels.keys {
 		public function KeyMan(lvl:Level, xml:XMLList) {
 			theStage = Aeon.instance.stage;
 			level = lvl;
+			strictKeys = new LinkedList();
 
 			var esc:uint = 27;
 			keys[esc - SMALLEST_KEYCODE] = PAUSE;
@@ -230,12 +234,14 @@ package org.interguild.levels.keys {
 					actions[point] = KEY_HOLD_DOWN;
 				} else {
 					actions[point] = KEY_DOWN;
+					strictKeys.add(point);
 				}
 			} else {
 				if (keys[pos] == KEY_DOWN || keys[pos] == KEY_HOLD_DOWN) {
 					keys[pos] = KEY_HOLD_DOWN;
 				} else {
 					keys[pos] = KEY_DOWN;
+					strictKeys.add(evt.keyCode);
 				}
 			}
 		}
@@ -250,6 +256,24 @@ package org.interguild.levels.keys {
 			} else {
 				keys[pos] = KEY_UP;
 			}
+		}
+
+
+		/**
+		 * Goes through all of the keys that have been pressed down in the last frame and updates
+		 * their status from KEY_DOWN to KEY_HOLD_DOWN.
+		 */
+		public function onGameLoop():void {
+			strictKeys.beginIteration();
+			while (strictKeys.hasNext()) {
+				var key:uint = uint(strictKeys.next);
+				if (key < ACTIONS_NUM && key > 0 && actions[key] == KEY_DOWN) {
+					actions[key] = KEY_HOLD_DOWN;
+				} else if (keys[key] == KEY_DOWN) {
+					keys[key] = KEY_HOLD_DOWN;
+				}
+			}
+			strictKeys.clear();
 		}
 
 
