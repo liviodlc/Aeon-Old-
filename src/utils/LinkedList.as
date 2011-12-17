@@ -89,6 +89,37 @@ package utils {
             head = new Node( toAdd, head );
 
         }
+		
+		/**
+		 * Remove object from list.
+		 */
+		public function remove( toRemove:Object ):void {
+			
+			var traverse:Node;
+			
+			// Special case, removed object is currently head
+			if( head.object == toRemove ) {
+				
+				head = head.next;
+				return;
+				
+			}
+			
+			// Traverse thru the list
+			while( traverse != null ) {
+				
+				// If next element is object to remove...
+				if( traverse.next.object == toRemove ) {
+					
+					// Remove it
+					traverse.next = traverse.next.next;
+					return;
+					
+				}
+				
+			}
+			
+		}
 
     }
 
@@ -122,6 +153,15 @@ internal class Node {
         return nex;
 
     }
+	
+	/**
+	 * Set next node in list
+	 */
+	public function set next( n:Node ):void {
+		
+		nex = n;
+		
+	}
 
     /**
      * Get current node's stored object.
