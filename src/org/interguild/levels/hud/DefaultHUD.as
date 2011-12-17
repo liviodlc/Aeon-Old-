@@ -1,4 +1,4 @@
-package org.interguild.levels.defaults {
+package org.interguild.levels.hud {
 	import flash.display.Stage;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;

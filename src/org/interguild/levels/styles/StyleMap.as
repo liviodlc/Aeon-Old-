@@ -8,9 +8,11 @@ package org.interguild.levels.styles {
 	 */
 	public class StyleMap extends Object {
 		
-		public function StyleMap() {
-			//TODO: implement function
-			super();
+		/**
+		 * xml is the <objects> list. It will initialize all the objects.
+		 */
+		public function StyleMap(xml:XMLList) {
+			
 		}
 	}
 }

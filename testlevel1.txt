@@ -5,7 +5,7 @@
 <assets>
 	<image id="steel" src="http://img10.imageshack.us/img10/6178/crate2.png" />
 	<image id="sprite_sheet" src="http://www.sprites-inc.co.uk/files/X/X/x1sheet.gif" />
-	<sound id="magnetman" src="http://FAKEocrmirror.org/files/music/remixes/Mega_Man_3_Magnetic_Fireworks_OC_ReMix.mp3" />
+	<!--<sound id="magnetman" src="http://FAKEocrmirror.org/files/music/remixes/Mega_Man_3_Magnetic_Fireworks_OC_ReMix.mp3" />-->
 	<youtube id="rickroll" src="XZ5TajZYW6Y" />
 </assets>
 <content>

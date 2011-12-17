@@ -3,15 +3,15 @@ package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
-	
+
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.ui.Keyboard;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.levels.assets.AssetMan;
-	import org.interguild.levels.defaults.DefaultHUD;
+	import org.interguild.levels.hud.DefaultHUD;
 	import org.interguild.levels.keys.KeyMan;
 	import org.interguild.levels.styles.StyleMap;
 	import org.interguild.pages.GamePage;
@@ -33,40 +33,57 @@ package org.interguild.levels {
 
 		private var xml:XML;
 
-		private var  assets:AssetMan;
+		private var assets:AssetMan;
 
- 
+
 		public function LevelBuilder(myLvl:Level) {
 			gamepage = GamePage.instance;
 			loader = BulkLoader.getLoader("gamepage");
 			level = myLvl;
-			trace(level.levelCode);
+//			trace(level.levelCode);
 			try {
 				xml = new XML(level.levelCode);
 			} catch (error:TypeError) {
 				level.addError("Could not parse level code. Malformed XML.");
-				trace("malformed xml");
+//				trace("malformed xml");
 			}
 			if (xml != null) {
 				gamepage.loadingText = "Loading Assets: 0%";
 				gamepage.loadingButton.text = "Skip";
-				loadAssets(xml.assets);
+
+				initAssets();
 			}
 		}
 
 
+		/**
+		 * Handles the initializationa and loading of all external assets.
+		 * When done, it moves on to building the HUD.
+		 */
+		private function initAssets():void {
+			assets = new AssetMan(level);
+			level.assets = assets;
+
+			include "assets/DefaultAssets.as";
+			var isAny:Boolean;
+			isAny = parseAssets($default_assets.assets);
+			isAny = parseAssets(xml.assets);
+			if (isAny) {
+				loadAssets();
+			} else {
+				buildHUD();
+			}
+		}
 
 
 		/**
 		 * Parses the XML, registers the asset ID's with AssetMan, and adds them to BulkLoader's queue.
+		 *
+		 * Returns true if any assets were added to be loaded.
 		 */
-		private function loadAssets(xmlAssets:XMLList):void {
-			assets = new AssetMan(level);
-			level.assets = assets;
-
+		private function parseAssets(xmlAssets:XMLList):Boolean {
 			if (xmlAssets == null) {
-				buildHUD();
-				return;
+				return false;
 			}
 
 			var isAny:Boolean = false;
@@ -94,15 +111,19 @@ package org.interguild.levels {
 					}
 				}
 			}
-			if (isAny) {
-				gamepage.loadingButton.addEventListener(MouseEvent.CLICK, stopLoadingAssets, false, 0, true);
-				loader.addEventListener(BulkProgressEvent.COMPLETE, assetsLoadComplete, false);
-				loader.addEventListener(BulkProgressEvent.PROGRESS, assetsLoadProgress, false);
-				loader.addEventListener(BulkLoader.ERROR, assetsError, false);
-				loader.start();
-			} else {
-				buildHUD();
-			}
+			return isAny;
+		}
+
+
+		/**
+		 * Sets up event listeners and tells BulkLoader to start loading.
+		 */
+		private function loadAssets():void {
+			gamepage.loadingButton.addEventListener(MouseEvent.CLICK, stopLoadingAssets, false, 0, true);
+			loader.addEventListener(BulkProgressEvent.COMPLETE, assetsLoadComplete, false);
+			loader.addEventListener(BulkProgressEvent.PROGRESS, assetsLoadProgress, false);
+			loader.addEventListener(BulkLoader.ERROR, assetsError, false);
+			loader.start();
 		}
 
 
@@ -238,10 +259,10 @@ package org.interguild.levels {
 			}
 			initLevelArea(width, height);
 		}
-		
-		
-		private function initStylesMap():void{
-			
+
+
+		private function initStylesMap():void {
+
 		}
 
 

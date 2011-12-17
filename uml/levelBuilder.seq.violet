@@ -378,15 +378,15 @@ Resizer</string>
     </void> 
     <void method="addChild"> 
      <object id="ActivationBarNode20" class="com.horstmann.violet.CallNode"> 
-      <void method="addChild"> 
-       <object id="ActivationBarNode21" class="com.horstmann.violet.CallNode"> 
-        <void property="implicitParameter"> 
-         <object idref="LifelineNode13"/> 
-        </void> 
-       </object> 
-      </void> 
       <void property="implicitParameter"> 
        <object idref="LifelineNode14"/> 
+      </void> 
+     </object> 
+    </void> 
+    <void method="addChild"> 
+     <object id="ActivationBarNode21" class="com.horstmann.violet.CallNode"> 
+      <void property="implicitParameter"> 
+       <object idref="LifelineNode13"/> 
       </void> 
      </object> 
     </void> 
@@ -760,7 +760,7 @@ keys XML for us.</string>
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
      <double>74.0</double> 
-     <double>1828.0</double> 
+     <double>1838.0</double> 
     </void> 
    </object> 
   </void> 
@@ -768,8 +768,8 @@ keys XML for us.</string>
    <object class="com.horstmann.violet.NoteNode"/> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1931.0</double> 
-     <double>1942.0</double> 
+     <double>1969.0</double> 
+     <double>2114.0</double> 
     </void> 
    </object> 
   </void> 
@@ -778,6 +778,8 @@ keys XML for us.</string>
     <void property="text"> 
      <void property="text"> 
       <string>StyleMap initializes
+--iterate through all &lt;objects&gt;,
+
 --when tile inherits, create
 copy of StyleDefinition array
 --when defining style definitions
@@ -798,7 +800,7 @@ defined.</string>
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
      <double>1642.654762208439</double> 
-     <double>1852.0</double> 
+     <double>1862.0</double> 
     </void> 
    </object> 
   </void> 
@@ -807,7 +809,7 @@ defined.</string>
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
      <double>1674.654762208439</double> 
-     <double>1936.0</double> 
+     <double>1946.0</double> 
     </void> 
    </object> 
   </void> 
@@ -823,8 +825,8 @@ StyleMap</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1014.1971849821691</double> 
-     <double>1847.3893193304548</double> 
+     <double>992.1971849821691</double> 
+     <double>1837.3893193304548</double> 
     </void> 
    </object> 
   </void> 
@@ -833,7 +835,7 @@ StyleMap</string>
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
      <double>933.8994949366116</double> 
-     <double>1990.0</double> 
+     <double>2000.0</double> 
     </void> 
    </object> 
   </void> 
@@ -842,7 +844,7 @@ StyleMap</string>
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
      <double>933.8994949366116</double> 
-     <double>1754.0</double> 
+     <double>1784.0</double> 
     </void> 
    </object> 
   </void> 
@@ -1255,16 +1257,16 @@ StyleMap</string>
   <void method="connect"> 
    <object class="com.horstmann.violet.CallEdge"> 
     <void property="middleLabel"> 
-     <string>set styles</string> 
+     <string>updateStyles()</string> 
     </void> 
    </object> 
-   <object idref="ActivationBarNode20"/> 
+   <object idref="ActivationBarNode9"/> 
    <object idref="ActivationBarNode21"/> 
   </void> 
   <void method="connect"> 
    <object class="com.horstmann.violet.ReturnEdge"/> 
    <object idref="ActivationBarNode21"/> 
-   <object idref="ActivationBarNode20"/> 
+   <object idref="ActivationBarNode9"/> 
   </void> 
  </object> 
 </java> 

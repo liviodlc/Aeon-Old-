@@ -1,14 +1,17 @@
 package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
-	
+
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
+	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
-	
+
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.keys.KeyMan;
 	import org.interguild.log.LoadingBox;
@@ -200,6 +203,15 @@ package org.interguild.levels {
 				//TODO convert everything from level edit to level start state
 			} else {
 				hud.onLoadComplete();
+
+				// if there are errors, show them.
+				if (_errorLog.length > 2) {
+					// this is temporary code. Ideally, the Pause Menu would load the error log
+					trace("//ERROR LOG");
+					trace(_errorLog);
+					trace("//END ERROR LOG");
+				}
+
 				timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 				_keys.activate();
 				timer.start();
@@ -218,10 +230,10 @@ package org.interguild.levels {
 		private function onGameLoop(evt:TimerEvent):void {
 			lvl.onGameLoop();
 			hud.onGameLoop();
-			
+
 			//testing KeyMan
-			if(_keys.isActionDown(KeyMan.JUMP,true))
-				trace("A	"+Math.round(flash.utils.getTimer()));
+			if (_keys.isActionDown(KeyMan.JUMP, true))
+				trace("A	" + Math.round(flash.utils.getTimer()));
 //			if(_keys.isKeyDown(32,true))
 //				trace("K	"+Math.round(flash.utils.getTimer()/1000));
 		}

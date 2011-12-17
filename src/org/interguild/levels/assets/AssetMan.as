@@ -1,6 +1,7 @@
 package org.interguild.levels.assets {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.media.Sound;
 	
 	import org.interguild.levels.Level;
@@ -95,11 +96,11 @@ package org.interguild.levels.assets {
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                               @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                               @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-	 * 
+	 *
 	 * His job is to store all of the level's raw assets, custom content,
 	 * and animation frames. He keeps track of all of the ID names, making
 	 * sure there are no conflicts while making it easy to find what you're
-	 * looking for. 
+	 * looking for.
 	 */
 	public class AssetMan {
 
@@ -138,12 +139,13 @@ package org.interguild.levels.assets {
 				return true;
 			}
 		}
-		
-		private function runChecks(id:String, value:Object):void{
+
+
+		private function runSetChecks(id:String, value:Object):void {
 			if (assets[id] == null) {
-				throw new Error("Asset ID #" + id + " not registered yet.");
+				throw new Error("Asset ID '" + id + "' not registered yet.");
 			} else if (assets[id] != false) {
-				throw new Error("Asset ID #" + id + " already has data in it!");
+				throw new Error("Asset ID '" + id + "' already has data in it!");
 			} else if (value == null) {
 				throw new Error("AssetMan rejects the addition of a null asset into his list.");
 			}
@@ -152,19 +154,73 @@ package org.interguild.levels.assets {
 
 		/**
 		 * Assigns a non-null value to the registered id.
+		 * Only raw image assets allowed.
 		 */
 		public function setImage(id:String, value:BitmapData):void {
-			runChecks(id, value);
-			assets[id] = new Asset(/*id,*/ value, Asset.IMAGE_ASSET);
+			runSetChecks(id, value);
+			assets[id] = value;
 		}
 
 
 		/**
 		 * Assigns a non-null value to the registered id.
+		 * Only raw sound assets allowed.
 		 */
 		public function setSound(id:String, value:Sound):void {
-			runChecks(id, value);
-			assets[id] = new Asset(/*id,*/ value, Asset.SOUND_ASSET);
+			runSetChecks(id, value);
+			assets[id] = value;
+		}
+
+
+		/**
+		 * This function is called to validate all retreivals of assets.
+		 *
+		 * For the tag parameter, put in the name of the tag that is relevant
+		 * to any errors that might occur. Examples include "assets", "content",
+		 * "animation".
+		 */
+		private function runGetChecks(id:String, tag:String):Boolean {
+			if (assets[id] == null) {
+				level.addError("You failed to define the ID '" + id + "' under the <" + tag + "> tag.");
+				return false;
+			} else if (assets[id] == false) {
+				level.addError("Asset ID '" + id + "' failed to load and could not be instantiated.");
+				return false;
+			}
+			return true;
+		}
+
+
+		/**
+		 * Returns the BitmapData of the raw image, if it exists.
+		 * Otherwise, returns null and an error message is added to
+		 * the Level's error log. Please plan your code accordingly
+		 * so that the game doesn't crash from a NullPointerException.
+		 */
+		public function getImage(id:String):BitmapData {
+			var test:Boolean = runGetChecks(id, "assets");
+			if (test) {
+				var thing:Object = assets[id];
+				if (thing is BitmapData) {
+					return BitmapData(thing);
+				}
+				level.addError("The Asset ID '" + id + "' is not a raw image and could not be instantiated.");
+			}
+			return null;
+		}
+
+		/**
+		 * Just like getImage(), but only returns a segment of the image as defined by the
+		 * parameter box.
+		 */
+		public function getImageBox(id:String, box:Rectangle):BitmapData{
+			var img:BitmapData = getImage(id);
+			if(img != null){
+				var imgcopy:BitmapData = new BitmapData(box.width, box.height,true);
+				imgcopy.copyPixels(img,box,new Point());
+				return imgcopy;
+			}
+			return null;
 		}
 	}
 }

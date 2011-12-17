@@ -4,6 +4,7 @@ package org.interguild {
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.system.Security;
 	
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.*;
@@ -41,13 +42,12 @@ package org.interguild {
 
 
 		public function Aeon() {
-			
 			var test:TestUtils;
-			
 			test = new TestUtils();
 			
 			thisInstance = this;
 			allowStageResize();
+			allowYouTube();
 			initLoadingText();
 			initPages();
 			finishLoading();
@@ -57,6 +57,10 @@ package org.interguild {
 		private function allowStageResize():void {
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
+		}
+		
+		private function allowYouTube():void{
+			Security.allowDomain("www.youtube.com");
 		}
 
 
