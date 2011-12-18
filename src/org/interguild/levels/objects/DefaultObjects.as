@@ -1,6 +1,3 @@
-// CUSTOM CONTENT
-$default_content = "";
-
 // ANIMATION FRAMES
 $default_animation = "<xml><animation>" +
 	'<frame id="stand1" next="stand2" delay="60">' +

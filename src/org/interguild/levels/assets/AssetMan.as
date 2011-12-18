@@ -1,5 +1,6 @@
 package org.interguild.levels.assets {
 	import flash.display.BitmapData;
+	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
@@ -154,19 +155,8 @@ package org.interguild.levels.assets {
 
 		/**
 		 * Assigns a non-null value to the registered id.
-		 * Only raw image assets allowed.
 		 */
-		public function setImage(id:String, value:BitmapData):void {
-			runSetChecks(id, value);
-			assets[id] = value;
-		}
-
-
-		/**
-		 * Assigns a non-null value to the registered id.
-		 * Only raw sound assets allowed.
-		 */
-		public function setSound(id:String, value:Sound):void {
+		public function setAsset(id:String, value:Object):void {
 			runSetChecks(id, value);
 			assets[id] = value;
 		}
@@ -203,21 +193,28 @@ package org.interguild.levels.assets {
 				var thing:Object = assets[id];
 				if (thing is BitmapData) {
 					return BitmapData(thing);
+				}else if(thing is DrawingFactory){
+					return DrawingFactory(thing).getClone();
 				}
 				level.addError("The Asset ID '" + id + "' is not a raw image and could not be instantiated.");
 			}
 			return null;
 		}
+		
+		public function test():Sprite{
+			return DrawingFactory(assets["circleWithSquare"]).sp;
+		}
+
 
 		/**
 		 * Just like getImage(), but only returns a segment of the image as defined by the
 		 * parameter box.
 		 */
-		public function getImageBox(id:String, box:Rectangle):BitmapData{
+		public function getImageBox(id:String, box:Rectangle):BitmapData {
 			var img:BitmapData = getImage(id);
-			if(img != null){
-				var imgcopy:BitmapData = new BitmapData(box.width, box.height,true);
-				imgcopy.copyPixels(img,box,new Point());
+			if (img != null) {
+				var imgcopy:BitmapData = new BitmapData(box.width, box.height, true);
+				imgcopy.copyPixels(img, box, new Point());
 				return imgcopy;
 			}
 			return null;

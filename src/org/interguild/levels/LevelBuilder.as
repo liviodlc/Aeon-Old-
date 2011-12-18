@@ -11,6 +11,8 @@ package org.interguild.levels {
 
 	import org.interguild.Aeon;
 	import org.interguild.levels.assets.AssetMan;
+	import org.interguild.levels.assets.ContentFactory;
+	import org.interguild.levels.assets.DrawingFactory;
 	import org.interguild.levels.hud.DefaultHUD;
 	import org.interguild.levels.keys.KeyMan;
 	import org.interguild.levels.styles.StyleMap;
@@ -71,7 +73,7 @@ package org.interguild.levels {
 			if (isAny) {
 				loadAssets();
 			} else {
-				buildHUD();
+				loadCustomContent();
 			}
 		}
 
@@ -139,7 +141,7 @@ package org.interguild.levels {
 
 			assets = null;
 			loader.removeAll();
-			buildHUD();
+			loadCustomContent();
 		}
 
 
@@ -173,13 +175,46 @@ package org.interguild.levels {
 			gamepage.loadingButton.removeEventListener(MouseEvent.CLICK, stopLoadingAssets);
 			for each (var item:LoadingItem in loader.items) {
 				if (item.type == "image") {
-					assets.setImage(item.id, loader.getBitmapData(item.id, true));
+					assets.setAsset(item.id, loader.getBitmapData(item.id, true));
 				} else if (item.type == "sound") {
-					assets.setSound(item.id, loader.getSound(item.id, true));
+					assets.setAsset(item.id, loader.getSound(item.id, true));
 				}
 			}
 			loader.removeAll();
+			loadCustomContent();
+		}
+
+
+		/**
+		 * Iterates through all tags under <content>, creates the appropriate factory,
+		 * and gives it to AssetMan for storage.
+		 */
+		private function loadCustomContent():void {
+			include "assets/DefaultContent.as";
+			parseContentXML($default_content.content);
+			parseContentXML(xml.content);
+
 			buildHUD();
+		}
+
+
+		private function parseContentXML(xmlContent:XMLList):void {
+			for each (var el:XML in xmlContent.elements()) {
+				var factory:ContentFactory;
+				var type:String = String(el.name());
+				var id:String = el.@id;
+				if (assets.addID(id)) {
+					switch (type) {
+						case "drawing":
+							factory = new DrawingFactory(el, level);
+							assets.setAsset(id, factory);
+							break;
+						default:
+							level.addError("Invalid <content> type: <" + type + ">");
+							break;
+					}
+				}
+			}
 		}
 
 

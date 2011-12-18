@@ -326,8 +326,8 @@ detection.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>628.999999999999</double> 
-     <double>275.0</double> 
+     <double>627.999999999999</double> 
+     <double>260.0</double> 
     </void> 
    </object> 
   </void> 
@@ -400,8 +400,8 @@ on the preview screen.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1145.999999999999</double> 
-     <double>767.0</double> 
+     <double>1147.999999999999</double> 
+     <double>785.0</double> 
     </void> 
    </object> 
   </void> 
@@ -435,8 +435,8 @@ game camera in a fluid way.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>960.999999999999</double> 
-     <double>634.0</double> 
+     <double>949.999999999999</double> 
+     <double>716.0</double> 
     </void> 
    </object> 
   </void> 
@@ -485,8 +485,8 @@ far less often at the same time.</string>
    <object id="PointNode0" class="com.horstmann.violet.PointNode"> 
     <void id="Rectangle2D$Double0" property="bounds"> 
      <void method="setRect"> 
-      <double>713.0</double> 
-      <double>670.0</double> 
+      <double>715.0</double> 
+      <double>620.0</double> 
       <double>0.0</double> 
       <double>0.0</double> 
      </void> 
@@ -497,8 +497,8 @@ far less often at the same time.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>713.0</double> 
-     <double>670.0</double> 
+     <double>715.0</double> 
+     <double>620.0</double> 
     </void> 
    </object> 
   </void> 
@@ -506,8 +506,8 @@ far less often at the same time.</string>
    <object id="PointNode1" class="com.horstmann.violet.PointNode"> 
     <void id="Rectangle2D$Double1" property="bounds"> 
      <void method="setRect"> 
-      <double>715.0</double> 
-      <double>415.0</double> 
+      <double>712.0</double> 
+      <double>359.0</double> 
       <double>0.0</double> 
       <double>0.0</double> 
      </void> 
@@ -518,8 +518,8 @@ far less often at the same time.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>715.0</double> 
-     <double>415.0</double> 
+     <double>712.0</double> 
+     <double>359.0</double> 
     </void> 
    </object> 
   </void> 

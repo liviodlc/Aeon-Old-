@@ -1,7 +1,7 @@
 package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
-
+	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -11,7 +11,7 @@ package org.interguild.levels {
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
-
+	
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.keys.KeyMan;
 	import org.interguild.log.LoadingBox;
@@ -204,6 +204,17 @@ package org.interguild.levels {
 			} else {
 				hud.onLoadComplete();
 
+//				var img:BitmapData = assets.getImage("circleWithSquare");
+//				var b1:Bitmap = new Bitmap(img);
+//				var b2:Bitmap = new Bitmap(img);
+//				b2.x = b2.y = 100;
+//				addChild(b1);
+//				addChild(b2);
+//				
+//				var test:Sprite = assets.test();
+//				test.x = test.y = 300;
+//				addChild(test);
+				
 				// if there are errors, show them.
 				if (_errorLog.length > 2) {
 					// this is temporary code. Ideally, the Pause Menu would load the error log
