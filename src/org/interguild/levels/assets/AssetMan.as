@@ -182,7 +182,7 @@ package org.interguild.levels.assets {
 
 
 		/**
-		 * Returns the BitmapData of the raw image, if it exists.
+		 * Returns the BitmapData of the image, if it exists.
 		 * Otherwise, returns null and an error message is added to
 		 * the Level's error log. Please plan your code accordingly
 		 * so that the game doesn't crash from a NullPointerException.
@@ -193,16 +193,10 @@ package org.interguild.levels.assets {
 				var thing:Object = assets[id];
 				if (thing is BitmapData) {
 					return BitmapData(thing);
-				}else if(thing is DrawingFactory){
-					return DrawingFactory(thing).getClone();
 				}
-				level.addError("The Asset ID '" + id + "' is not a raw image and could not be instantiated.");
+				level.addError("The Asset ID '" + id + "' is not an image and could not be instantiated.");
 			}
 			return null;
-		}
-		
-		public function test():Sprite{
-			return DrawingFactory(assets["circleWithSquare"]).sp;
 		}
 
 

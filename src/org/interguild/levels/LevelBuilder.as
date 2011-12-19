@@ -3,16 +3,15 @@ package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
-
+	
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.ui.Keyboard;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.levels.assets.AssetMan;
-	import org.interguild.levels.assets.ContentFactory;
-	import org.interguild.levels.assets.DrawingFactory;
+	import org.interguild.levels.assets.DrawingBuilder;
 	import org.interguild.levels.hud.DefaultHUD;
 	import org.interguild.levels.keys.KeyMan;
 	import org.interguild.levels.styles.StyleMap;
@@ -200,14 +199,13 @@ package org.interguild.levels {
 
 		private function parseContentXML(xmlContent:XMLList):void {
 			for each (var el:XML in xmlContent.elements()) {
-				var factory:ContentFactory;
 				var type:String = String(el.name());
 				var id:String = el.@id;
 				if (assets.addID(id)) {
 					switch (type) {
 						case "drawing":
-							factory = new DrawingFactory(el, level);
-							assets.setAsset(id, factory);
+							var draw:DrawingBuilder = new DrawingBuilder(el, level);
+							assets.setAsset(id, draw.getBitmapData());
 							break;
 						default:
 							level.addError("Invalid <content> type: <" + type + ">");

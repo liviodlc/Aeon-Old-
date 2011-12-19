@@ -1,10 +1,12 @@
 package org.interguild.levels.assets {
 	import fl.motion.Color;
+	
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.xml.XMLNode;
+	
 	import org.interguild.levels.Level;
 
 	/**
@@ -12,30 +14,23 @@ package org.interguild.levels.assets {
 	 * a variety of different fills and borders applied to them, and can even use Masks as their
 	 * fills.
 	 *
-	 * A DrawingFactory creates and maintains one vector-based drawing based on the input XML.
-	 * It then distributes this drawing for use for multiple purposes and instances by passing
-	 * along the BitmapData of the dynamic image.
+	 * A DrawingBuilder instance creates one vector-based drawing based on the input XML.
+	 * It then returns the BitmapData of this dynamically created drawing through its only
+	 * public function: getBitmapData()
 	 *
-	 * At this point in time, once the BitmapData is available, there is no more need for maintaining
-	 * a reference to this DrawingFactory instance. However, we keep this reference in the likely
-	 * chance that we implement a camera feature that can zoom in and out of the level, in which case,
-	 * this class would be responsible for supplying the BitmapData at multiple zoom levels. Of course,
-	 * we could also simply allow things to get pixelated...
-	 * 
 	 * TODO
-	 * 	implement other shapes
+	 * 	implement other shapes: ellipse, triangles
 	 * 	gradient fills
-	 * 	consider allowing text to be rendered as part of Drawings, rather than their own thing. 
+	 * 	consider allowing text to be rendered as part of Drawings, rather than their own thing.
 	 */
-	public class DrawingFactory implements ContentFactory {
+	public class DrawingBuilder {
 
 		private var xml:XML;
 		private var assets:AssetMan;
 		private var level:Level;
 		private var id:String;
 
-		public var sp:Sprite;
-		private var data:BitmapData;
+		private var sp:Sprite;
 		private var offsetX:Number = 0;
 		private var offsetY:Number = 0;
 
@@ -44,7 +39,7 @@ package org.interguild.levels.assets {
 		 * The constructor takes the xml instructions, adds all of its errors to the Level's error
 		 * log, and then fixes those errors, so that getContent() can run as smoothly as possible.
 		 */
-		public function DrawingFactory(xml:XML, lvl:Level) {
+		public function DrawingBuilder(xml:XML, lvl:Level) {
 			this.xml = xml;
 			level = lvl;
 			assets = level.assets;
@@ -61,25 +56,29 @@ package org.interguild.levels.assets {
 				- important fields left unspecified.
 			*/
 			for each (var el:XML in xml.elements()) {
+				var offX:Number, offY:Number, border:Array, solidFill:Array, imageFill:Array;
+
+				// SET BORDER, SOLID FILL, IMAGE FILL
+				border = checkBorder(el.border);
+				solidFill = checkSolidFill(el.solidFill);
+				imageFill = checkImageFill(el.imageFill);
+
+				// SET BORDER AND FILLS
+				sp.graphics.lineStyle(border[0], border[2], border[1]);
+				// may want to include more border options, such as caps, joints, and miterLimit
+				if (imageFill[0] != null) {
+					sp.graphics.beginBitmapFill(imageFill[0], imageFill[1]);
+				} else
+					sp.graphics.beginFill(solidFill[0], solidFill[1]);
+
+				// FIGURE OUT WHICH SHAPE TO DRAW
 				var name:String = String(el.name());
 				if (name == "circle") {
-					var offX:Number, offY:Number;
-					var radius:Number;
-					var center:Array;
-					var border:Array;
-					var solidFill:Array;
-					var imageFill:Array;
+					var radius:Number, center:Array;
 
+					// SET SIZE OF SHAPE
 					radius = checkCircleRadius(Number(el.@radius));
 					center = checkCircleCenter(String(el.@centerX), String(el.@centerY), String(el.@center));
-					border = checkBorder(el.border);
-					solidFill = checkSolidFill(el.solidFill);
-					imageFill = checkImageFill(el.imageFill);
-
-					// TESTS
-//					centerX = -16;
-//					centerY = -100;
-//					rad = 32;
 
 					// CALCULATE OFFSETS
 					offX = center[0] - radius - border[0] / 2;
@@ -90,22 +89,34 @@ package org.interguild.levels.assets {
 						offsetY = offY;
 
 					// DRAW SHAPE
-					sp.graphics.lineStyle(border[0], border[2], border[1]);
-					// may want to include more border options, such as caps, joints, and miterLimit
-					if (imageFill[0] != null) {
-						sp.graphics.beginBitmapFill(imageFill[0], imageFill[1]);
-					} else
-						sp.graphics.beginFill(solidFill[0], solidFill[1]);
 					sp.graphics.drawCircle(center[0], center[1], radius);
-					sp.graphics.endFill();
 
 				} else if (name == "rectangle") {
+					var box:Rectangle, rounding:Array;
+
+					// SET SIZE OF SHAPE
+					box = checkBox(String(el.@box));
+					rounding = checkRectangleRounding(String(el.@rounding));
+
+					// CALCULATE OFFSETS
+					offX = box.x - border[0] / 2;
+					if (offX < offsetX)
+						offsetX = offX;
+					offY = box.y - border[0] / 2;
+					if (offY < offsetY)
+						offsetY = offY;
+
+					// DRAW SHAPE
+					if (rounding[0] == 0 && rounding[1] == 0)
+						sp.graphics.drawRect(box.x, box.y, box.width, box.height);
+					else
+						sp.graphics.drawRoundRect(box.x, box.y, box.width, box.height, rounding[0], rounding[1]);
 
 				} else {
 					level.addError("Drawing Asset with ID '" + id + "' contains invalid shape '" + name + "'");
 				}
+				sp.graphics.endFill();
 			}
-			updateData();
 		}
 
 
@@ -152,6 +163,28 @@ package org.interguild.levels.assets {
 						a[1] = 0;
 				}
 			}
+			return a;
+		}
+
+
+		/**
+		 * Returns a validated value for the rounding of a rectangle.
+		 */
+		private function checkRectangleRounding(s:String):Array {
+			var a:Array = s.split(" ", 2);
+
+			a[0] = Number(a[0]);
+			if (isNaN(a[0]))
+				a[0] = 0;
+
+			if (a.length < 2) {
+				a.push(a[0]);
+			} else {
+				a[1] = Number(a[1]);
+				if (isNaN(a[1]))
+					a[1] = 0;
+			}
+
 			return a;
 		}
 
@@ -213,10 +246,17 @@ package org.interguild.levels.assets {
 		 */
 		private function checkImageFill(xml:XMLList):Array {
 			var a:Array = new Array(2);
+			a[0] = null;
 
 			// get BitmapData
 			var box:Rectangle = checkBox(xml.@box);
-			var bm:BitmapData = assets.getImageBox(String(xml.@assetid), box);
+			var assetid:String = String(xml.@assetid);
+			if (assetid.length == 0)
+				return a;
+			if(assetid == this.id){
+				level.addError("You are not allowed to include an asset within itself. You tried to do this with id: '"+ id + "'");
+			}
+			var bm:BitmapData = assets.getImageBox(assetid, box);
 			a[0] = bm;
 			if (a[0] == null) {
 				return a;
@@ -264,7 +304,7 @@ package org.interguild.levels.assets {
 		private function checkAlpha(s:String):Number {
 			var num:Number = Number(s);
 			if (isNaN(num)) {
-				num = 0;
+				num = 100;
 			} else if (num > 100) {
 				num = 100;
 			} else if (num < 0) {
@@ -343,25 +383,15 @@ package org.interguild.levels.assets {
 
 			return new Rectangle(a[0], a[1], a[2], a[3]);
 		}
-
-
-		public function getContent():Content {
-			return null;
-		}
-
-
-		public function getClone():BitmapData {
-			return data;
-		}
-
-
-		private function updateData():void {
+		
+		
+		public function getBitmapData():BitmapData{
 			var result:BitmapData = new BitmapData(sp.width, sp.height, true, 0x00000000);
 			var m:Matrix = new Matrix();
 			m.createBox(1, 1, 0, -offsetX, -offsetY);
 			result.draw(sp, m);
-
-			data = result;
+			
+			return result;
 		}
 	}
 }

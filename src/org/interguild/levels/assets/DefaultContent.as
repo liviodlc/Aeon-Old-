@@ -19,8 +19,9 @@ var $default_content:XML = new XML('<xml><content>' +
 		'<circle radius="20" center="0 0">' +
 			'<border color="666666" alpha="100" size="10" />' +
 		'</circle>' +
-		'<rectangle box="0 0 32 32" rounding="10">' +
-			'<solidFill color="0" />' +
+		'<rectangle box="40 40 80 80" rounding="40">' +
+			'<solidFill color="0x00CC00" alpha="25" />' +
+			'<border color="0" alpha="100" size="6" />' +
 		'</rectangle>' +
 	'</drawing>' +
 	'<text id="helloworld" offset="15 15" box="" width="" height="" alpha="">' +

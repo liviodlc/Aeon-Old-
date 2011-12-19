@@ -204,16 +204,12 @@ package org.interguild.levels {
 			} else {
 				hud.onLoadComplete();
 
-//				var img:BitmapData = assets.getImage("circleWithSquare");
-//				var b1:Bitmap = new Bitmap(img);
-//				var b2:Bitmap = new Bitmap(img);
-//				b2.x = b2.y = 100;
-//				addChild(b1);
-//				addChild(b2);
-//				
-//				var test:Sprite = assets.test();
-//				test.x = test.y = 300;
-//				addChild(test);
+				var img:BitmapData = assets.getImage("circleWithSquare");
+				var b1:Bitmap = new Bitmap(img);
+				var b2:Bitmap = new Bitmap(img);
+				b2.x = b2.y = 200;
+				addChild(b1);
+				addChild(b2);
 				
 				// if there are errors, show them.
 				if (_errorLog.length > 2) {
