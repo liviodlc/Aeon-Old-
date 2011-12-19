@@ -1,23 +1,31 @@
 package org.interguild.levels.assets {
 	import fl.motion.Color;
-	
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
-	import flash.filters.ColorMatrixFilter;
-	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.xml.XMLNode;
-	
 	import org.interguild.levels.Level;
 
 	/**
-	 * An instance of DrawingFactory stores instructions on how to create X number of instances
-	 * of a certain DrawingContent object.
-	 *
 	 * Drawings are generally composed of dynamically created shapes. These shapes can then have
 	 * a variety of different fills and borders applied to them, and can even use Masks as their
 	 * fills.
+	 *
+	 * A DrawingFactory creates and maintains one vector-based drawing based on the input XML.
+	 * It then distributes this drawing for use for multiple purposes and instances by passing
+	 * along the BitmapData of the dynamic image.
+	 *
+	 * At this point in time, once the BitmapData is available, there is no more need for maintaining
+	 * a reference to this DrawingFactory instance. However, we keep this reference in the likely
+	 * chance that we implement a camera feature that can zoom in and out of the level, in which case,
+	 * this class would be responsible for supplying the BitmapData at multiple zoom levels. Of course,
+	 * we could also simply allow things to get pixelated...
+	 * 
+	 * TODO
+	 * 	implement other shapes
+	 * 	gradient fills
+	 * 	consider allowing text to be rendered as part of Drawings, rather than their own thing. 
 	 */
 	public class DrawingFactory implements ContentFactory {
 
@@ -345,13 +353,14 @@ package org.interguild.levels.assets {
 		public function getClone():BitmapData {
 			return data;
 		}
-		
-		private function updateData():void{
+
+
+		private function updateData():void {
 			var result:BitmapData = new BitmapData(sp.width, sp.height, true, 0x00000000);
 			var m:Matrix = new Matrix();
 			m.createBox(1, 1, 0, -offsetX, -offsetY);
 			result.draw(sp, m);
-			
+
 			data = result;
 		}
 	}
