@@ -11,6 +11,9 @@ package org.interguild.levels.objects {
 	 * GameObject represents any object in the games, such as tiles, players, enemies, etc.
 	 */
 	public class GameObject extends Sprite {
+		
+		private var definition:GameObjectDefinition;
+		private var classes:LinkedList;
 
 		//included in Sprite:
 //		public var x:Number;

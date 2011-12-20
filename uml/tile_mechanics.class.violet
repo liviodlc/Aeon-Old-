@@ -169,8 +169,8 @@ specific they are.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1419.594271929951</double> 
-     <double>770.379077485107</double> 
+     <double>1442.594271929951</double> 
+     <double>796.379077485107</double> 
     </void> 
    </object> 
   </void> 
@@ -555,8 +555,8 @@ tile id&apos;s and classNames.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1449.0</double> 
-     <double>637.0</double> 
+     <double>1439.0</double> 
+     <double>641.0</double> 
     </void> 
    </object> 
   </void> 
@@ -565,7 +565,10 @@ tile id&apos;s and classNames.</string>
     <void property="attributes"> 
      <void property="text"> 
       <string>normalStyles:Array
-dynamicStyle:Array</string> 
+dynamicStyles:Array
+descendants:LinkedList
+name:String
+editorIcon:BitmapData</string> 
      </void> 
     </void> 
     <void property="name"> 
@@ -676,7 +679,7 @@ have as their superclasses.</string>
    </object> 
   </void> 
   <void method="addNode"> 
-   <object class="com.horstmann.violet.NoteNode"> 
+   <object id="NoteNode1" class="com.horstmann.violet.NoteNode"> 
     <void property="text"> 
      <void property="text"> 
       <string>mainly referred to during level-building</string> 
@@ -687,6 +690,27 @@ have as their superclasses.</string>
     <void method="setLocation"> 
      <double>1699.0</double> 
      <double>744.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="PointNode3" class="com.horstmann.violet.PointNode"> 
+    <void id="Rectangle2D$Double3" property="bounds"> 
+     <void method="setRect"> 
+      <double>1614.0</double> 
+      <double>751.0</double> 
+      <double>0.0</double> 
+      <double>0.0</double> 
+     </void> 
+    </void> 
+    <void property="bounds"> 
+     <object idref="Rectangle2D$Double3"/> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1614.0</double> 
+     <double>751.0</double> 
     </void> 
    </object> 
   </void> 
@@ -986,6 +1010,11 @@ have as their superclasses.</string>
    </object> 
    <object idref="ClassNode3"/> 
    <object idref="ClassNode19"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.NoteEdge"/> 
+   <object idref="NoteNode1"/> 
+   <object idref="PointNode3"/> 
   </void> 
  </object> 
 </java> 

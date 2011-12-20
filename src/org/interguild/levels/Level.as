@@ -43,6 +43,8 @@ package org.interguild.levels {
 
 		private var timer:Timer;
 		private var _frameRate:Number;
+		
+		public var loadDefaultSettings:Boolean = true;
 
 
 		/**

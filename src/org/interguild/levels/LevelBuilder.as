@@ -14,7 +14,7 @@ package org.interguild.levels {
 	import org.interguild.levels.assets.DrawingBuilder;
 	import org.interguild.levels.hud.DefaultHUD;
 	import org.interguild.levels.keys.KeyMan;
-	import org.interguild.levels.styles.StyleMap;
+	import org.interguild.levels.objects.StyleMap;
 	import org.interguild.pages.GamePage;
 	import org.interguild.resize.WindowResizer;
 
@@ -26,11 +26,13 @@ package org.interguild.levels {
 		private static const DEFAULT_LEVEL_WIDTH:uint = 10;
 		private static const DEFAULT_LEVEL_HEIGHT:uint = 10;
 		private static const DEFAULT_FRAME_RATE:uint = 30;
+		private static const MAX_SCREEN_WIDTH:uint = 2000;
+		private static const MAX_SCREEN_HEIGHT:uint = 1500;
 
 		private var gamepage:GamePage;
 		private var level:Level;
 		private var loader:BulkLoader;
-		private var styleMap:StyleMap;
+		private var stylesMap:StyleMap;
 
 		private var xml:XML;
 
@@ -221,7 +223,7 @@ package org.interguild.levels {
 			gamepage.loadingButton.text = "Cancel & Quit";
 			gamepage.loadingButton.addEventListener(MouseEvent.CLICK, stopBuildingLevel, false, 0, true);
 
-			level.title = xml.title;
+			initTitle(String(xml.title));
 
 			//TODO check xml for hud settings
 			level.setHUD(new DefaultHUD(level));
@@ -236,16 +238,84 @@ package org.interguild.levels {
 		private function buildLevel():void {
 			gamepage.loadingText = "Building Level: 1%"
 
+			initLevel(xml.level);
 			initKeys();
-			initFrameRate();
-			initWindowSize();
-			initLevelSize();
 			initStylesMap();
 
 			finishLoading();
 		}
+		
+		
+		private function initTitle(s:String):void{
+			level.title = s;
+		}
+		
+		
+		private function initLevel(xml:XMLList):void{
+			if(String(xml.@loadDefaultSettings)=="false")
+				level.loadDefaultSettings = false;
+			
+			var size:Array = checkLevelSize(xml.@size);
+			initLevelArea(size[0], size[1]);
+			
+			size = checkWindowSize(xml.@windowSize);
+			initWindowSize(size[0],size[1]);
+			
+			initFrameRate(String(xml.@framerate));
+		}
+		
+		
+		/**
+		 * Returns an array of exactly two, valid, unsigned Integers for dimensions.
+		 *  a[0] = width
+		 *  a[1] = height
+		 */
+		private function checkLevelSize(s:String):Array {
+			var a:Array = s.split(" ", 2);
+			
+			a[0] = uint(a[0]);
+			if (isNaN(a[0]) || a[0] == 0) {
+				a[0] = DEFAULT_LEVEL_WIDTH;
+			}
+			
+			if (a.length < 2) {
+				a.push(a[0]);
+			} else {
+				a[1] = uint(a[1]);
+				if (isNaN(a[1]) || a[1] == 0) {
+					a[1] = DEFAULT_LEVEL_HEIGHT;
+				}
+			}
+			
+			return a;
+		}
 
 
+		/**
+		 * Returns an array of exactly two, valid, unsigned Integers for dimensions.
+		 *  a[0] = width
+		 *  a[1] = height
+		 */
+		private function checkWindowSize(s:String):Array {
+			var a:Array = s.split(" ", 2);
+			
+			a[0] = uint(a[0]);
+			if (isNaN(a[0]) || a[0] > MAX_SCREEN_WIDTH) {
+				a[0] = 0;
+			}
+			
+			if (a.length < 2) {
+				a.push(a[0]);
+			} else {
+				a[1] = uint(a[1]);
+				if (isNaN(a[1]) || a[1] > MAX_SCREEN_HEIGHT) {
+					a[1] = 0;
+				}
+			}
+			
+			return a;
+		}
+		
 		/**
 		 * Gets keys info from XML and gives them to KeyMan.
 		 */
@@ -255,47 +325,33 @@ package org.interguild.levels {
 		}
 
 
-		private function initFrameRate():void {
-			level.frameRate = DEFAULT_FRAME_RATE;
+		private function initFrameRate(s:String):void {
+			var num:Number = Number(s);
+			
+			if(isNaN(num))
+				num = DEFAULT_FRAME_RATE;
+			
+			if (num < 0.01 || num > 1000)
+				num = DEFAULT_FRAME_RATE;
+			
+			level.frameRate = num;
 		}
 
 
-		private function initWindowSize():void {
-			var width:uint, height:uint;
-			if (xml.windowSize != null) {
-				width = uint(xml.windowSize.@width);
-				height = uint(xml.windowSize.@height);
-				if (width > 0 || height > 0) {
-					var resizer:WindowResizer = new WindowResizer();
-					if (width <= 0)
-						width = resizer.getCurrentWidth();
-					else if (height <= 0)
-						height = resizer.getCurrentHeight();
-					resizer.resize(height, width);
-				}
-			}
-		}
-
-
-		private function initLevelSize():void {
-			var width:uint, height:uint;
-			if (xml.size != null) {
-				width = uint(xml.size.@width);
-				height = uint(xml.size.@height);
+		private function initWindowSize(width:uint, height:uint):void {
+			if (width > 0 || height > 0) {
+				var resizer:WindowResizer = new WindowResizer();
 				if (width == 0)
-					width = DEFAULT_LEVEL_WIDTH;
-				if (height == 0)
-					height = DEFAULT_LEVEL_HEIGHT;
-			} else {
-				width = DEFAULT_LEVEL_WIDTH;
-				height = DEFAULT_LEVEL_HEIGHT;
+					width = resizer.getCurrentWidth();
+				else if (height == 0)
+					height = resizer.getCurrentHeight();
+				resizer.resize(height, width);
 			}
-			initLevelArea(width, height);
 		}
 
 
 		private function initStylesMap():void {
-
+			stylesMap = new StyleMap(xml.objects, String(xml.styles), level);
 		}
 
 

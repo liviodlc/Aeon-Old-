@@ -119,7 +119,7 @@ package org.interguild.levels {
 
 
 		/**
-		 * Called by Level.onGameLoop(evt:TimerEvent)
+		 * Called by Level.onGameLoop()
 		 */
 		public function onGameLoop():void {
 

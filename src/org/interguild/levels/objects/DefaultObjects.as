@@ -1,20 +1,13 @@
-// ANIMATION FRAMES
-$default_animation = "<xml><animation>" +
-	'<frame id="stand1" next="stand2" delay="60">' +
-		'<image assetID="megaman" box="106 12 21 24" offset="" />' +
-	'</frame>' +
-"</animation></xml>";
-
 // DEFINING OBJECT IDs
-$default_objects = "<xml><objects>" +
-	'<obj id="x" name="Terrain" editoricon="" />' +
-	'<obj id="#" name="Starting Position" editoricon="" />' +
-	'<obj id="m" name="Floor Spike" editoricon="" />' +
-	'<obj id="w" name="Ceiling Spike" editoricon="" />' +
-"</objects></xml>";
+var $default_objects:XML = new XML("<xml><objects>" +
+	'<type id="x" name="Terrain" editoricon="" />' +
+	'<type id="#" name="Starting Position" editoricon="" />' +
+	'<type id="m" name="Floor Spike" editoricon="" />' +
+	'<type id="w" name="Ceiling Spike" editoricon="" />' +
+"</objects></xml>");
 
 // DEFINING OBJECT STYLES
-$default_styles = "<xml><styles><![CDATA[" +
+var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 // CUSTOM VARIABLES	
 "global {" +
 	"$gravity: 2.35;" +
@@ -61,4 +54,4 @@ $default_styles = "<xml><styles><![CDATA[" +
 "#:left{" +
 	"accelerate-x: -5" +
 "}" +
-"]]></styles></xml>";
+"]]></styles></xml>");

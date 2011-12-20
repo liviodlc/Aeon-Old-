@@ -182,8 +182,10 @@ package org.interguild.levels.keys {
 			var esc:uint = 27;
 			keys[esc - SMALLEST_KEYCODE] = PAUSE;
 
-			include "DefaultKeys.as";
-			parseXML(dKeys);
+			if (level.loadDefaultSettings) {
+				include "DefaultKeys.as";
+				parseXML(dKeys);
+			}
 			parseXML(xml);
 		}
 
