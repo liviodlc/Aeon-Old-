@@ -660,25 +660,6 @@ editorIcon:BitmapData</string>
    </object> 
   </void> 
   <void method="addNode"> 
-   <object class="com.horstmann.violet.NoteNode"> 
-    <void property="text"> 
-     <void property="text"> 
-      <string>An interface in name only.
-It could be an abstract class
-but there&apos;s no need to add
-burdens on what these can
-have as their superclasses.</string> 
-     </void> 
-    </void> 
-   </object> 
-   <object class="java.awt.geom.Point2D$Double"> 
-    <void method="setLocation"> 
-     <double>458.0</double> 
-     <double>713.0</double> 
-    </void> 
-   </object> 
-  </void> 
-  <void method="addNode"> 
    <object id="NoteNode1" class="com.horstmann.violet.NoteNode"> 
     <void property="text"> 
      <void property="text"> 
@@ -711,6 +692,22 @@ have as their superclasses.</string>
     <void method="setLocation"> 
      <double>1614.0</double> 
      <double>751.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object class="com.horstmann.violet.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>see if you can store which tests to run
+by using obj.[propertyName]</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1530.0</double> 
+     <double>563.0</double> 
     </void> 
    </object> 
   </void> 

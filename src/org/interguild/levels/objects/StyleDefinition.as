@@ -4,6 +4,7 @@ package org.interguild.levels.objects {
 	public class StyleDefinition {
 		
 		private var users:LinkedList;
+		private var _isDynamic:Boolean;
 
 		public function StyleDefinition() {
 			
@@ -18,6 +19,10 @@ package org.interguild.levels.objects {
 			var u:LinkedList = users;
 			users = null;
 			return u;
+		}
+		
+		public function get isDynamic():Boolean{
+			return _isDynamic;
 		}
 	}
 }

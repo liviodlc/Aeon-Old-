@@ -91,8 +91,10 @@ package org.interguild.levels.objects {
 				var secondChar:String = id.substr(1, 1);
 				if (id == "\r\n" || secondChar == "\r" || secondChar == "\n" || secondChar == "\r\n")
 					level.addError("You are not allowed to use the new line character in an object type ID. This is a reserved character used to mark the end of a row in the level code.");
-				else if ((id.length == 2 && firstChar != "$" && firstChar != ".") || id.length > 2)
+				else if ((id.length == 2 && firstChar != "$" && firstChar != ".")  || id.length > 2)
 					level.addError("The object type ID '" + id + "' is too long. Object type IDs must only be one character. If you run out of characters, you can define a double-character ID by setting the first character as the '$' symbol. Class names are always two characters long, but their first character is the '.' symbol.");
+				else if(secondChar == "." || secondChar==";" || secondChar=="=")
+					level.addError("You are not allowed to use invalid characters such as '=', '.', or ';' in your object type IDs.");
 				else {
 					addTypeID(id, String(xml.@editorIcon));
 				}
