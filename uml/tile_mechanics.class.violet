@@ -169,8 +169,8 @@ specific they are.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1442.594271929951</double> 
-     <double>796.379077485107</double> 
+     <double>1447.594271929951</double> 
+     <double>789.379077485107</double> 
     </void> 
    </object> 
   </void> 
@@ -555,8 +555,8 @@ tile id&apos;s and classNames.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1439.0</double> 
-     <double>641.0</double> 
+     <double>1447.0</double> 
+     <double>627.0</double> 
     </void> 
    </object> 
   </void> 
@@ -580,7 +580,7 @@ editorIcon:BitmapData</string>
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
      <double>1478.0</double> 
-     <double>681.0</double> 
+     <double>667.0</double> 
     </void> 
    </object> 
   </void> 
@@ -708,6 +708,23 @@ by using obj.[propertyName]</string>
     <void method="setLocation"> 
      <double>1530.0</double> 
      <double>563.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object class="com.horstmann.violet.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>IMPORTANT: The above explains how tiles keep track of their
+styles, but how does the level keep track of styles, and how
+do we keep track of the global variables??</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>1642.0</double> 
+     <double>824.0</double> 
     </void> 
    </object> 
   </void> 

@@ -4,6 +4,7 @@ var $default_objects:XML = new XML("<xml><objects>" +
 	'<type id="#" name="Starting Position" editoricon="" />' +
 	'<type id="m" name="Floor Spike" editoricon="" />' +
 	'<type id="w" name="Ceiling Spike" editoricon="" />' +
+	'<type id=".a" name="Ceiling Spike" editoricon="" />' +
 "</objects></xml>");
 
 // DEFINING OBJECT STYLES
@@ -27,8 +28,9 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 // PLAYER
 "# {" +
 	"player: true;" +
-	"hit-box-width: 30;" +
-	"hit-box-height: 42;" +
+	"hitbox-width: 30;" +
+	"hitbox-height: 42;" +
+	"hitbox-size: 50 60" +
 	"object-offset: 1 -10;" +
 	"y-Acc: $gravity;" +
 	"max-speed-x: 8;" +
@@ -53,5 +55,14 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 "}" +
 "#:left{" +
 	"accelerate-x: -5" +
+"}" +
+".a{" +
+	"animate:megaman;" +
+"}" +
+".ab{" +
+	"animate:megaman;" +
+"}" +
+".B{" +
+	"animate:megaman;" +
 "}" +
 "]]></styles></xml>");

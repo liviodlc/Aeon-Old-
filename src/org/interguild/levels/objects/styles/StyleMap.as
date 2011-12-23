@@ -1,7 +1,8 @@
-package org.interguild.levels.objects {
+package org.interguild.levels.objects.styles {
 	import org.interguild.levels.Level;
 	
 	import utils.LinkedList;
+	import org.interguild.levels.objects.GameObjectDefinition;
 
 	/**
 	 * StyleMap keeps all of the arrays of StyleDefinitions and maps them
@@ -26,8 +27,10 @@ package org.interguild.levels.objects {
 			level = lvl;
 			// initialize array:
 			stylesMap = [];
+//			stylesMap["level"] = new GameObjectDefinition(id, editorIcon);
+//			stylesMap["global"] = new GameObjectDefinition(id, editorIcon);
 
-			include "../objects/DefaultObjects.as";
+			include "../DefaultObjects.as";
 
 			if (level.loadDefaultSettings) {
 				initObjects($default_objects.objects);
@@ -117,22 +120,15 @@ package org.interguild.levels.objects {
 		 * instances in the map.
 		 */
 		private function initStyles(s:String):void {
-			var parser:StyleParser = new StyleParser(s, level);
-			while (parser.hasNext()) {
-				var def:StyleDefinition = parser.next();
-				if (def != null) {
-					var list:LinkedList = def.usersList;
-					list.beginIteration();
-					while (list.hasNext()) {
-						var id:String = String(list.next);
-						var objDef:GameObjectDefinition = stylesMap[id];
-						if (objDef == null)
-							level.addError("You failed to define the ID '" + id + "' under the <objects> tag.");
-						else
-							objDef.addStyles(def);
-					}
-				}
-			}
+			new StyleParser(s, level, this);
+		}
+		
+		/**
+		 * Returns the GameObjectDefinition of the registered object type ID.
+		 * If the ID is not registered, returns null.
+		 */
+		public function get(id:String):GameObjectDefinition{
+			return stylesMap[id];
 		}
 	}
 }

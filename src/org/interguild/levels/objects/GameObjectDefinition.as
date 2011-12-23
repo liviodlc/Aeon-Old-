@@ -1,5 +1,6 @@
 package org.interguild.levels.objects {
 	import flash.display.BitmapData;
+	import org.interguild.levels.objects.styles.StyleDefinition;
 
 	/**
 	 * This class stores all of the information associated with any one GameObject
@@ -30,6 +31,7 @@ package org.interguild.levels.objects {
 		 * Adds the StyleDefinition to the appropriate array, in order based on priority.
 		 */
 		public function addStyles(s:StyleDefinition):void{
+			
 			/*
 			TODO:
 				create OrderedList class, and maybe Comparable interface.

@@ -39,6 +39,9 @@ level{
 	frame-rate: 60;
 	window-size: 600 300;
 }
+#, x:standing-on-down, k:destroyed{
+
+}
 ]]></styles>
 
 </level>

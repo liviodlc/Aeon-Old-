@@ -14,7 +14,7 @@ package org.interguild.levels {
 	import org.interguild.levels.assets.DrawingBuilder;
 	import org.interguild.levels.hud.DefaultHUD;
 	import org.interguild.levels.keys.KeyMan;
-	import org.interguild.levels.objects.StyleMap;
+	import org.interguild.levels.objects.styles.StyleMap;
 	import org.interguild.pages.GamePage;
 	import org.interguild.resize.WindowResizer;
 
@@ -236,11 +236,13 @@ package org.interguild.levels {
 		 * Starts building the level.
 		 */
 		private function buildLevel():void {
-			gamepage.loadingText = "Building Level: 1%"
+			gamepage.loadingText = "Parsing Level Code...";
 
 			initLevel(xml.level);
 			initKeys();
 			initStylesMap();
+			
+			gamepage.loadingText = "Building Level: 1%";
 
 			finishLoading();
 		}
