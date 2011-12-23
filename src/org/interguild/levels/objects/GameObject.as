@@ -20,22 +20,31 @@ package org.interguild.levels.objects {
 //		public var y:Number;
 
 		//for collision detection
-		private var newX:Number;
-		private var newY:Number;
-		private var currentSpeedX:Number;
-		private var currentSpeedY:Number;
+		private var newX:Number = 0;
+		private var newY:Number = 0;
+		private var currentSpeedX:Number = 0;
+		private var currentSpeedY:Number = 0;
 
+		private var def:GameObjectDefinition;
+		
+		private var _static:Boolean;
 		private var collideable:Boolean;
 		private var collBox:Rectangle;
 
 		private var gridOccupied:LinkedList;
 
 
-		public function GameObject() {
-			super();
-
+		public function GameObject(god:GameObjectDefinition,posX:Number,posY:Number) {
 			gridOccupied = new LinkedList();
+			x = posX;
+			y = posY;
 
+			//set defaults:
+			_static = true;
+			collideable = true;
+			collBox = new Rectangle(0,0,32,32);
+			
+			def = god;
 		}
 
 
@@ -55,7 +64,7 @@ package org.interguild.levels.objects {
 		}
 
 
-		public function addOccupied(element:GridElement) {
+		public function addOccupied(element:GridElement):void {
 
 		}
 		
@@ -68,6 +77,10 @@ package org.interguild.levels.objects {
 		 */
 		public function updateStyles():void{
 			
+		}
+		
+		public function get isStatic():Boolean{
+			return _static;
 		}
 	}
 }

@@ -135,7 +135,7 @@ package org.interguild.levels.objects.styles {
 					} else {
 						id = s.substr(0, 2);
 					}
-					trace("id: '" + id + "'");
+//					trace("id: '" + id + "'");
 					var objdef:GameObjectDefinition = map.get(id);
 					if (objdef == null)
 						level.addError(syntaxError(i) + "You tried to apply styles to an invalid object type ID: '" + id + "'");

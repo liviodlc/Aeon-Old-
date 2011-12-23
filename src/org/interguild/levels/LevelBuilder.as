@@ -3,17 +3,20 @@ package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
-	
+
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.ui.Keyboard;
-	
+	import flash.utils.Timer;
+
 	import org.interguild.Aeon;
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.assets.DrawingBuilder;
 	import org.interguild.levels.hud.DefaultHUD;
 	import org.interguild.levels.keys.KeyMan;
+	import org.interguild.levels.objects.GameObjectDefinition;
 	import org.interguild.levels.objects.styles.StyleMap;
 	import org.interguild.pages.GamePage;
 	import org.interguild.resize.WindowResizer;
@@ -23,6 +26,10 @@ package org.interguild.levels {
 	 */
 	public class LevelBuilder {
 
+		private static const CHARS_TO_READ_PER_TICK:uint = 50;
+		private static const TILE_WIDTH:uint = 32;
+		private static const TAB_WIDTH:uint = 128; // 4 * 32;
+
 		private static const DEFAULT_LEVEL_WIDTH:uint = 10;
 		private static const DEFAULT_LEVEL_HEIGHT:uint = 10;
 		private static const DEFAULT_FRAME_RATE:uint = 30;
@@ -31,12 +38,20 @@ package org.interguild.levels {
 
 		private var gamepage:GamePage;
 		private var level:Level;
+
 		private var loader:BulkLoader;
-		private var stylesMap:StyleMap;
+		private var assets:AssetMan;
 
 		private var xml:XML;
+		private var stylesMap:StyleMap;
 
-		private var assets:AssetMan;
+		private var builder:Timer;
+		private var code:String;
+		private var i:uint;
+		private var n:uint;
+		private var markerX:Number;
+		private var markerY:Number;
+		private var lastID:String;
 
 
 		public function LevelBuilder(myLvl:Level) {
@@ -241,32 +256,36 @@ package org.interguild.levels {
 			initLevel(xml.level);
 			initKeys();
 			initStylesMap();
-			
-			gamepage.loadingText = "Building Level: 1%";
 
-			finishLoading();
+			builder = new Timer(0);
+			builder.addEventListener(TimerEvent.TIMER, onLevelBuild, false, 0, true);
+			code = String(xml.levelcode);
+			n = code.length;
+			markerX = 0;
+			markerY = 0;
+			builder.start();
 		}
-		
-		
-		private function initTitle(s:String):void{
+
+
+		private function initTitle(s:String):void {
 			level.title = s;
 		}
-		
-		
-		private function initLevel(xml:XMLList):void{
-			if(String(xml.@loadDefaultSettings)=="false")
+
+
+		private function initLevel(xml:XMLList):void {
+			if (String(xml.@loadDefaultSettings) == "false")
 				level.loadDefaultSettings = false;
-			
+
 			var size:Array = checkLevelSize(xml.@size);
 			initLevelArea(size[0], size[1]);
-			
+
 			size = checkWindowSize(xml.@windowSize);
-			initWindowSize(size[0],size[1]);
-			
+			initWindowSize(size[0], size[1]);
+
 			initFrameRate(String(xml.@framerate));
 		}
-		
-		
+
+
 		/**
 		 * Returns an array of exactly two, valid, unsigned Integers for dimensions.
 		 *  a[0] = width
@@ -274,12 +293,12 @@ package org.interguild.levels {
 		 */
 		private function checkLevelSize(s:String):Array {
 			var a:Array = s.split(" ", 2);
-			
+
 			a[0] = uint(a[0]);
 			if (isNaN(a[0]) || a[0] == 0) {
 				a[0] = DEFAULT_LEVEL_WIDTH;
 			}
-			
+
 			if (a.length < 2) {
 				a.push(a[0]);
 			} else {
@@ -288,7 +307,7 @@ package org.interguild.levels {
 					a[1] = DEFAULT_LEVEL_HEIGHT;
 				}
 			}
-			
+
 			return a;
 		}
 
@@ -300,12 +319,12 @@ package org.interguild.levels {
 		 */
 		private function checkWindowSize(s:String):Array {
 			var a:Array = s.split(" ", 2);
-			
+
 			a[0] = uint(a[0]);
 			if (isNaN(a[0]) || a[0] > MAX_SCREEN_WIDTH) {
 				a[0] = 0;
 			}
-			
+
 			if (a.length < 2) {
 				a.push(a[0]);
 			} else {
@@ -314,10 +333,11 @@ package org.interguild.levels {
 					a[1] = 0;
 				}
 			}
-			
+
 			return a;
 		}
-		
+
+
 		/**
 		 * Gets keys info from XML and gives them to KeyMan.
 		 */
@@ -329,13 +349,13 @@ package org.interguild.levels {
 
 		private function initFrameRate(s:String):void {
 			var num:Number = Number(s);
-			
-			if(isNaN(num))
+
+			if (isNaN(num))
 				num = DEFAULT_FRAME_RATE;
-			
+
 			if (num < 0.01 || num > 1000)
 				num = DEFAULT_FRAME_RATE;
-			
+
 			level.frameRate = num;
 		}
 
@@ -362,7 +382,83 @@ package org.interguild.levels {
 		}
 
 
+		/**
+		 * On every timer tick, this function parses the next few characters
+		 * from the level code, and instantiates objects. The number of chars
+		 * to parse is determined by CHARS_TO_READ_PER_TICK.
+		 */
+		private function onLevelBuild(evt:TimerEvent):void {
+			var percent:uint = i / n;
+			gamepage.loadingText = "Building Level: " + percent + "%";
+			var j:uint = i + CHARS_TO_READ_PER_TICK;
+			while (i < n && i < j) {
+				var id:String = code.charAt(i);
+				if (id == "=") {
+					var newI:uint = code.indexOf(";", i);
+					var len:Number = Number(code.substring(i + 1, newI));
+					if (isNaN(len) || len < 0)
+						len = 1;
+					len--; // we already placed the first one, last iteration.
+					while (len > 0) {
+						parseChar(lastID);
+						len--;
+					}
+					i = newI; //will get +1 later.
+				} else {
+					if (id == "$" || id == ".") {
+						i++;
+						id += code.charAt(i);
+					}
+					parseChar(id);
+				}
+				lastID = id;
+				i++;
+			}
+			if (i >= n) {
+				finishLoading();
+			}
+		}
+
+
+		/**
+		 * Takes the current character (or double-character ID) and figures out
+		 * what to do with it.
+		 */
+		private function parseChar(s:String):void {
+			if (s == " ") {
+				addSpace();
+			} else if (s == "	") {
+				addSpace(TAB_WIDTH);
+			} else if (s == "\r" || (s == "\n" && lastID != "\r")) {
+				addNewLine();
+			} else if (s == "\n"){
+				lastID = "/r";
+			} else {
+				var def:GameObjectDefinition = stylesMap.get(s);
+				if (def == null) {
+					level.addError("Unrecognized symbol in level code: '" + s + "'");
+				} else {
+					trace("new tile: '" + s + "' at x:" + markerX + ", y:" + markerY);
+					addSpace();
+				}
+			}
+		}
+
+
+		private function addSpace(d:Number = TILE_WIDTH):void {
+			markerX += d;
+		}
+
+
+		private function addNewLine():void {
+			markerY += TILE_WIDTH;
+			markerX = 0;
+		}
+
+
 		private function finishLoading():void {
+			builder.stop();
+			builder.removeEventListener(TimerEvent.TIMER, onLevelBuild);
 			gamepage.loadingButton.removeEventListener(MouseEvent.CLICK, stopBuildingLevel);
 			gamepage.loadUnlock();
 			level.playLevel();

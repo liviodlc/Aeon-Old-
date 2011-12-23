@@ -78,6 +78,9 @@ package org.interguild.levels.objects.styles {
 					case "=":
 						level.addError("You are not allowed to use the '=' symbol as an object type ID. This is a reserved character used to mark the beginning of an instance multiplyer in the level code.");
 						break;
+					case "	":
+						level.addError("You are not allowed to use the tab symbol as an object type ID. This is a reserved character used to mark 4 blank spaces in the level code.");
+						break;
 					case "\n":
 					case "\r":
 					case "\r\n":
@@ -110,7 +113,7 @@ package org.interguild.levels.objects.styles {
 				level.addError("You attempted to define the object type ID '" + id + "' more than once.");
 			} else {
 				stylesMap[id] = new GameObjectDefinition(id, editorIcon);
-				trace("Added ID '" + id + "'");
+//				trace("Added ID '" + id + "'");
 			}
 		}
 

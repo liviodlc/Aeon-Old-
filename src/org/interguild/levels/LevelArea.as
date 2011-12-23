@@ -1,5 +1,7 @@
 package org.interguild.levels {
 	import flash.display.Sprite;
+	
+	import org.interguild.levels.objects.GameObject;
 
 	internal class LevelArea extends Sprite {
 
@@ -9,6 +11,8 @@ package org.interguild.levels {
 		private static var GRID_SIZE:uint = 32;
 
 		private var gridArray:Array;
+		private var staticObjs:Array;
+		private var nonstaticObjs:Array;
 
 		private var _levelWidth:uint;
 		private var _levelHeight:uint;
@@ -18,6 +22,7 @@ package org.interguild.levels {
 			initLevelGrid();
 			levelWidth = width;
 			levelHeight = height;
+			this.visible = false; // when loading is done, LevelBuilder sets this to true
 		}
 
 
@@ -115,6 +120,21 @@ package org.interguild.levels {
 				gridArray.splice(h);
 			}
 			_levelHeight = h;
+		}
+		
+		
+		/**
+		 * Adds the GameObject to the LevelArea, and calculates the grid elements
+		 * that it intersects with.
+		 */
+		public function add(obj:GameObject):void{
+			if(obj.isStatic)
+				staticObjs.push(obj);
+			else
+				nonstaticObjs.push(obj);
+			
+			addChild(obj);
+			//TODO collision grid testing
 		}
 
 

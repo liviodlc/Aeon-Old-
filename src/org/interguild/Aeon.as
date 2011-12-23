@@ -42,8 +42,8 @@ package org.interguild {
 
 
 		public function Aeon() {
-			var test:TestUtils;
-			test = new TestUtils();
+//			var test:TestUtils;
+//			test = new TestUtils();
 			
 			thisInstance = this;
 			allowStageResize();

@@ -32,8 +32,8 @@ package org.interguild.levels.objects.styles {
 					level.addError("Invalid property '" + prop + "' used in <styles> tag.");
 					good = false;
 			}
-			if (good)
-				trace("'" + property + "': '" + value + "'");
+//			if (good)
+//				trace("'" + property + "': '" + value + "'");
 		}
 
 
@@ -46,7 +46,6 @@ package org.interguild.levels.objects.styles {
 		 * Returns a valid number for the string
 		 */
 		private function checkNum(s:String, notZero:Boolean = false):Number {
-			trace("checkNum: '"+s+"'");
 			var n:Number = Number(s);
 			if (isNaN(n))
 				if (notZero)
