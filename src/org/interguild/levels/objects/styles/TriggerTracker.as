@@ -6,7 +6,7 @@ package org.interguild.levels.objects.styles {
 		 * stored by a GameObject, not if this is the instance of conditions
 		 * stored by a StyleDefinition.
 		 */
-		function reset():void;
+		function update():void;
 
 
 		/**

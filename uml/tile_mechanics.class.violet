@@ -113,7 +113,6 @@ views[]:DisplayObject</string>
      <void property="text"> 
       <string>pseudoClassConditions:uint
 dynamicConditions:uint
-globalConditions:uint
 rules[]:StyleRules</string> 
      </void> 
     </void> 
@@ -162,8 +161,10 @@ value:String</string>
      <void property="text"> 
       <string>Style definitions in order
 of precedence, which is
-determined by how
-specific they are.</string> 
+determined by how specific
+they are, so that rules with
+highest precendence are
+evaluated last.</string> 
      </void> 
     </void> 
    </object> 
@@ -292,16 +293,15 @@ tells GameObjects when and how to move.</string>
    <object id="ClassNode12" class="com.horstmann.violet.ClassNode"> 
     <void property="attributes"> 
      <void property="text"> 
-      <string>globalString:uint &lt;i&gt;//3 bits (static)&lt;/i&gt;
-
+      <string>globalString:uint &lt;i&gt;//3 bits&lt;/i&gt;
 binaryString:uint &lt;i&gt;//16 bits&lt;/i&gt;</string> 
      </void> 
     </void> 
     <void property="methods"> 
      <void property="text"> 
-      <string>get/set preview():Boolean &lt;i&gt;(static)&lt;/i&gt;
-get/set doorOpen():Boolean &lt;i&gt;(static)&lt;/i&gt;
- 
+      <string>get/set preview():Boolean
+get/set doorOpen():Boolean
+get/set loading():Boolean
 get/set static():Boolean
 get/set destroyed():Boolean
 get/set underwater():Boolean
@@ -445,8 +445,8 @@ n:uint</string>
    <object id="PointNode2" class="com.horstmann.violet.PointNode"> 
     <void id="Rectangle2D$Double2" property="bounds"> 
      <void method="setRect"> 
-      <double>1673.5942719299512</double> 
-      <double>455.4330419100925</double> 
+      <double>1678.5942719299512</double> 
+      <double>479.4330419100925</double> 
       <double>0.0</double> 
       <double>0.0</double> 
      </void> 
@@ -457,8 +457,8 @@ n:uint</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1673.5942719299512</double> 
-     <double>455.4330419100925</double> 
+     <double>1678.5942719299512</double> 
+     <double>479.4330419100925</double> 
     </void> 
    </object> 
   </void> 
@@ -555,7 +555,7 @@ tile id&apos;s and classNames.</string>
    </object> 
    <object class="java.awt.geom.Point2D$Double"> 
     <void method="setLocation"> 
-     <double>1447.0</double> 
+     <double>1446.0</double> 
      <double>627.0</double> 
     </void> 
    </object> 
@@ -725,6 +725,22 @@ do we keep track of the global variables??</string>
     <void method="setLocation"> 
      <double>1642.0</double> 
      <double>824.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object class="com.horstmann.violet.NoteNode"> 
+    <void property="text"> 
+     <void property="text"> 
+      <string>CHECK
+WIP</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>148.0</double> 
+     <double>316.0</double> 
     </void> 
    </object> 
   </void> 

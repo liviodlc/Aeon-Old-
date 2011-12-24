@@ -216,16 +216,16 @@ package org.interguild.levels.objects.styles {
 								result.setStandingLeft();
 								break;
 							case "up":
-								result.setMoveUp(false);
+								result.setMoveUp(true, false);
 								break;
 							case "down":
-								result.setMoveDown(false);
+								result.setMoveDown(true, false);
 								break;
 							case "right":
-								result.setMoveRight(false);
+								result.setMoveRight(true, false);
 								break;
 							case "left":
-								result.setMoveLeft(false);
+								result.setMoveLeft(true, false);
 								break;
 							case "face-right":
 								result.setFaceRight();

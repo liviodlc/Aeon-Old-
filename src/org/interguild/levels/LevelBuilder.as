@@ -16,6 +16,7 @@ package org.interguild.levels {
 	import org.interguild.levels.assets.DrawingBuilder;
 	import org.interguild.levels.hud.DefaultHUD;
 	import org.interguild.levels.keys.KeyMan;
+	import org.interguild.levels.objects.GameObject;
 	import org.interguild.levels.objects.GameObjectDefinition;
 	import org.interguild.levels.objects.styles.StyleMap;
 	import org.interguild.pages.GamePage;
@@ -52,6 +53,7 @@ package org.interguild.levels {
 		private var markerX:Number;
 		private var markerY:Number;
 		private var lastID:String;
+		private var lastGO:GameObject;
 
 
 		public function LevelBuilder(myLvl:Level) {
@@ -241,7 +243,7 @@ package org.interguild.levels {
 			initTitle(String(xml.title));
 
 			//TODO check xml for hud settings
-			level.setHUD(new DefaultHUD(level));
+			level.setHUD(new DefaultHUD(level.state, level.title));
 
 			buildLevel();
 		}
@@ -378,7 +380,7 @@ package org.interguild.levels {
 
 
 		private function initLevelArea(width:uint, height:uint):void {
-			level.levelArea = new LevelArea(width, height);
+			level.levelArea = new LevelArea(width, height, level.state);
 		}
 
 
@@ -431,13 +433,17 @@ package org.interguild.levels {
 				addSpace(TAB_WIDTH);
 			} else if (s == "\r" || (s == "\n" && lastID != "\r")) {
 				addNewLine();
-			} else if (s == "\n"){
+			} else if (s == "\n") {
 				lastID = "/r";
 			} else {
 				var def:GameObjectDefinition = stylesMap.get(s);
 				if (def == null) {
 					level.addError("Unrecognized symbol in level code: '" + s + "'");
+				} else if (s.charAt(0) == ".") {
+					lastGO.addStyleClass(def);
 				} else {
+					lastGO = new GameObject(def, markerX, markerY)
+					level.levelArea.add(lastGO);
 					trace("new tile: '" + s + "' at x:" + markerX + ", y:" + markerY);
 					addSpace();
 				}

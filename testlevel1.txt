@@ -43,7 +43,7 @@ level{
 
 }
 ]]></styles>
-<levelcode><![CDATA[
+<levelcode><![CDATA[x
 	x x x
 x$x.aab
 x=5; =5;$x=5;.a=5;

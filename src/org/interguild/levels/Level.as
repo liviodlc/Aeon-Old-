@@ -14,6 +14,7 @@ package org.interguild.levels {
 	
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.keys.KeyMan;
+	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.GamePage;
 
@@ -21,16 +22,13 @@ package org.interguild.levels {
 
 		private static var untitledCount:uint = 1;
 
-		private static const LEVEL_EDIT:uint = 1;
-		private static const LEVEL_START:uint = 2;
-		private static const LEVEL_PLAY:uint = 3;
-		private static const LEVEL_END:uint = 4;
+		private var inEditor:Boolean = false;
+		private var _state:PseudoClassTriggers;
 
 		private var gamepage:GamePage;
 		private var hud:LevelHUD;
 		private var lvl:LevelArea;
 
-		private var state:uint;
 		private var _levelCode:String;
 
 		private var _assets:AssetMan;
@@ -43,7 +41,7 @@ package org.interguild.levels {
 
 		private var timer:Timer;
 		private var _frameRate:Number;
-		
+
 		public var loadDefaultSettings:Boolean = true;
 
 
@@ -55,10 +53,16 @@ package org.interguild.levels {
 			_levelCode = code;
 			_errorLog = "";
 
-			if (inEditor)
-				state = LEVEL_EDIT;
-			else
-				state = LEVEL_START;
+			this.inEditor = inEditor;
+			_state = new PseudoClassTriggers();
+			_state.setLoading();
+			if (!inEditor)
+				_state.setPreview();
+		}
+
+
+		public function get state():PseudoClassTriggers {
+			return _state;
 		}
 
 
@@ -162,10 +166,17 @@ package org.interguild.levels {
 		 * Allows you to set the LevelArea for this level, but only if the LevelArea for this level hasn't been defined yet.
 		 */
 		public function set levelArea(la:LevelArea):void {
-			if (lvl == null)
+			if (lvl == null) {
 				lvl = la;
-			else
+				lvl.visible = false;
+				addChildAt(lvl,0);
+			} else {
 				new Error("The LevelArea for level '" + this.title + "' has already been initialized.");
+			}
+		}
+		
+		public function get levelArea():LevelArea{
+			return lvl;
 		}
 
 
@@ -201,25 +212,28 @@ package org.interguild.levels {
 		 * is called by the Level Editor when it's time to test the level.
 		 */
 		public function playLevel():void {
-			if (state == LEVEL_EDIT) {
+			if (inEditor) {
 				//TODO convert everything from level edit to level start state
 			} else {
-				hud.onLoadComplete();
+				_state.update();
+				_state.setLoading(false);
+				lvl.visible = true;
 
-				var img:BitmapData = assets.getImage("circleWithSquare");
-				var b1:Bitmap = new Bitmap(img);
-				var b2:Bitmap = new Bitmap(img);
-				b2.x = b2.y = 200;
-				addChild(b1);
-				addChild(b2);
-				
+				//testing assets:
+//				var img:BitmapData = assets.getImage("circleWithSquare");
+//				var b1:Bitmap = new Bitmap(img);
+//				var b2:Bitmap = new Bitmap(img);
+//				b2.x = b2.y = 200;
+//				addChild(b1);
+//				addChild(b2);
+
 				// if there are errors, show them.
-				if (_errorLog.length > 2) {
-					// this is temporary code. Ideally, the Pause Menu would load the error log
-					trace("//ERROR LOG");
-					trace(_errorLog);
-					trace("//END ERROR LOG");
-				}
+//				if (_errorLog.length > 2) {
+//					// this is temporary code. Ideally, the Pause Menu would load the error log
+//					trace("//ERROR LOG");
+//					trace(_errorLog);
+//					trace("//END ERROR LOG");
+//				}
 
 				timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 				_keys.activate();
@@ -237,15 +251,38 @@ package org.interguild.levels {
 		 *	--Manage events such as LEVEL_RESET, LEVEL_WIN, etc.
 		 */
 		private function onGameLoop(evt:TimerEvent):void {
+			updateState();
+
 			lvl.onGameLoop();
 			hud.onGameLoop();
-
-			//testing KeyMan
-			if (_keys.isActionDown(KeyMan.JUMP, true))
-				trace("A	" + Math.round(flash.utils.getTimer()));
-//			if(_keys.isKeyDown(32,true))
-//				trace("K	"+Math.round(flash.utils.getTimer()/1000));
 			_keys.onGameLoop();
+
+			_state.update();
+		}
+
+
+		private function updateState():void {
+			// if on jump-to-start screen and player jumps, then start level
+			if (_state.getPreview() && _keys.isActionDown(KeyMan.JUMP, true))
+				_state.setPreview(false);
+
+			// if on any screen, the player presses pause, open pause menu
+//			if(_keys.isActionDown(KeyMan.PAUSE,true)
+//				open pasue menu
+
+			// if on any screen, the player presses quit, quit the level
+			if (_keys.isActionDown(KeyMan.QUIT, true))
+				gamepage.closeLevel(this);
+
+			// if while playing or after winning, player wants to restart, restart level
+			if (!_state.getPreview() && _keys.isActionDown(KeyMan.RESTART, true))
+				lvl.restart();
+
+			//tests:
+			if (_keys.isActionDown(KeyMan.JUMP, true)) {
+				trace("gameloop: " + timer.currentCount);
+				trace("LevelArea x: " + lvl.x + " y: " + lvl.y + " w: " + lvl.width + " h: " + lvl.height);
+			}
 		}
 	}
 }

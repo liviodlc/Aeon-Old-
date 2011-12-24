@@ -1,7 +1,10 @@
 package org.interguild.levels {
 	import flash.display.Sprite;
-	
+
 	import org.interguild.levels.objects.GameObject;
+	import org.interguild.levels.objects.styles.PseudoClassTriggers;
+
+	import utils.LinkedList;
 
 	internal class LevelArea extends Sprite {
 
@@ -10,19 +13,29 @@ package org.interguild.levels {
 		 */
 		private static var GRID_SIZE:uint = 32;
 
+		private var levelState:PseudoClassTriggers;
+
 		private var gridArray:Array;
+
+		/* we may want to reconsider the choice of data structures here.
+		 * I only picked Arrays for the first two because I knew we'd be
+		 * adding and deleting stuff a lot, but that doesn't mean it's a
+		 * good idea. destroyedObjs is good as a LinkedList as we'll only
+		 * be adding stuff to it and iterating through all of it.
+		 */
 		private var staticObjs:Array;
 		private var nonstaticObjs:Array;
+		private var destroyedObjs:LinkedList;
 
 		private var _levelWidth:uint;
 		private var _levelHeight:uint;
 
 
-		public function LevelArea(width:uint, height:uint) {
+		public function LevelArea(width:uint, height:uint, lvlstate:PseudoClassTriggers) {
+			levelState = lvlstate;
 			initLevelGrid();
 			levelWidth = width;
 			levelHeight = height;
-			this.visible = false; // when loading is done, LevelBuilder sets this to true
 		}
 
 
@@ -37,6 +50,8 @@ package org.interguild.levels {
 		 */
 		public function initLevelGrid():void {
 			gridArray = [[[0]]];
+			staticObjs = [];
+			nonstaticObjs = [];
 			_levelWidth = 1;
 			_levelHeight = 1;
 		}
@@ -121,18 +136,18 @@ package org.interguild.levels {
 			}
 			_levelHeight = h;
 		}
-		
-		
+
+
 		/**
 		 * Adds the GameObject to the LevelArea, and calculates the grid elements
 		 * that it intersects with.
 		 */
-		public function add(obj:GameObject):void{
-			if(obj.isStatic)
+		public function add(obj:GameObject):void {
+			if (obj.isStatic)
 				staticObjs.push(obj);
 			else
 				nonstaticObjs.push(obj);
-			
+
 			addChild(obj);
 			//TODO collision grid testing
 		}
@@ -142,7 +157,69 @@ package org.interguild.levels {
 		 * Called by Level.onGameLoop()
 		 */
 		public function onGameLoop():void {
+			if (levelState.hasChanged()) {
+				if (levelState.getPreview()) {
+					// camera zoom fit
+				} else if (!levelState.getEnding()) {
+					// transition from preview to playing
+				}
+			} else if (!levelState.getPreview() && !levelState.getEnding()) {
+				// play level!
 
+				// TODO according to UML, we must clear dynamic objects from collision grid
+
+				// TODO next step would be to update all Behaviors
+
+				updateModels();
+
+				// TODO now we do collision detection
+				/* the UML says to update styles as we go along, but it would probably be a much
+				 * better idea if we kept a list of all the objects that have had collisions
+				 * and then update their styles later. This will avoid the problem of when tiles
+				 * collide with multiple objects at once.
+				 */
+
+				updateViews();
+			}
+		}
+
+
+		/**
+		 * Depending on how long it takes to reset everything, we may want
+		 * to stop the game loop and give things a chance to load.
+		 *
+		 * In any case, this function will first change the state of the
+		 * level to preview and begin resetting all the tiles to their
+		 * last checkpoint state.
+		 */
+		public function restart():void {
+			levelState.setPreview();
+			levelState.setEnding(false); // make sure we're not on win screen
+		}
+
+
+		/**
+		 * This function goes through all non-static objects and updates their
+		 * positions, speed, hitbox locations, etc.
+		 */
+		private function updateModels():void {
+			for each (var o:GameObject in nonstaticObjs) {
+				o.updateModel();
+			}
+		}
+
+
+		/**
+		 * Goes through all non-destroyed objects in the LevelArea and tells them
+		 * to animate.
+		 */
+		private function updateViews():void {
+			for each (var o:GameObject in nonstaticObjs) {
+				o.updateView();
+			}
+			for each (var p:GameObject in staticObjs) {
+				p.updateView();
+			}
 		}
 	}
 }

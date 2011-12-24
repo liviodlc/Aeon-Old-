@@ -4,10 +4,11 @@ package org.interguild.levels.hud {
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.levels.Level;
 	import org.interguild.levels.LevelHUD;
+	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 
 	public class DefaultHUD extends LevelHUD {
 
@@ -15,10 +16,10 @@ package org.interguild.levels.hud {
 		private var toStart:TextField;
 
 
-		public function DefaultHUD(_level:Level) {
-			super(_level);
+		public function DefaultHUD(levelstate:PseudoClassTriggers, title:String) {
+			super(levelstate);
 
-			initTitle();
+			initTitle(title);
 			initJumpToStart();
 		}
 
@@ -32,7 +33,7 @@ package org.interguild.levels.hud {
 		}
 
 
-		private function initTitle():void {
+		private function initTitle(title:String):void {
 			var titleFormat:TextFormat = new TextFormat("Verdana", 36, 0xFF0000);
 			titleText = new TextField();
 			titleFormat.align = TextFormatAlign.CENTER;
@@ -41,7 +42,7 @@ package org.interguild.levels.hud {
 				multiline = true;
 				autoSize = TextFieldAutoSize.CENTER;
 				width = theStage.stageWidth;
-				text = level.title;
+				text = title;
 				setTextFormat(titleFormat);
 				background = true;
 				backgroundColor = 0x000000;

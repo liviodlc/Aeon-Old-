@@ -4,10 +4,11 @@ package org.interguild.levels {
 	import flash.events.Event;
 
 	import org.interguild.Aeon;
+	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 
 	public class LevelHUD extends Sprite {
 
-		protected var level:Level;
+		protected var levelState:PseudoClassTriggers;
 		protected var theStage:Stage;
 
 		protected var page_start:Sprite;
@@ -15,8 +16,8 @@ package org.interguild.levels {
 		protected var page_win:Sprite;
 
 
-		public function LevelHUD(_level:Level) {
-			level = _level;
+		public function LevelHUD(levelstate:PseudoClassTriggers) {
+			levelState = levelstate;
 			theStage = Aeon.instance.stage;
 
 			page_start = new Sprite();
@@ -74,7 +75,23 @@ package org.interguild.levels {
 		 * Called by Level.onGameLoop(evt:TimerEvent)
 		 */
 		public function onGameLoop():void {
-
+			if (levelState.hasChanged()) {
+				if (levelState.getPreview()) {
+					page_start.visible = true;
+					page_play.visible = false;
+					page_win.visible = false;
+					if (!levelState.getLoading())
+						onLoadComplete();
+				} else if (levelState.getEnding()) {
+					page_start.visible = false;
+					page_play.visible = false;
+					page_win.visible = true;
+				} else {
+					page_start.visible = false;
+					page_play.visible = true;
+					page_win.visible = false;
+				}
+			}
 		}
 	}
 }
