@@ -4,7 +4,7 @@ package org.interguild.levels {
 	import org.interguild.levels.objects.GameObject;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 
-	import utils.LinkedList;
+	import org.interguild.utils.LinkedList;
 
 	internal class LevelArea extends Sprite {
 
@@ -150,6 +150,20 @@ package org.interguild.levels {
 
 			addChild(obj);
 			//TODO collision grid testing
+		}
+		
+		
+		/**
+		 * Initializes the styles of all of the GameObjects that have been added
+		 * to the LevelArea so far.
+		 */
+		public function initStyles():void{
+			for each (var o:GameObject in nonstaticObjs) {
+				o.updateStyles(levelState,true);
+			}
+			for each (var p:GameObject in staticObjs) {
+				o.updateStyles(levelState,true);
+			}
 		}
 
 

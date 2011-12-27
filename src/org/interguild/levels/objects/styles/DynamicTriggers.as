@@ -8,6 +8,15 @@ package org.interguild.levels.objects.styles {
 		public function DynamicTriggers() {
 			
 		}
+		
+		
+		/**
+		 * Returns true if 'this' has the same conditions as 'other'.
+		 */
+		public function equals(other:DynamicTriggers):Boolean{
+			//TODO implement function
+			return true;
+		}
 
 
 		/**
@@ -16,7 +25,7 @@ package org.interguild.levels.objects.styles {
 		 * stored by a StyleDefinition.
 		 */
 		public function update():void {
-
+			//TODO implement function
 		}
 
 
@@ -25,6 +34,7 @@ package org.interguild.levels.objects.styles {
 		 * to reset(). Returns false otherwise.
 		 */
 		public function hasChanged():Boolean {
+			//TODO implement function
 			return false;
 		}
 
@@ -34,6 +44,15 @@ package org.interguild.levels.objects.styles {
 				return true;
 			else
 				return false;
+		}
+		
+		/**
+		 * Returns the number of dynamic conditions that this instance is listening to.
+		 * The 'B' refers to the way in which StyleDefinition calculates precendence.
+		 */
+		public function getA():uint{
+			//TODO implement function
+			return 0;
 		}
 	}
 }

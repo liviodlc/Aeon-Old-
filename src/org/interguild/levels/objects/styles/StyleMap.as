@@ -1,8 +1,7 @@
 package org.interguild.levels.objects.styles {
 	import org.interguild.levels.Level;
-	
-	import utils.LinkedList;
 	import org.interguild.levels.objects.GameObjectDefinition;
+	import org.interguild.utils.LinkedList;
 
 	/**
 	 * StyleMap keeps all of the arrays of StyleDefinitions and maps them
@@ -10,7 +9,7 @@ package org.interguild.levels.objects.styles {
 	 */
 	public class StyleMap extends Object {
 
-		private var stylesMap:Array;
+		private var stylesMap:Object;
 		private var level:Level;
 
 
@@ -26,7 +25,7 @@ package org.interguild.levels.objects.styles {
 		public function StyleMap(xml:XMLList, styles:String, lvl:Level) {
 			level = lvl;
 			// initialize array:
-			stylesMap = [];
+			stylesMap = new Object();
 //			stylesMap["level"] = new GameObjectDefinition(id, editorIcon);
 //			stylesMap["global"] = new GameObjectDefinition(id, editorIcon);
 
@@ -41,6 +40,11 @@ package org.interguild.levels.objects.styles {
 				initStyles(String($default_styles.styles));
 			}
 			initStyles(styles);
+
+			//print tests
+//			for each(var god:GameObjectDefinition in stylesMap){
+//				god.testPrint();
+//			}
 		}
 
 
@@ -89,7 +93,7 @@ package org.interguild.levels.objects.styles {
 					case " ":
 						level.addError("You are not allowed to use the space character as an object type ID. This is a reserved character used to mark an empty tile in the level code.");
 					default:
-						addTypeID(id, String(xml.@editorIcon));
+						addTypeID(id, String(xml.@editorIcon), String(xml.@inheritsFrom));
 						break;
 				}
 			} else {
@@ -97,22 +101,28 @@ package org.interguild.levels.objects.styles {
 				var secondChar:String = id.substr(1, 1);
 				if (id == "\r\n" || secondChar == "\r" || secondChar == "\n" || secondChar == "\r\n")
 					level.addError("You are not allowed to use the new line character in an object type ID. This is a reserved character used to mark the end of a row in the level code.");
-				else if ((id.length == 2 && firstChar != "$" && firstChar != ".")  || id.length > 2)
+				else if ((id.length == 2 && firstChar != "$" && firstChar != ".") || id.length > 2)
 					level.addError("The object type ID '" + id + "' is too long. Object type IDs must only be one character. If you run out of characters, you can define a double-character ID by setting the first character as the '$' symbol. Class names are always two characters long, but their first character is the '.' symbol.");
-				else if(secondChar == "." || secondChar==";" || secondChar=="=")
+				else if (secondChar == "." || secondChar == ";" || secondChar == "=")
 					level.addError("You are not allowed to use invalid characters such as '=', '.', or ';' in your object type IDs.");
 				else {
-					addTypeID(id, String(xml.@editorIcon));
+					addTypeID(id, String(xml.@editorIcon), String(xml.@inheritsFrom));
 				}
 			}
 		}
 
 
-		private function addTypeID(id:String, editorIcon:String):void {
+		private function addTypeID(id:String, editorIcon:String, ancestor:String):void {
 			if (stylesMap[id] is GameObjectDefinition) {
 				level.addError("You attempted to define the object type ID '" + id + "' more than once.");
 			} else {
-				stylesMap[id] = new GameObjectDefinition(id, editorIcon);
+				var god2:GameObjectDefinition = null;
+				if (ancestor.length > 0) {
+					god2 = stylesMap[ancestor];
+					if (god2 == null)
+						level.addError("Object type ID '" + id + "' cannot inherit the styles of an invalid type ID: '" + ancestor + "'. If this is a valid ID, make sure to define '" + id + "' after '" + ancestor + "'");
+				}
+				stylesMap[id] = new GameObjectDefinition(id, editorIcon, god2);
 //				trace("Added ID '" + id + "'");
 			}
 		}
@@ -125,12 +135,13 @@ package org.interguild.levels.objects.styles {
 		private function initStyles(s:String):void {
 			new StyleParser(s, level, this);
 		}
-		
+
+
 		/**
 		 * Returns the GameObjectDefinition of the registered object type ID.
 		 * If the ID is not registered, returns null.
 		 */
-		public function get(id:String):GameObjectDefinition{
+		public function get(id:String):GameObjectDefinition {
 			return stylesMap[id];
 		}
 	}

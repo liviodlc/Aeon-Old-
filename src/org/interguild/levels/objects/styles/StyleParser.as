@@ -1,10 +1,9 @@
 package org.interguild.levels.objects.styles {
 	import mx.utils.StringUtil;
-
+	
 	import org.interguild.levels.Level;
 	import org.interguild.levels.objects.GameObjectDefinition;
-
-	import utils.LinkedList;
+	import org.interguild.utils.LinkedList;
 
 	/**
 	 * This class reads and parses the styles definitions written in the <styles> xml tag.
@@ -110,7 +109,7 @@ package org.interguild.levels.objects.styles {
 				i++;
 				return;
 			}
-			var rules:LinkedList = parseStyleRules(cur.substr(point + 1));
+			var rules:Object = parseStyleRules(cur.substr(point + 1));
 			/*
 			when parsing first line, we want to know:
 				(1) which object type IDs need this StyleDefinition
@@ -142,7 +141,7 @@ package org.interguild.levels.objects.styles {
 					else {
 						//TODO: add parseDynamicConditions();
 						var p:PseudoClassTriggers = parsePseudoClasses(s.substr(id.length));
-						objdef.addStyles(new StyleDefinition(p, null, rules));
+						objdef.addStyles(new StyleDefinition(p, null, rules/*, (id.charAt(0) == ".")*/));
 					}
 				}
 			}
@@ -151,10 +150,10 @@ package org.interguild.levels.objects.styles {
 
 
 		/**
-		 * Returns a LinkedList of all the StyleRules in the string.
+		 * Returns an associative array of all the StyleRules in the string.
 		 */
-		private function parseStyleRules(st:String):LinkedList {
-			var list:LinkedList = new LinkedList();
+		private function parseStyleRules(st:String):Object {
+			var list:Object = new Object();
 			var a:Array = st.split(";");
 			for each (var s:String in a) {
 				s = StringUtil.trim(s);
@@ -166,14 +165,11 @@ package org.interguild.levels.objects.styles {
 						var prop:String = StringUtil.trim(s.substring(0, point));
 						var val:String = StringUtil.trim(s.substr(point + 1));
 						if (val.indexOf(":") != -1)
-							level.addError(syntaxError(i) + "You forgot to end a line with a semicolon, leading to ambiguity in how to parse this line: '" + s + "'");
-						var rule:StyleRule = new StyleRule(prop, val, level);
-						if (rule.isGood)
-							list.add(rule);
+							level.addError(syntaxError(i) + "You forgot to put a semicolon (;) somewhere, which makes it unclear how this line should be interpreted: '" + s + "'");
+						parseRule(prop, val, list);
 					}
 				}
 			}
-			//TODO parse rules
 			return list;
 		}
 
@@ -259,6 +255,65 @@ package org.interguild.levels.objects.styles {
 				}
 				return result;
 			}
+		}
+		
+		
+		private function parseRule(prop:String, val:String, map:Object):void{
+			switch (prop) {
+				case "hitbox-width":
+					map[prop] = checkNum(val);
+					break;
+				case "hitbox-height":
+					map[prop] = checkNum(val);
+					break;
+				case "hitbox-size":
+					var a:Array = check2Nums(val);
+					map["hitbox-width"] = a[0];
+					map["hitbox-height"] = a[1];
+					break;
+				default:
+					level.addError(syntaxError(i) + "Invalid property: '" + prop + "'");
+			}
+		}
+		
+		/**
+		 * Returns a valid number for the string
+		 */
+		private function checkNum(s:String, notZero:Boolean = false):Number {
+			var n:Number = Number(s);
+			if (isNaN(n))
+				if (notZero)
+					n = 1;
+				else
+					n = 0;
+			return n;
+		}
+		
+		
+		/**
+		 * Returns an array of valid numbers from the string.
+		 *
+		 * If no second number is found in the string, it's default value
+		 * will be the first number supplied.
+		 */
+		private function check2Nums(s:String, notZero:Boolean = false):Array {
+			var a:Array = s.split(" ", 2);
+			a[0] = Number(a[0]);
+			if (isNaN(a[0]))
+				if (notZero)
+					a[0] = 1;
+				else
+					a[0] = 0;
+			
+			if (a[1] == null)
+				a[1] = a[0];
+			else if (isNaN(a[1]))
+				if (notZero)
+					a[1] = 1;
+				else
+					a[1] = 0;
+			
+			return a;
 		}
 	}
 }

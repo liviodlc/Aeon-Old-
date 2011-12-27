@@ -48,6 +48,7 @@ package org.interguild.levels.hud {
 				backgroundColor = 0x000000;
 				selectable = true;
 				x = 0;
+				alpha = .75;
 			}
 			page_start.addChild(titleText);
 		}

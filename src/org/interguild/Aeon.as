@@ -9,6 +9,7 @@ package org.interguild {
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.*;
 	
+	import tests.TestOrderedList;
 	import tests.TestUtils;
 
 	[SWF(width = "640", height = "480", frameRate = "30", backgroundColor = "#222222")]
@@ -42,8 +43,8 @@ package org.interguild {
 
 
 		public function Aeon() {
-//			var test:TestUtils;
-//			test = new TestUtils();
+//			new TestUtils();
+//			new TestOrderedList();
 			
 			thisInstance = this;
 			allowStageResize();

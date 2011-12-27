@@ -5,7 +5,7 @@ package org.interguild.levels.keys {
 	import org.interguild.Aeon;
 	import org.interguild.levels.Level;
 
-	import utils.LinkedList;
+	import org.interguild.utils.LinkedList;
 
 	/**
 	 * TODO

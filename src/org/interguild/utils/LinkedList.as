@@ -1,4 +1,4 @@
-package utils {
+package org.interguild.utils {
 
     /**
      * LinkedList with built-in iterator.

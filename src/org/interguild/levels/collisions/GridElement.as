@@ -1,7 +1,7 @@
 package org.interguild.levels.collisions {
 	import org.interguild.levels.objects.GameObject;
 	
-	import utils.LinkedList;
+	import org.interguild.utils.LinkedList;
 	
 	public class GridElement {
 		

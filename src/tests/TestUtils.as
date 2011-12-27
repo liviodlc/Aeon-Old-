@@ -1,6 +1,6 @@
 package tests
 {
-	import utils.LinkedList;
+	import org.interguild.utils.LinkedList;
 	
 	public class TestUtils
 	{

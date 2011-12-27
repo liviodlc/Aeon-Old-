@@ -22,6 +22,9 @@
 <keys>
 	
 </keys>
+<objects>
+	<type id="y" inheritsFrom=".a" name="Terrain" editoricon="" />
+</objects>
 <styles><![CDATA[
 global {
 	gravity: 2.35;
@@ -39,12 +42,18 @@ level{
 	frame-rate: 60;
 	window-size: 600 300;
 }
-#, x:standing-on-down, k:destroyed{
-
+x{
+	hitbox-size:30;
+}
+.a{
+	hitbox-size:15;
+}
+y{
+	hitbox-height:40;
 }
 ]]></styles>
 <levelcode><![CDATA[x
-	x x x
+	x x y
 x$x.aab
 x=5; =5;$x=5;.a=5;
 	=5;x

@@ -217,6 +217,7 @@ package org.interguild.levels {
 			} else {
 				_state.update();
 				_state.setLoading(false);
+				lvl.initStyles();
 				lvl.visible = true;
 
 				//testing assets:

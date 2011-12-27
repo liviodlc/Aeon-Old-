@@ -6,8 +6,9 @@ package org.interguild.levels.objects {
 	import org.interguild.levels.collisions.GridElement;
 	import org.interguild.levels.objects.styles.DynamicTriggers;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
-
-	import utils.LinkedList;
+	import org.interguild.levels.objects.styles.StyleDefinition;
+	import org.interguild.utils.LinkedList;
+	import org.interguild.utils.OrderedList;
 
 	/**
 	 * GameObject represents any object in the games, such as tiles, players, enemies, etc.
@@ -52,11 +53,6 @@ package org.interguild.levels.objects {
 			collBox = new Rectangle(0, 0, 32, 32);
 			accY = 1;
 			maxSpeedY = 100;
-
-			// for testing purposes:
-			graphics.beginFill(0x00CC00);
-			graphics.drawRect(collBox.x, collBox.y, 32, 32);
-			graphics.endFill();
 
 			def = god;
 		}
@@ -131,12 +127,61 @@ package org.interguild.levels.objects {
 		 * @param init:Boolean Mark this as true if you want to update styles as
 		 * part of this object's initialization, as opposed to part of the game loop.
 		 */
-		public function updateStyles(init:Boolean = false):void {
+		public function updateStyles(global:PseudoClassTriggers, init:Boolean = false):void {
 			if (init || normalTriggers.hasChanged() || dynamicTriggers.hasChanged()) {
-
+				trace("update styles");
+				if (def.hasAncestor()) {
+					applyStylesList(def.ancestor.normalStylesList, global);
+					applyStylesList(def.ancestor.dynamicStylesList, global);
+				}
+				applyStylesList(def.normalStylesList, global);
+				applyStylesList(def.dynamicStylesList, global);
+				classes.beginIteration();
+				while (classes.hasNext()) {
+					var god:GameObjectDefinition = GameObjectDefinition(classes.next);
+					applyStylesList(god.normalStylesList, global);
+					applyStylesList(god.dynamicStylesList, global);
+				}
 			}
 			normalTriggers.update();
 			dynamicTriggers.update();
+		}
+
+
+		private function applyStylesList(list:OrderedList, global:PseudoClassTriggers):void {
+			var n:uint = list.length;
+			for (var i:uint = 0; i < n; i++) {
+				var styleDef:StyleDefinition = StyleDefinition(list.get(i));
+				if (normalTriggers.isStyleActiveNormal(styleDef.normalTriggers) && global.isStyleActiveGlobal(styleDef.normalTriggers)) {
+					var rules:Object = styleDef.rulesArray;
+					for (var key:String in rules) {
+						applyStyle(key, rules[key]);
+					}
+				}
+			}
+		}
+
+
+		private function applyStyle(prop:String, val:Object):void {
+			// TODO implement function
+			switch (prop) {
+				case 'hitbox-width':
+					collBox.width = Number(val);
+					break;
+				case 'hitbox-height':
+					collBox.height = Number(val);
+					break;
+			}
+			TESTdrawBox();
+		}
+
+
+		private function TESTdrawBox():void {
+			// for testing purposes:
+			graphics.clear();
+			graphics.beginFill(0x00CC00);
+			graphics.drawRect(collBox.x, collBox.y, collBox.width, collBox.height);
+			graphics.endFill();
 		}
 
 
