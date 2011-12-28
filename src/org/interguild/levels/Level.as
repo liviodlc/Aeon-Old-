@@ -1,7 +1,7 @@
 package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
-	
+
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -11,7 +11,7 @@ package org.interguild.levels {
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
-	
+
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.keys.KeyMan;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
@@ -169,13 +169,14 @@ package org.interguild.levels {
 			if (lvl == null) {
 				lvl = la;
 				lvl.visible = false;
-				addChildAt(lvl,0);
+				addChildAt(lvl, 0);
 			} else {
 				new Error("The LevelArea for level '" + this.title + "' has already been initialized.");
 			}
 		}
-		
-		public function get levelArea():LevelArea{
+
+
+		public function get levelArea():LevelArea {
 			return lvl;
 		}
 
@@ -273,7 +274,7 @@ package org.interguild.levels {
 
 			// if on any screen, the player presses quit, quit the level
 			if (_keys.isActionDown(KeyMan.QUIT, true))
-				gamepage.closeLevel(this);
+				quit();
 
 			// if while playing or after winning, player wants to restart, restart level
 			if (!_state.getPreview() && _keys.isActionDown(KeyMan.RESTART, true))
@@ -284,6 +285,13 @@ package org.interguild.levels {
 				trace("gameloop: " + timer.currentCount);
 				trace("LevelArea x: " + lvl.x + " y: " + lvl.y + " w: " + lvl.width + " h: " + lvl.height);
 			}
+		}
+
+
+		private function quit():void {
+			timer.stop();
+			timer.removeEventListener(TimerEvent.TIMER, onGameLoop);
+			gamepage.closeLevel(this);
 		}
 	}
 }

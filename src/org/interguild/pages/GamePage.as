@@ -1,14 +1,15 @@
 package org.interguild.pages {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
-	
+
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.gui.Btn;
 	import org.interguild.levels.Level;
 	import org.interguild.levels.editor.LevelEditor;
+	import org.interguild.levels.objects.GameObject;
 	import org.interguild.levels.pause.Pause;
 	import org.interguild.log.LoadingBox;
 
@@ -49,7 +50,7 @@ package org.interguild.pages {
 
 			//create the loading text
 			loadingBox = new LoadingBox(true);
-			
+
 			loadingBox.cancelButton.addEventListener(MouseEvent.CLICK, onCancel, false, 0, true);
 
 			//create the pause menu
@@ -61,9 +62,9 @@ package org.interguild.pages {
 			//initialize level array
 			allLevels = [];
 		}
-		
-		
-		public function onCancel(evt:MouseEvent):void{
+
+
+		public function onCancel(evt:MouseEvent):void {
 			closeLevel(curLevel);
 			Aeon.instance.gotoLevelsPage();
 		}
@@ -108,6 +109,7 @@ package org.interguild.pages {
 			} else {
 				Aeon.instance.gotoGamePage();
 				var lvl:Level = new Level(false, lvlCode);
+				GameObject.LEVEL_STATE = lvl.state;
 				allLevels.push(lvl);
 				curLevel = lvl;
 				addChild(lvl);
@@ -152,17 +154,23 @@ package org.interguild.pages {
 			removeChild(loadingBox);
 		}
 
+
 		/**
 		 * Removes the level from the GamePage.
 		 */
-		public function closeLevel(lvl:Level):void{
+		public function closeLevel(lvl:Level):void {
 			var index:int = allLevels.indexOf(lvl);
-			if(index==-1){
+			if (index == -1) {
 				throw new Error("You tried to close a level that was not in GamePage");
-			}else{
-				allLevels.splice(index,1);
+			} else {
+				allLevels.splice(index, 1);
 			}
 			removeChild(lvl);
+			if (allLevels.length == 0) {
+				Aeon.instance.gotoHomePage();
+			} else {
+				//TODO switch to another level.
+			}
 		}
 	}
 }

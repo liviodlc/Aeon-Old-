@@ -2,7 +2,7 @@ package org.interguild.levels.objects {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.levels.collisions.GridElement;
 	import org.interguild.levels.objects.styles.DynamicTriggers;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
@@ -14,6 +14,11 @@ package org.interguild.levels.objects {
 	 * GameObject represents any object in the games, such as tiles, players, enemies, etc.
 	 */
 	public class GameObject extends Sprite {
+		
+		/**
+		 * This is set to the Level.state of whichever level is currently in focus.
+		 */
+		public static var LEVEL_STATE:PseudoClassTriggers;
 
 		private var def:GameObjectDefinition;
 		private var classes:LinkedList;
@@ -129,30 +134,41 @@ package org.interguild.levels.objects {
 		 */
 		public function updateStyles(global:PseudoClassTriggers, init:Boolean = false):void {
 			if (init || normalTriggers.hasChanged() || dynamicTriggers.hasChanged()) {
+
 				trace("update styles");
-				if (def.hasAncestor()) {
-					applyStylesList(def.ancestor.normalStylesList, global);
-					applyStylesList(def.ancestor.dynamicStylesList, global);
-				}
-				applyStylesList(def.normalStylesList, global);
-				applyStylesList(def.dynamicStylesList, global);
+
+				applyStyles(def);
+
 				classes.beginIteration();
-				while (classes.hasNext()) {
-					var god:GameObjectDefinition = GameObjectDefinition(classes.next);
-					applyStylesList(god.normalStylesList, global);
-					applyStylesList(god.dynamicStylesList, global);
-				}
+				while (classes.hasNext())
+					applyStyles(GameObjectDefinition(classes.next));
 			}
 			normalTriggers.update();
 			dynamicTriggers.update();
 		}
 
 
-		private function applyStylesList(list:OrderedList, global:PseudoClassTriggers):void {
+		/**
+		 * Applies the specified style definition and all of its ancestor definitions recursively.
+		 * The ancestors are applied in the correct order so that their descendants may overwrite
+		 * their effects.
+		 */
+		private function applyStyles(god:GameObjectDefinition):void {
+			if (god == null)
+				return;
+
+			applyStyles(god.ancestor);
+
+			applyStylesList(god.normalStylesList);
+			applyStylesList(god.dynamicStylesList);
+		}
+
+
+		private function applyStylesList(list:OrderedList):void {
 			var n:uint = list.length;
 			for (var i:uint = 0; i < n; i++) {
 				var styleDef:StyleDefinition = StyleDefinition(list.get(i));
-				if (normalTriggers.isStyleActiveNormal(styleDef.normalTriggers) && global.isStyleActiveGlobal(styleDef.normalTriggers)) {
+				if (normalTriggers.isStyleActiveNormal(styleDef.normalTriggers) && LEVEL_STATE.isStyleActiveGlobal(styleDef.normalTriggers)) {
 					var rules:Object = styleDef.rulesArray;
 					for (var key:String in rules) {
 						applyStyle(key, rules[key]);
@@ -172,7 +188,6 @@ package org.interguild.levels.objects {
 					collBox.height = Number(val);
 					break;
 			}
-			TESTdrawBox();
 		}
 
 
@@ -192,7 +207,7 @@ package org.interguild.levels.objects {
 		public function updateView():void {
 			x = newX;
 			y = newY;
-
+			TESTdrawBox();
 			//TODO update visuals based on styles and animation sequences
 		}
 

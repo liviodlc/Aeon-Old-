@@ -92,7 +92,7 @@ package org.interguild.levels.objects.styles {
 		/**
 		 * Returns true if there's still more styles to parse.
 		 */
-		public function hasNext():Boolean {
+		private function hasNext():Boolean {
 			return i < n;
 		}
 
@@ -101,7 +101,7 @@ package org.interguild.levels.objects.styles {
 		 * Parses the next style definition and adds it to the StyleMap for
 		 * all relevant IDs.
 		 */
-		public function next():void {
+		private function next():void {
 			var cur:String = String(styles[i]);
 			var point:int = cur.indexOf("{");
 			if (point == -1) {

@@ -1,10 +1,10 @@
 package org.interguild.levellist {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
-	
+
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
-	
+
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -19,7 +19,9 @@ package org.interguild.levellist {
 	import flash.text.TextFormatAlign;
 	import flash.ui.Keyboard;
 	import flash.xml.XMLNode;
-	
+
+	import flashx.textLayout.formats.TextAlign;
+
 	import org.interguild.Aeon;
 	import org.interguild.pages.GamePage;
 	import org.interguild.pages.HomePage;
@@ -40,6 +42,7 @@ package org.interguild.levellist {
 		private var pageBox:TextField;
 		private var pageLimit:TextField;
 		private var num_results:TextField;
+		private var no_results:TextField;
 
 		private var curSearch:String = "";
 		private var curPage:uint;
@@ -47,6 +50,7 @@ package org.interguild.levellist {
 
 
 		public function LevelLister() {
+
 			//initialize scrollpane and container
 			container = new Sprite();
 			scrollpane = new ScrollPane();
@@ -58,17 +62,15 @@ package org.interguild.levellist {
 			mc.graphics.endFill();
 			scrollpane.setStyle("upSkin", mc);
 			scrollpane.source = container;
-			addChild(scrollpane);
+
 
 			//initialize pagination
 			pagination = new Sprite();
-			addChild(pagination);
 
 			var pageText:TextField = new TextField();
 			pageText.defaultTextFormat = new TextFormat("Arial", 13, 0xFFFFFF, true);
 			pageText.autoSize = TextFieldAutoSize.LEFT;
 			pageText.text = "Page:";
-			pagination.addChild(pageText);
 
 			pageBox = new TextField();
 			pageBox.defaultTextFormat = new TextFormat("Verdana", 13, 0, null, null, null, null, null, TextFormatAlign.CENTER);
@@ -80,14 +82,13 @@ package org.interguild.levellist {
 			pageBox.width = 24;
 			pageBox.height = 20;
 			pageBox.addEventListener(KeyboardEvent.KEY_DOWN, onPageBoxKey, false, 0, true);
-			pagination.addChild(pageBox);
 
 			pageLimit = new TextField();
 			pageLimit.defaultTextFormat = new TextFormat("Arial", 13, 0xFFFFFF, true);
 			pageLimit.autoSize = TextFieldAutoSize.LEFT;
 			pageLimit.text = "of 1";
 			pageLimit.x = pageBox.x + pageBox.width + 4;
-			pagination.addChild(pageLimit);
+
 
 			//initialize results count
 			num_results = new TextField();
@@ -95,7 +96,13 @@ package org.interguild.levellist {
 			num_results.autoSize = TextFieldAutoSize.LEFT;
 			num_results.text = "Results: 0";
 			num_results.x = 10;
-			addChild(num_results);
+
+			//initialize no-results text
+			no_results = new TextField();
+			no_results.defaultTextFormat = new TextFormat("Arial", 13, 0xFFFFFF);
+			no_results.autoSize = TextFieldAutoSize.LEFT;
+			no_results.text = "Your search returned zero results.";
+			no_results.visible = false;
 
 			//initialize loading text
 			loadingText = new TextField();
@@ -106,6 +113,15 @@ package org.interguild.levellist {
 			loadingText.x = 10;
 			loadingText.text = "Loading...";
 			loadingText.visible = false;
+
+			//add children
+			addChild(scrollpane);
+			pagination.addChild(pageText);
+			pagination.addChild(pageBox);
+			pagination.addChild(pageLimit);
+			addChild(pagination);
+			addChild(num_results);
+			addChild(no_results);
 			addChild(loadingText);
 
 			loader = new BulkLoader("level_list");
@@ -126,6 +142,7 @@ package org.interguild.levellist {
 		public override function set width(newWidth:Number):void {
 			scrollpane.width = newWidth;
 			pagination.x = newWidth - pagination.width - 10;
+			no_results.x = newWidth / 2 - no_results.width / 2;
 			var num:int = container.numChildren;
 			for (var i:int = 0; i < num; i++) {
 				container.getChildAt(i).width = newWidth;
@@ -137,10 +154,12 @@ package org.interguild.levellist {
 			scrollpane.height = newHeight - 26;
 			scrollpane.y = 26;
 			loadingText.y = newHeight + 10;
+			no_results.y = newHeight / 2;
 		}
 
 
 		public function searchFor(txt:String):void {
+			no_results.visible = false;
 			loadList("?search=" + txt);
 			curSearch = txt;
 			curPage = 1;
@@ -173,11 +192,16 @@ package org.interguild.levellist {
 			for each (var item:XML in xml.elements()) {
 				addLevel(new LevelListItem(item));
 			}
+			
 			lastPage = uint(xml.@lastpage);
 			pageLimit.text = "of " + xml.@lastpage;
-			num_results.text = "Results: " + xml.@results;
 			curPage = uint(xml.@curpage);
 			pageBox.text = String(curPage);
+			
+			var num:int = int(xml.@results);
+			num_results.text = "Results: " + num;
+			if (num == 0)
+				no_results.visible = true;
 		}
 
 
@@ -233,6 +257,7 @@ package org.interguild.levellist {
 		 */
 		public function reset():void {
 			clearList();
+			no_results.visible = false;
 			loadingText.visible = false;
 			loadList();
 		}

@@ -174,6 +174,7 @@ package org.interguild.levels {
 			if (levelState.hasChanged()) {
 				if (levelState.getPreview()) {
 					// camera zoom fit
+					updateViews();
 				} else if (!levelState.getEnding()) {
 					// transition from preview to playing
 				}
