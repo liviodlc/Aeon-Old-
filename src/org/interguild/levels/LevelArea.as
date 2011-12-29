@@ -1,21 +1,16 @@
 package org.interguild.levels {
 	import flash.display.Sprite;
 
+	import org.interguild.levels.collisions.CollisionGrid;
 	import org.interguild.levels.objects.GameObject;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
-
 	import org.interguild.utils.LinkedList;
 
 	internal class LevelArea extends Sprite {
 
-		/**
-		 * For the grid used in collision detection
-		 */
-		private static var GRID_SIZE:uint = 32;
-
 		private var levelState:PseudoClassTriggers;
 
-		private var gridArray:Array;
+		private var grid:CollisionGrid;
 
 		/* we may want to reconsider the choice of data structures here.
 		 * I only picked Arrays for the first two because I knew we'd be
@@ -27,33 +22,12 @@ package org.interguild.levels {
 		private var nonstaticObjs:Array;
 		private var destroyedObjs:LinkedList;
 
-		private var _levelWidth:uint;
-		private var _levelHeight:uint;
-
 
 		public function LevelArea(width:uint, height:uint, lvlstate:PseudoClassTriggers) {
 			levelState = lvlstate;
-			initLevelGrid();
-			levelWidth = width;
-			levelHeight = height;
-		}
-
-
-		/**
-		 * Initializes the level space and the collision detection grid. This must be called before
-		 * trying to set the level width or height.
-		 *
-		 * HOW THIS GRID WORKS
-		 * We have a two-dimensional array, with rows representing the first dimension (array[1])
-		 * and columns in the second dimension (array[0][1]). In each of these slots, we have another
-		 * array holding references to all of the tiles that intersect that specific grid element.
-		 */
-		public function initLevelGrid():void {
-			gridArray = [[[0]]];
+			grid = new CollisionGrid(width, height);
 			staticObjs = [];
 			nonstaticObjs = [];
-			_levelWidth = 1;
-			_levelHeight = 1;
 		}
 
 
@@ -75,7 +49,7 @@ package org.interguild.levels {
 
 
 		public function get levelWidth():uint {
-			return _levelWidth;
+			return grid.width;
 		}
 
 
@@ -86,28 +60,12 @@ package org.interguild.levels {
 		 *
 		 */
 		public function set levelWidth(w:uint):void {
-			if (w == 0)
-				w = 1;
-			if (w > _levelWidth) {
-				// add to width
-				var diff:uint = w - _levelWidth;
-				for (var i:uint = 0; i < _levelHeight; i++) {
-					for (var j:uint = 0; j < diff; j++) {
-						gridArray[i].push([0]);
-					}
-				}
-			} else if (w < _levelWidth) {
-				// remove from width
-				for (var k:uint = 0; k < _levelHeight; k++) {
-					gridArray[k].splice(w);
-				}
-			}
-			_levelWidth = w;
+			grid.width = w;
 		}
 
 
 		public function get levelHeight():uint {
-			return _levelHeight;
+			return grid.height;
 		}
 
 
@@ -120,21 +78,7 @@ package org.interguild.levels {
 		 *
 		 */
 		public function set levelHeight(h:uint):void {
-			if (h == 0)
-				h = 1;
-			if (h > _levelHeight) {
-				// add to height
-				for (var i:uint = _levelHeight; i < h; i++) {
-					gridArray.push([[0]]);
-					for (var j:uint = 1; j < _levelWidth; j++) {
-						gridArray[i].push([0]);
-					}
-				}
-			} else if (h < _levelHeight) {
-				// remove from height
-				gridArray.splice(h);
-			}
-			_levelHeight = h;
+			grid.height = h;
 		}
 
 
@@ -147,22 +91,21 @@ package org.interguild.levels {
 				staticObjs.push(obj);
 			else
 				nonstaticObjs.push(obj);
-
+			grid.add(obj);
 			addChild(obj);
-			//TODO collision grid testing
 		}
-		
-		
+
+
 		/**
 		 * Initializes the styles of all of the GameObjects that have been added
 		 * to the LevelArea so far.
 		 */
-		public function initStyles():void{
+		public function initStyles():void {
 			for each (var o:GameObject in nonstaticObjs) {
-				o.updateStyles(levelState,true);
+				o.updateStyles(levelState, true);
 			}
 			for each (var p:GameObject in staticObjs) {
-				o.updateStyles(levelState,true);
+				o.updateStyles(levelState, true);
 			}
 		}
 
