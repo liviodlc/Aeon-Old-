@@ -1,8 +1,8 @@
 package org.interguild.levels {
 	import flash.display.Sprite;
 
-	import org.interguild.levels.collisions.CollisionGrid;
 	import org.interguild.levels.objects.GameObject;
+	import org.interguild.levels.objects.collisions.CollisionGrid;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 	import org.interguild.utils.LinkedList;
 
@@ -21,6 +21,7 @@ package org.interguild.levels {
 		private var staticObjs:Array;
 		private var nonstaticObjs:Array;
 		private var destroyedObjs:LinkedList;
+		private var stateChanged:LinkedList;
 
 
 		public function LevelArea(width:uint, height:uint, lvlstate:PseudoClassTriggers) {
@@ -28,6 +29,8 @@ package org.interguild.levels {
 			grid = new CollisionGrid(width, height);
 			staticObjs = [];
 			nonstaticObjs = [];
+			stateChanged = new LinkedList();
+			destroyedObjs = new LinkedList();
 		}
 
 
@@ -87,26 +90,9 @@ package org.interguild.levels {
 		 * that it intersects with.
 		 */
 		public function add(obj:GameObject):void {
-			if (obj.isStatic)
-				staticObjs.push(obj);
-			else
-				nonstaticObjs.push(obj);
+			staticObjs.push(obj);
 			grid.add(obj);
 			addChild(obj);
-		}
-
-
-		/**
-		 * Initializes the styles of all of the GameObjects that have been added
-		 * to the LevelArea so far.
-		 */
-		public function initStyles():void {
-			for each (var o:GameObject in nonstaticObjs) {
-				o.updateStyles(levelState, true);
-			}
-			for each (var p:GameObject in staticObjs) {
-				o.updateStyles(levelState, true);
-			}
 		}
 
 
@@ -122,15 +108,18 @@ package org.interguild.levels {
 					// transition from preview to playing
 				}
 			} else if (!levelState.getPreview() && !levelState.getEnding()) {
-				// play level!
 
-				// TODO according to UML, we must clear dynamic objects from collision grid
+				// play level!
+//				trace("--LOOP--");
+
+				grid.clearDynamicObjects(nonstaticObjs);
 
 				// TODO next step would be to update all Behaviors
 
 				updateModels();
 
 				// TODO now we do collision detection
+				grid.detectCollisions(nonstaticObjs);
 				/* the UML says to update styles as we go along, but it would probably be a much
 				 * better idea if we kept a list of all the objects that have had collisions
 				 * and then update their styles later. This will avoid the problem of when tiles
@@ -138,6 +127,7 @@ package org.interguild.levels {
 				 */
 
 				updateViews();
+				updateStates();
 			}
 		}
 
@@ -163,7 +153,53 @@ package org.interguild.levels {
 		private function updateModels():void {
 			for each (var o:GameObject in nonstaticObjs) {
 				o.updateModel();
+				grid.add(o);
 			}
+		}
+
+
+		/**
+		 * Initializes the styles of all of the GameObjects that have been added
+		 * to the LevelArea so far.
+		 */
+		public function initStyles():void {
+			var n:uint = staticObjs.length;
+			for (var i:uint = 0; i < n; i++) {
+				var p:GameObject = staticObjs[i];
+				if (p.updateStyles(true)) {
+					stateChanged.add(i << 1); //LSB = 0, for staticObjs array
+				}
+			}
+			updateStates();
+		}
+
+
+		/**
+		 * The stateChanged LinkedList contains uints where the LSB stores
+		 * the current state of the GameObject (static or nonstatic), and
+		 * the rest of the bits store the index in the array in wich it is
+		 * stored.
+		 */
+		private function updateStates():void {
+			stateChanged.beginIteration();
+			while (stateChanged.hasNext()) {
+				var i:uint = uint(stateChanged.next);
+				var o:GameObject;
+				if ((i & 0x1) == 0x0) { // staticObjs to nonstaticObjs
+					i = i >> 0x1;
+					o = GameObject(staticObjs[i]);
+					nonstaticObjs.push(o);
+					staticObjs.splice(i, 1);
+					o.switchGridStates();
+				} else { //nonstaticObjs to staticObjs
+					i = i >> 0x1;
+					o = GameObject(nonstaticObjs[i]);
+					staticObjs.push(o);
+					nonstaticObjs.splice(i, 1);
+					o.switchGridStates();
+				}
+			}
+			stateChanged.clear();
 		}
 
 
@@ -172,11 +208,22 @@ package org.interguild.levels {
 		 * to animate.
 		 */
 		private function updateViews():void {
-			for each (var o:GameObject in nonstaticObjs) {
+			var n:uint = nonstaticObjs.length;
+			var i:uint, o:GameObject;
+			for (i = 0; i < n; i++) {
+				o = GameObject(nonstaticObjs[i]);
+				if (o.isStatic) {
+					stateChanged.add((i << 2) | 1);
+				}
 				o.updateView();
 			}
-			for each (var p:GameObject in staticObjs) {
-				p.updateView();
+			n = staticObjs.length;
+			for (i = 0; i < n; i++) {
+				o = GameObject(staticObjs[i]);
+				if (!o.isStatic) {
+					stateChanged.add(i << 2);
+				}
+				o.updateView();
 			}
 		}
 	}

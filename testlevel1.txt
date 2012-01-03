@@ -23,7 +23,7 @@
 	
 </keys>
 <objects>
-	<type id="y" inheritsFrom=".a" name="Terrain" editoricon="" />
+	<type id="y" inheritsFrom="x" name="Terrain" editoricon="" />
 </objects>
 <styles><![CDATA[
 global {
@@ -37,7 +37,7 @@ level{
 	allow-pause: true;
 	sound: magnetman;
 	restart-sound-on-retry: false;
-	background: mainbg
+	background: mainbg;
 	void: void;
 	frame-rate: 60;
 	window-size: 600 300;
@@ -47,16 +47,18 @@ x{
 }
 .a{
 	hitbox-size:15;
+	init-state:nonstatic;
+	allow-state-change: true;
 }
 y{
-	hitbox-height:40;
+	hitbox-height:50;
 }
 ]]></styles>
 <levelcode><![CDATA[x
-	x x y
-x$x.aab
-x=5; =5;$x=5;.a=5;
-	=5;x
+	x x yy.a
+ xx
+x=5; =3;x=5;
+	=4;x
 =5;x
 ]]></levelcode>
 </level>

@@ -1,6 +1,6 @@
 package org.interguild.levels.objects {
 	import flash.display.BitmapData;
-
+	
 	import org.interguild.levels.objects.styles.StyleDefinition;
 	import org.interguild.utils.OrderedList;
 
@@ -86,5 +86,9 @@ package org.interguild.levels.objects {
 //				StyleDefinition(normalStyles.get(i)).testPrint();
 //			}
 //		}
+
+		public function get id():String {
+			return name;
+		}
 	}
 }

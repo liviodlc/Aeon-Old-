@@ -1,7 +1,8 @@
 package org.interguild.levels.objects.styles {
 	import mx.utils.StringUtil;
-	
+
 	import org.interguild.levels.Level;
+	import org.interguild.levels.objects.GameObject;
 	import org.interguild.levels.objects.GameObjectDefinition;
 	import org.interguild.utils.LinkedList;
 
@@ -141,7 +142,7 @@ package org.interguild.levels.objects.styles {
 					else {
 						//TODO: add parseDynamicConditions();
 						var p:PseudoClassTriggers = parsePseudoClasses(s.substr(id.length));
-						objdef.addStyles(new StyleDefinition(p, null, rules/*, (id.charAt(0) == ".")*/));
+						objdef.addStyles(new StyleDefinition(p, null, rules /*, (id.charAt(0) == ".")*/));
 					}
 				}
 			}
@@ -256,9 +257,10 @@ package org.interguild.levels.objects.styles {
 				return result;
 			}
 		}
-		
-		
-		private function parseRule(prop:String, val:String, map:Object):void{
+
+
+		private function parseRule(prop:String, val:String, map:Object):void {
+			var a:Array, un:uint;
 			switch (prop) {
 				case "hitbox-width":
 					map[prop] = checkNum(val);
@@ -267,15 +269,69 @@ package org.interguild.levels.objects.styles {
 					map[prop] = checkNum(val);
 					break;
 				case "hitbox-size":
-					var a:Array = check2Nums(val);
+					a = check2Nums(val);
 					map["hitbox-width"] = a[0];
 					map["hitbox-height"] = a[1];
 					break;
+				case "init-state":
+					if (val != "static" && val != "nonstatic")
+						level.addError(syntaxError(i) + "The only valid values for the 'init-state' property are 'static' or 'nonstatic'.");
+					else if (val == "static")
+						map[prop] = true;
+					else
+						map[prop] = false;
+					break;
+				case "allow-state-change":
+				case "allow-collisions":
+				case "can-use-ladder":
+					if (checkTrueFalse(prop, val))
+						map[prop] = getTrueFalse(val);
+					trace(prop+" "+map[prop]);
+					break;
+				case "coll-edge-top-solidity":
+				case "coll-edge-right-solidity":
+				case "coll-edge-bottom-solidity":
+				case "coll-edge-left-solidity":
+					un = parseCollEdgeType(val);
+					if (un == 0xF)
+						addCollEdgeError(prop);
+					else
+						map[prop] = un;
+					break;
+				case "coll-edge-solidity":
+					a = checkCollEdges(val);
+					if (a.length == 1) {
+						map[prop] = a[0];
+					} else {
+						map["coll-edge-top-solidity"] = a[0];
+						map["coll-edge-right-solidity"] = a[1];
+						map["coll-edge-bottom-solidity"] = a[2];
+						map["coll-edge-left-solidity"] = a[3];
+					}
+					break;
 				default:
 					level.addError(syntaxError(i) + "Invalid property: '" + prop + "'");
+					break;
 			}
 		}
-		
+
+
+		private function checkTrueFalse(prop:String, val:String):Boolean {
+			if (val != "true" && val != "false") {
+				level.addError(syntaxError(i) + "The only valid values for the '" + prop + "' property are 'true' or 'false'.");
+				return false;
+			}
+			return true;
+		}
+
+
+		private function getTrueFalse(s:String):Boolean {
+			if (s == "true")
+				return true;
+			return false;
+		}
+
+
 		/**
 		 * Returns a valid number for the string
 		 */
@@ -288,8 +344,8 @@ package org.interguild.levels.objects.styles {
 					n = 0;
 			return n;
 		}
-		
-		
+
+
 		/**
 		 * Returns an array of valid numbers from the string.
 		 *
@@ -304,7 +360,7 @@ package org.interguild.levels.objects.styles {
 					a[0] = 1;
 				else
 					a[0] = 0;
-			
+
 			if (a[1] == null)
 				a[1] = a[0];
 			else if (isNaN(a[1]))
@@ -312,8 +368,76 @@ package org.interguild.levels.objects.styles {
 					a[1] = 1;
 				else
 					a[1] = 0;
-			
+
 			return a;
+		}
+
+
+		private function checkCollEdges(s:String):Array {
+			var a:Array = s.split(" ", 4);
+
+			if (a.length == 1) {
+				a[0] = parseCollEdgeType(a[0]);
+				if (a[0] == 0xF) {
+					addCollEdgeError("coll-edge-solidity");
+					return [];
+				} else {
+					return [a[0]];
+				}
+			} else if (a.length == 2) {
+				a[0] = parseCollEdgeType(a[0]);
+				a[1] = parseCollEdgeType(a[1]);
+				if (a[0] == 0xF || a[1] == 0xF) {
+					addCollEdgeError("coll-edge-solidity");
+					return [];
+				} else {
+					a[2] = a[0];
+					a[3] = a[1];
+					return a;
+				}
+			} else {
+				a[0] = parseCollEdgeType(a[0]);
+				a[1] = parseCollEdgeType(a[1]);
+				a[2] = parseCollEdgeType(a[2]);
+				a[3] = parseCollEdgeType(a[3]);
+				if (a[0] == 0xF || a[1] == 0xF || a[2] == 0xF || a[3] == 0xF) {
+					addCollEdgeError("coll-edge-solidity");
+					return [];
+				} else {
+					return a;
+				}
+			}
+
+			return a;
+		}
+
+
+		private function addCollEdgeError(prop:String):void {
+			level.addError(syntaxError(i) + "The only valid values for the '" + prop + "' property are 'no-wall', 'solid-wall', 'pseudo-wall', 'solid-ladder', and 'pseudo-ladder'.");
+		}
+
+
+		private function parseCollEdgeType(s:String):uint {
+			switch (s) {
+				case "no-wall":
+					return GameObject.NO_WALL;
+					break;
+				case "solid-wall":
+					return GameObject.SOLID_WALL;
+					break;
+				case "pseudo-wall":
+					return GameObject.PSEUDO_WALL;
+					break;
+				case "solid-ladder":
+					return GameObject.SOLID_LADDER;
+					break;
+				case "pseudo-ladder":
+					return GameObject.PSEUDO_LADDER;
+					break;
+				default:
+					return 0xF;
+					break;
+			}
 		}
 	}
 }

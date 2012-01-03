@@ -444,7 +444,6 @@ package org.interguild.levels {
 				} else {
 					lastGO = new GameObject(def, markerX, markerY)
 					level.levelArea.add(lastGO);
-					trace("new tile: '" + s + "' at x:" + markerX + ", y:" + markerY);
 					addSpace();
 				}
 			}
