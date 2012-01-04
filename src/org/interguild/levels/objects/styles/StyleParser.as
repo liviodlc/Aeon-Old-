@@ -273,9 +273,19 @@ package org.interguild.levels.objects.styles {
 					map["hitbox-width"] = a[0];
 					map["hitbox-height"] = a[1];
 					break;
+				case "hitbox-offset-x":
+				case "hitbox-offset-y":
+					map[prop] = checkNum(val);
+					break;
+				case "hitbox-offset":
+					a = check2Nums(val);
+					map["hitbox-offset-x"] = a[0];
+					map["hitbox-offset-y"] = a[1];
+					break;
 				case "init-state":
+				case "set-state":
 					if (val != "static" && val != "nonstatic")
-						level.addError(syntaxError(i) + "The only valid values for the 'init-state' property are 'static' or 'nonstatic'.");
+						level.addError(syntaxError(i) + "The only valid values for the '" + prop + "' property are 'static' or 'nonstatic'.");
 					else if (val == "static")
 						map[prop] = true;
 					else
@@ -286,7 +296,7 @@ package org.interguild.levels.objects.styles {
 				case "can-use-ladder":
 					if (checkTrueFalse(prop, val))
 						map[prop] = getTrueFalse(val);
-					trace(prop+" "+map[prop]);
+					trace(prop + " " + map[prop]);
 					break;
 				case "coll-edge-top-solidity":
 				case "coll-edge-right-solidity":

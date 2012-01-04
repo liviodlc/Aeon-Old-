@@ -58,10 +58,11 @@ package org.interguild.levels.objects {
 
 		public function applyResolution():void {
 //			trace(obj1 + " || " + obj2);
-			var v:Boolean = isValid();
 //			trace(v + "\n	" + oldBox1 + "	" + oldBox2 + "\n	" + newBox1 + "	" + newBox2);
-			if (v) {
 
+			var curBox1:Rectangle = obj1.hitbox;
+			var curBox2:Rectangle = obj2.hitbox;
+			if (curBox1.intersects(curBox2)) { // valid collision
 				/*
 				check for lethality
 					coll-edge-lathality, coll-edge-strength, proj-trigger
@@ -73,17 +74,23 @@ package org.interguild.levels.objects {
 				check collision effects
 					coll-effect, coll-edge-air, coll-edge-gem, coll-edge-points
 				*/
+
 //				obj2.color = 0xCC0000; // TESTING
 				//collide on bottom
-				if (oldBox1.bottom <= oldBox2.top && newBox1.bottom > newBox2.top) {
-					obj1.normalTriggers.setStandingDown();
-					obj2.normalTriggers.setStandingUp();
+				if (oldBox1.bottom <= oldBox2.top && curBox1.bottom > curBox2.top) {
 					if (obj2.isStatic) {
 						if (obj1.allowStateChange)
 							obj1.isStatic = true;
-						obj1.newY = obj2.newY - obj1.oldHitbox.height;
+						obj1.setStanding(GameObject.DOWN, obj1.isStatic);
+						obj2.setStanding(GameObject.UP, obj1.isStatic);
+						obj2.markToUpdate();
+						if (obj1.isStatic)
+							obj1.markToUpdate();
+						else
+							obj1.addtoStandingList(obj2, GameObject.UP);
+						obj1.newY += curBox2.top - curBox1.bottom;
 						obj1.currentSpeedY = 0;
-						obj1.currentSpeedX = 0.5;
+						obj1.currentSpeedX = 0;
 					}
 					/*
 					TODO check whether obj2 is static or dynamic
@@ -93,11 +100,24 @@ package org.interguild.levels.objects {
 
 				if (!obj1.isStatic)
 					obj1.collidedWith(obj2);
+			} else if (wasValid()) { // would've been a valid collision
+				// collide on bottom
+				if (oldBox1.bottom <= oldBox2.top && newBox1.bottom > newBox2.top) {
+					if (curBox1.bottom == curBox2.top) {
+						obj2.normalTriggers.setStandingUp();
+						obj2.markToUpdate();
+					}
+				}
 			}
 		}
 
 
 		private function isValid():Boolean {
+			return obj1.hitbox.intersects(obj2.hitbox);
+		}
+
+
+		private function wasValid():Boolean {
 			return newBox1.intersects(newBox2);
 		}
 

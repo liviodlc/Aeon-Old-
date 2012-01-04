@@ -3,7 +3,6 @@ package org.interguild.levels.objects {
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 
-	import org.interguild.levels.objects.collisions.GridElement;
 	import org.interguild.levels.objects.styles.DynamicTriggers;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 	import org.interguild.levels.objects.styles.StyleDefinition;
@@ -32,6 +31,13 @@ package org.interguild.levels.objects {
 		 */
 		public static var LEVEL_STATE:PseudoClassTriggers;
 
+		/**
+		 * This is a list of static objects that need to have their styles updated.
+		 */
+		public static var TO_UPDATE:LinkedList = new LinkedList();
+		private var toUpdateMarked:Boolean;
+		private var stylesInitialized:Boolean;
+
 		private var def:GameObjectDefinition;
 		private var classes:LinkedList;
 		internal var normalTriggers:PseudoClassTriggers;
@@ -46,9 +52,12 @@ package org.interguild.levels.objects {
 		private var maxSpeedY:Number = 0;
 		private var accX:Number = 0;
 		private var accY:Number = 0;
+
 		private var collBox:Rectangle;
 		private var oldCollBox:Rectangle;
 		internal var collEdgesSolidity:Array;
+		internal var standingNums:Array;
+		private var dynStandingList:LinkedList;
 		internal var isLadderUser:Boolean;
 
 		private var _static:Boolean;
@@ -73,14 +82,16 @@ package org.interguild.levels.objects {
 			gridsOccupied = new LinkedList();
 			classes = new LinkedList();
 			collMemory = new LinkedList();
+			dynStandingList = new LinkedList();
 			normalTriggers = new PseudoClassTriggers();
 			dynamicTriggers = new DynamicTriggers();
 
 			//set defaults:
-			_static = true;
+			isStatic = true;
 			collideable = true;
 			collBox = new Rectangle(0, 0, 31, 31);
-			collEdgesSolidity = new Array(0, 0, 0, 0);
+			collEdgesSolidity = [0, 0, 0, 0];
+			standingNums = [0, 0, 0, 0];
 			allowStateChange = true;
 			accY = 1;
 			maxSpeedY = 100;
@@ -151,6 +162,14 @@ package org.interguild.levels.objects {
 			newX += currentSpeedX;
 			newY += currentSpeedY;
 		}
+		
+		
+		/**
+		 * This is called by LevelArea, when any state changes have been confirmed.
+		 */
+		public function resetSpeed():void{
+			currentSpeedX = currentSpeedY = 0;
+		}
 
 
 		/**
@@ -219,34 +238,98 @@ package org.interguild.levels.objects {
 		}
 
 
-//		/**
-//		 * Updates the appropriate pseudo-classes, and if the object is dynamic,
-//		 * will make the object static.
-//		 */
-//		internal function setStanding(direction:uint):void{
-//			if(!_static && allowStateChange){
-//				currentSpeedX = 0;
-//				currentSpeedY = 0;
-//				_static = false;
-//			}
-//			switch(direction){
-//				case UP:
-//					normalTriggers.setStandingUp();
-//					break;
-//				case RIGHT:
-//					normalTriggers.setStandingRight();
-//					break;
-//				case DOWN:
-//					normalTriggers.setStandingDown();
-//					break;
-//				case LEFT:
-//					normalTriggers.setStandingLeft();
-//					break;
-//				default:
-//					new Error("Invalid Arguments");
-//					break;
-//			}
-//		}
+		/**
+		 * This function should only be called if this is a dynamic object.
+		 * This helps the dynamic object record which standing events it has
+		 * caused recently so that when it moves away from the object, it may
+		 * undo those events.
+		 */
+		public function addtoStandingList(ref:GameObject, direction:uint):void {
+			dynStandingList.add([ref, direction]);
+		}
+
+
+		/**
+		 * Clears this dynamic object's list of tiles that it's standing on.
+		 */
+		public function clearStandingList():void {
+			if (dynStandingList.isEmpty())
+				return;
+			dynStandingList.beginIteration();
+			while (dynStandingList.hasNext()) {
+				var a:Array = dynStandingList.next as Array;
+				var o:GameObject = a[0] as GameObject;
+				if (o.standingNums[a[1]] == 0) {
+					switch (a[1]) {
+						case UP:
+							o.normalTriggers.setStandingUp(false);
+							break;
+						case RIGHT:
+							o.normalTriggers.setStandingRight(false);
+							break;
+						case DOWN:
+							o.normalTriggers.setStandingDown(false);
+							break;
+						case LEFT:
+							o.normalTriggers.setStandingLeft(false);
+							break;
+					}
+					o.markToUpdate();
+				}
+			}
+			dynStandingList.clear();
+		}
+
+
+		/**
+		 * Updates the appropriate pseudo-classes, and if the object is dynamic,
+		 * will make the object static.
+		 *
+		 * @param direction:uint Use GameObject.TOP, GameObject.RIGHT, GameObject.LEFT,
+		 * or GameObject.BOTTOM.
+		 * @param fromStatic:Boolean Set true if the object marking this is static as a
+		 * result of this collision.
+		 */
+		internal function setStanding(direction:uint, fromStatic:Boolean):void {
+			switch (direction) {
+				case UP:
+					normalTriggers.setStandingUp();
+					break;
+				case RIGHT:
+					normalTriggers.setStandingRight();
+					break;
+				case DOWN:
+					normalTriggers.setStandingDown();
+					break;
+				case LEFT:
+					normalTriggers.setStandingLeft();
+					break;
+				default:
+					new Error("Invalid Arguments");
+					break;
+			}
+			if (fromStatic)
+				standingNums[direction]++;
+		}
+
+
+		public function clearStandings():void {
+			normalTriggers.setStandingDown(false);
+			normalTriggers.setStandingLeft(false);
+			normalTriggers.setStandingRight(false);
+			normalTriggers.setStandingUp(false);
+		}
+
+
+		/**
+		 * Adds this object to the list of those pending to have their styles updated.
+		 */
+		public function markToUpdate():void {
+			if (!toUpdateMarked) {
+				TO_UPDATE.add(this);
+				toUpdateMarked = true;
+			}
+		}
 
 
 		/**
@@ -258,27 +341,19 @@ package org.interguild.levels.objects {
 		 *
 		 * @param init:Boolean Mark this as true if you want to update styles as
 		 * part of this object's initialization, as opposed to part of the game loop.
-		 *
-		 * Returns true if there was a change in state.
 		 */
-		public function updateStyles(init:Boolean = false):Boolean {
-			var stateChanged:Boolean = false;
-			if (init || normalTriggers.hasChanged() || dynamicTriggers.hasChanged()) {
-				var currentState:Boolean = _static;
-
+		public function updateStyles(init:Boolean = false):void {
+			if (init || normalTriggers.hasChanged() || dynamicTriggers.hasChanged() || LEVEL_STATE.hasChanged()) {
 				applyStyles(def);
-
 				classes.beginIteration();
 				while (classes.hasNext()) {
 					applyStyles(GameObjectDefinition(classes.next));
 				}
-
-				if (_static != currentState)
-					stateChanged = true;
+				stylesInitialized = true;
 			}
+			toUpdateMarked = false;
 			normalTriggers.update();
 			dynamicTriggers.update();
-			return stateChanged;
 		}
 
 
@@ -321,8 +396,18 @@ package org.interguild.levels.objects {
 				case 'hitbox-height':
 					collBox.height = Number(val) - 1;
 					break;
+				case "hitbox-offset-x":
+					collBox.x = Number(val);
+					break;
+				case "hitbox-offset-y":
+					collBox.y = Number(val);
+					break;
 				case 'init-state':
-					_static = val;
+					if (!stylesInitialized)
+						isStatic = val;
+					break;
+				case 'set-state':
+					isStatic = val;
 					break;
 				case 'allow-state-change':
 					allowStateChange = val;
@@ -356,7 +441,7 @@ package org.interguild.levels.objects {
 
 
 		private function TESTdrawBox():void {
-			if (normalTriggers.getStandingUp())
+			if (normalTriggers.getMoveRight())
 				color = 0xCC0000; // TESTING
 			else
 				color = 0x00CC00;

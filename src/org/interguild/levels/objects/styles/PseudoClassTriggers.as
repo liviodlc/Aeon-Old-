@@ -490,7 +490,7 @@ package org.interguild.levels.objects.styles {
 		 * compare it with.
 		 */
 		public function isStyleActiveNormal(style:PseudoClassTriggers):Boolean {
-			return (style.triggers == 0 || style.triggers == this.triggers);
+			return (style.triggers == 0 || (style.triggers & this.triggers) == style.triggers);
 		}
 
 

@@ -44,14 +44,25 @@ level{
 }
 x{
 	hitbox-size:30;
+	set-state:static;
 }
 .a{
 	hitbox-size:15;
 	init-state:nonstatic;
-	allow-state-change: true;
+	allow-state-change: false;
+	set-state:nonstatic;
+}
+.a:preview{
+	hitbox-size:32;
 }
 y{
-	hitbox-height:50;
+	hitbox-height:62;
+}
+.a:standing-on-down{
+	
+}
+x:standing-on-up{
+	set-state:nonstatic;
 }
 ]]></styles>
 <levelcode><![CDATA[x

@@ -1,6 +1,4 @@
-package org.interguild.levels.objects.collisions {
-	import org.interguild.levels.objects.CollisionResolution;
-	import org.interguild.levels.objects.GameObject;
+package org.interguild.levels.objects {
 	import org.interguild.utils.LinkedList;
 
 	public class GridElement {

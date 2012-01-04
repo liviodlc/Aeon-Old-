@@ -1,8 +1,8 @@
 package org.interguild.levels {
 	import flash.display.Sprite;
 
+	import org.interguild.levels.objects.CollisionGrid;
 	import org.interguild.levels.objects.GameObject;
-	import org.interguild.levels.objects.collisions.CollisionGrid;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 	import org.interguild.utils.LinkedList;
 
@@ -103,9 +103,13 @@ package org.interguild.levels {
 			if (levelState.hasChanged()) {
 				if (levelState.getPreview()) {
 					// camera zoom fit
+					updateAllStyles();
 					updateViews();
 				} else if (!levelState.getEnding()) {
 					// transition from preview to playing
+					trace("LEVEL START");
+					updateAllStyles();
+					updateViews();
 				}
 			} else if (!levelState.getPreview() && !levelState.getEnding()) {
 
@@ -125,7 +129,7 @@ package org.interguild.levels {
 				 * and then update their styles later. This will avoid the problem of when tiles
 				 * collide with multiple objects at once.
 				 */
-
+				updateStyles();
 				updateViews();
 				updateStates();
 			}
@@ -151,9 +155,12 @@ package org.interguild.levels {
 		 * positions, speed, hitbox locations, etc.
 		 */
 		private function updateModels():void {
-			for each (var o:GameObject in nonstaticObjs) {
+			var o:GameObject;
+			for each (o in nonstaticObjs) {
 				o.updateModel();
 				grid.add(o);
+				o.clearStandings();
+				o.clearStandingList();
 			}
 		}
 
@@ -165,12 +172,46 @@ package org.interguild.levels {
 		public function initStyles():void {
 			var n:uint = staticObjs.length;
 			for (var i:uint = 0; i < n; i++) {
-				var p:GameObject = staticObjs[i];
-				if (p.updateStyles(true)) {
-					stateChanged.add(i << 1); //LSB = 0, for staticObjs array
+				var o:GameObject = staticObjs[i];
+				o.updateStyles(true)
+				if (!o.isStatic) {
+					stateChanged.add(o);
 				}
 			}
 			updateStates();
+		}
+
+
+		/**
+		 * Updates the styles of all GameObjects.
+		 */
+		private function updateAllStyles():void {
+			var o:GameObject;
+			for each (o in nonstaticObjs) {
+				o.updateStyles();
+			}
+			for each (o in staticObjs) {
+				o.updateStyles();
+			}
+		}
+
+
+		private function updateStyles():void {
+			//update dynamic objects:
+			var o:GameObject;
+			for each (o in nonstaticObjs) {
+				o.updateStyles();
+			}
+			//update static objects:
+			var list:LinkedList = GameObject.TO_UPDATE;
+			if (list.isEmpty())
+				return;
+			list.beginIteration();
+			while (list.hasNext()) {
+				o = list.next as GameObject;
+				o.updateStyles();
+			}
+			list.clear();
 		}
 
 
@@ -183,21 +224,18 @@ package org.interguild.levels {
 		private function updateStates():void {
 			stateChanged.beginIteration();
 			while (stateChanged.hasNext()) {
-				var i:uint = uint(stateChanged.next);
-				var o:GameObject;
-				if ((i & 0x1) == 0x0) { // staticObjs to nonstaticObjs
-					i = i >> 0x1;
-					o = GameObject(staticObjs[i]);
+				var o:GameObject = stateChanged.next as GameObject;
+				if (!o.isStatic) { // staticObjs to nonstaticObjs
+					staticObjs.splice(staticObjs.indexOf(o), 1);
 					nonstaticObjs.push(o);
-					staticObjs.splice(i, 1);
-					o.switchGridStates();
 				} else { //nonstaticObjs to staticObjs
-					i = i >> 0x1;
-					o = GameObject(nonstaticObjs[i]);
+					nonstaticObjs.splice(nonstaticObjs.indexOf(o), 1);
 					staticObjs.push(o);
-					nonstaticObjs.splice(i, 1);
-					o.switchGridStates();
+					o.resetSpeed();
+					o.clearGrids();
+					grid.add(o);
 				}
+				o.switchGridStates();
 			}
 			stateChanged.clear();
 		}
@@ -213,7 +251,7 @@ package org.interguild.levels {
 			for (i = 0; i < n; i++) {
 				o = GameObject(nonstaticObjs[i]);
 				if (o.isStatic) {
-					stateChanged.add((i << 2) | 1);
+					stateChanged.add(o);
 				}
 				o.updateView();
 			}
@@ -221,7 +259,7 @@ package org.interguild.levels {
 			for (i = 0; i < n; i++) {
 				o = GameObject(staticObjs[i]);
 				if (!o.isStatic) {
-					stateChanged.add(i << 2);
+					stateChanged.add(o);
 				}
 				o.updateView();
 			}

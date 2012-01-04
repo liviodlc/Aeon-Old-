@@ -104,7 +104,7 @@ package org.interguild.levels.objects.styles {
 		 * Dumps all of the rules 'other' into 'this', overwriting any conflicting rules.
 		 */
 		private function mergeWith(other:StyleDefinition):void {
-			for(var key:String in other.rules){
+			for (var key:String in other.rules) {
 				rules[key] = other.rules[key];
 			}
 		}

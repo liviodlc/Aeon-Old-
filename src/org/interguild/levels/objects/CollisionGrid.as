@@ -1,8 +1,7 @@
-package org.interguild.levels.objects.collisions {
+package org.interguild.levels.objects {
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import org.interguild.levels.objects.GameObject;
 	import org.interguild.utils.LinkedList;
 	import org.interguild.utils.OrderedList;
 
