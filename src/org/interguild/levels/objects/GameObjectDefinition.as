@@ -1,6 +1,6 @@
 package org.interguild.levels.objects {
 	import flash.display.BitmapData;
-	
+
 	import org.interguild.levels.objects.styles.StyleDefinition;
 	import org.interguild.utils.OrderedList;
 
@@ -16,6 +16,7 @@ package org.interguild.levels.objects {
 
 		private var normalStyles:OrderedList;
 		private var dynamicStyles:OrderedList;
+		private var beh:Behavior;
 
 		private var _ancestor:GameObjectDefinition;
 
@@ -24,19 +25,25 @@ package org.interguild.levels.objects {
 		 * Leave the editorIcon as a string for now. We'll worry about it later when
 		 * we start to implement the editor.
 		 */
-		public function GameObjectDefinition(editorName:String, editorIcon:String, ancestor:GameObjectDefinition) {
+		public function GameObjectDefinition(editorName:String, editorIcon:String, ancestor:GameObjectDefinition, behavior:Behavior) {
 			name = editorName;
 			icon = editorIcon;
 
 			normalStyles = new OrderedList();
 			dynamicStyles = new OrderedList();
 
-			this._ancestor = ancestor;
+			beh = behavior;
+			_ancestor = ancestor;
 		}
 
 
 		public function hasAncestor():Boolean {
 			return (_ancestor != null);
+		}
+
+
+		public function get behavior():Behavior {
+			return beh;
 		}
 
 

@@ -1,7 +1,7 @@
 // DEFINING OBJECT IDs
 var $default_objects:XML = new XML("<xml><objects>" +
 	'<type id="x" name="Terrain" editoricon="" />' +
-	'<type id="#" name="Starting Position" editoricon="" />' +
+	'<type id="#" name="Starting Position" behavior="player" editoricon="" />' +
 	'<type id="m" name="Floor Spike" editoricon="" />' +
 	'<type id="w" name="Ceiling Spike" editoricon="" />' +
 	'<type id=".a" name="Ceiling Spike" editoricon="" />' +
@@ -27,13 +27,14 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 "}" +
 // PLAYER
 "# {" +
-	"player: true;" +
 	"hitbox-width: 30;" +
 	"hitbox-height: 42;" +
-	"hitbox-size: 50 60" +
-	"object-offset: 1 -10;" +
-	"y-Acc: $gravity;" +
-	"max-speed-x: 8;" +
+	"hitbox-offset: 1 -10;" +
+	"accelerate-y: 2;" +
+	"accelerate-x: 0;" +
+	"max-speed-x: 10;" +
+	"max-speed-y: 30 20;" +
+	"friction-x: 1;" +
 	"coll-edge-solidity: solid-wall;" +
 	"coll-edge-lethality-smash: true;" +
 	"coll-edge-strength: false;" +
@@ -42,19 +43,33 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 	"allow-state-change: false;" +
 	"allow-be-in-crawl: true;" +
 	"allow-auto-crawl: true;" +
-	"jump: -22;" +
-	"allow-jump: false;" +
+	"jump-strength: 22;" +
+	"allow-jump: true;" +
 	"allow-enter-crawl: false;" +
+	"mid-air-jump-limit: 0;" +
 "}" +
 "#:standing-on-down {" +
 	"allow-enter-crawl: true;" +
 	"allow-jump: true;" +
+	"friction-x:3;" +
+"}" +
+"#:jumping{" +
+	"set-speed-y: -16;" +
+"}" +
+"#:jumping:standing-on-down{" +
+	"set-speed-y: -22;" +
+"}" +
+"#:jumping:right{" +
+	"set-speed-x: 10;" +
+"}" +
+"#:jumping:left{" +
+	"set-speed-x: -10;" +
 "}" +
 "#:right{" +
-	"accelerate-x: 5" +
+	"accelerate-x: 2;" +
 "}" +
 "#:left{" +
-	"accelerate-x: -5" +
+	"accelerate-x: -2;" +
 "}" +
 ".a{" +
 	"animate:megaman;" +

@@ -1,7 +1,7 @@
 <level>
 
 <title><![CDATA[Livio's Test Level]]></title>
-<level size="40 30" framerate="30" windowSize="0 0" loadDefaultSettings="true" />
+<level size="100 100" framerate="30" windowSize="0 0" loadDefaultSettings="true" />
 <assets>
 	<image id="steel" src="http://img10.imageshack.us/img10/6178/crate2.png" />
 	<image id="sprite_sheet" src="http://www.sprites-inc.co.uk/files/X/X/x1sheet.gif" />
@@ -42,34 +42,121 @@ level{
 	frame-rate: 60;
 	window-size: 600 300;
 }
-x{
-	hitbox-size:30;
-	set-state:static;
-}
 .a{
 	hitbox-size:15;
 	init-state:nonstatic;
-	allow-state-change: false;
-	set-state:nonstatic;
+	accelerate-y:1;
+	max-speed-y:1;
 }
 .a:preview{
 	hitbox-size:32;
 }
 y{
-	hitbox-height:62;
+	hitbox-height:64;
 }
 .a:standing-on-down{
 	
 }
-x:standing-on-up{
-	set-state:nonstatic;
-}
 ]]></styles>
-<levelcode><![CDATA[x
-	x x yy.a
- xx
-x=5; =3;x=5;
-	=4;x
+<levelcode><![CDATA[
 =5;x
+	x x yy.a  #	x=86;
+ xx =11;x=86;
+x=5; =3;x=5; x=86;
+	=4;x=84;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
+x=100;
 ]]></levelcode>
 </level>

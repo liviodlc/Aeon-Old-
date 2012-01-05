@@ -277,13 +277,10 @@ package org.interguild.levels {
 				quit();
 
 			// if while playing or after winning, player wants to restart, restart level
-			if (!_state.getPreview() && _keys.isActionDown(KeyMan.RESTART, true))
+			if (!_state.getPreview() && _keys.isActionDown(KeyMan.RESTART, true)){
+				timer.stop();
 				lvl.restart();
-
-			//tests:
-			if (_keys.isActionDown(KeyMan.JUMP, true)) {
-				trace("gameloop: " + timer.currentCount);
-				trace("LevelArea x: " + lvl.x + " y: " + lvl.y + " w: " + lvl.width + " h: " + lvl.height);
+				timer.start();
 			}
 		}
 

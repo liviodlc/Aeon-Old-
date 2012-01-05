@@ -3,14 +3,14 @@ package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
-
+	
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.ui.Keyboard;
 	import flash.utils.Timer;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.assets.DrawingBuilder;
@@ -258,9 +258,10 @@ package org.interguild.levels {
 			initLevel(xml.level);
 			initKeys();
 			initStylesMap();
+			level.levelArea.behaviors = stylesMap.behaviors;
 
 			builder = new Timer(0);
-			builder.addEventListener(TimerEvent.TIMER, onLevelBuild, false, 0, true);
+			builder.addEventListener(TimerEvent.TIMER, onLevelBuild);
 			code = String(xml.levelcode);
 			n = code.length;
 			markerX = 0;
@@ -390,7 +391,7 @@ package org.interguild.levels {
 		 * to parse is determined by CHARS_TO_READ_PER_TICK.
 		 */
 		private function onLevelBuild(evt:TimerEvent):void {
-			var percent:uint = i / n;
+			var percent:uint = Number(i / n) * 100;
 			gamepage.loadingText = "Building Level: " + percent + "%";
 			var j:uint = i + CHARS_TO_READ_PER_TICK;
 			while (i < n && i < j) {

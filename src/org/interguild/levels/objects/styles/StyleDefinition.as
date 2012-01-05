@@ -1,4 +1,5 @@
 package org.interguild.levels.objects.styles {
+	import org.interguild.levels.objects.Behavior;
 	import org.interguild.utils.Comparable;
 	import org.interguild.utils.LinkedList;
 

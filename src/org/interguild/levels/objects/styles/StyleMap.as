@@ -1,6 +1,8 @@
 package org.interguild.levels.objects.styles {
 	import org.interguild.levels.Level;
+	import org.interguild.levels.objects.Behavior;
 	import org.interguild.levels.objects.GameObjectDefinition;
+	import org.interguild.levels.objects.PlayerBehavior;
 	import org.interguild.utils.LinkedList;
 
 	/**
@@ -10,6 +12,7 @@ package org.interguild.levels.objects.styles {
 	public class StyleMap extends Object {
 
 		private var stylesMap:Object;
+		private var behaviorsMap:Object;
 		private var level:Level;
 
 
@@ -26,6 +29,8 @@ package org.interguild.levels.objects.styles {
 			level = lvl;
 			// initialize array:
 			stylesMap = new Object();
+			behaviorsMap = new Object();
+			behaviorsMap["player"] = new PlayerBehavior(lvl.keys);
 //			stylesMap["level"] = new GameObjectDefinition(id, editorIcon);
 //			stylesMap["global"] = new GameObjectDefinition(id, editorIcon);
 
@@ -93,7 +98,7 @@ package org.interguild.levels.objects.styles {
 					case " ":
 						level.addError("You are not allowed to use the space character as an object type ID. This is a reserved character used to mark an empty tile in the level code.");
 					default:
-						addTypeID(id, String(xml.@editorIcon), String(xml.@inheritsFrom));
+						addTypeID(id, String(xml.@editorIcon), String(xml.@inheritsFrom), String(xml.@behavior));
 						break;
 				}
 			} else {
@@ -106,13 +111,13 @@ package org.interguild.levels.objects.styles {
 				else if (secondChar == "." || secondChar == ";" || secondChar == "=")
 					level.addError("You are not allowed to use invalid characters such as '=', '.', or ';' in your object type IDs.");
 				else {
-					addTypeID(id, String(xml.@editorIcon), String(xml.@inheritsFrom));
+					addTypeID(id, String(xml.@editorIcon), String(xml.@inheritsFrom), String(xml.@behavior));
 				}
 			}
 		}
 
 
-		private function addTypeID(id:String, editorIcon:String, ancestor:String):void {
+		private function addTypeID(id:String, editorIcon:String, ancestor:String, behavior:String):void {
 			if (stylesMap[id] is GameObjectDefinition) {
 				level.addError("You attempted to define the object type ID '" + id + "' more than once.");
 			} else {
@@ -122,7 +127,13 @@ package org.interguild.levels.objects.styles {
 					if (god2 == null)
 						level.addError("Object type ID '" + id + "' cannot inherit the styles of an invalid type ID: '" + ancestor + "'. If this is a valid ID, make sure to define '" + id + "' after '" + ancestor + "'");
 				}
-				stylesMap[id] = new GameObjectDefinition(id, editorIcon, god2);
+				var beh:Behavior = null;
+				if (behavior.length > 0) {
+					beh = behaviorsMap[behavior];
+					if (beh == null)
+						level.addError("Object type ID '" + id + "' cannot be assigned to an invalid Behavior ID: '" + ancestor + "'.");
+				}
+				stylesMap[id] = new GameObjectDefinition(id, editorIcon, god2, beh);
 //				trace("Added ID '" + id + "'");
 			}
 		}
@@ -143,6 +154,10 @@ package org.interguild.levels.objects.styles {
 		 */
 		public function get(id:String):GameObjectDefinition {
 			return stylesMap[id];
+		}
+		
+		public function get behaviors():Object{
+			return behaviorsMap;
 		}
 	}
 }

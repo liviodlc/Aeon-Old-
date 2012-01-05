@@ -67,22 +67,19 @@ package org.interguild.levels.objects {
 		public function detectCollisions(obj1:GameObject):void {
 			var obj2:GameObject;
 			staticObjects.beginIteration();
+			obj1.tested = true;
 			while (staticObjects.hasNext()) {
 				obj2 = GameObject(staticObjects.next);
 				if (!obj2.tested) {
-					if (obj2 == obj1)
-						new Error("What is a dynamic GameObject doing in my staticObjects list?");
 					obj1.addResolution(new CollisionResolution(obj1, obj2));
-					obj1.tested = true;
 				}
 			}
 			
 			dynamicObjects.beginIteration();
 			while (dynamicObjects.hasNext()) {
 				obj2 = GameObject(dynamicObjects.next);
-				if (!obj2.tested && obj2 != obj1) {
+				if (!obj2.tested) {
 					obj1.addResolution(new CollisionResolution(obj1, obj2));
-					obj1.tested = true;
 				}
 			}
 		}

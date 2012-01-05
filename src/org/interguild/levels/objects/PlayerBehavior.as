@@ -16,14 +16,21 @@ package org.interguild.levels.objects {
 			list.beginIteration();
 			while (list.hasNext()) {
 				var o:GameObject = list.next as GameObject;
-				if (keyMan.isActionDown(KeyMan.RIGHT))
-					o.normalTriggers.setMoveRight();
-				if (keyMan.isActionDown(KeyMan.RIGHT))
-					o.normalTriggers.setMoveRight();
-				if (keyMan.isActionDown(KeyMan.DOWN))
-					o.normalTriggers.setMoveDown();
-				if (keyMan.isActionDown(KeyMan.UP))
-					o.normalTriggers.setMoveUp();
+				o.normalTriggers.setMoveRight(keyMan.isActionDown(KeyMan.RIGHT));
+				o.normalTriggers.setMoveLeft(keyMan.isActionDown(KeyMan.LEFT));
+				o.normalTriggers.setMoveDown(keyMan.isActionDown(KeyMan.DOWN));
+				o.normalTriggers.setMoveUp(keyMan.isActionDown(KeyMan.UP));
+				if (o.canJump && keyMan.isActionDown(KeyMan.JUMP, true) && (o.jumpLimit == 0 || o.numJumps < o.jumpLimit)) {
+					o.normalTriggers.setJumping();
+					if (!o.normalTriggers.getStandingDown())
+						o.numJumps++;
+					else
+						o.numJumps = 0;
+				} else {
+					o.normalTriggers.setJumping(false);
+					if (o.normalTriggers.getStandingDown())
+						o.numJumps = 0;
+				}
 			}
 		}
 	}

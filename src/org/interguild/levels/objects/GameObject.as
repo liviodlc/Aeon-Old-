@@ -48,17 +48,21 @@ package org.interguild.levels.objects {
 		internal var newY:Number = 0;
 		internal var currentSpeedX:Number = 0;
 		internal var currentSpeedY:Number = 0;
-		private var maxSpeedX:Number = 0;
-		private var maxSpeedY:Number = 0;
+		private var maxSpeed:Array;
+		private var friction:Array;
 		private var accX:Number = 0;
 		private var accY:Number = 0;
+		internal var canJump:Boolean;
+		internal var jumpLimit:int;
+		internal var numJumps:int;
+		internal var isLadderUser:Boolean;
 
 		private var collBox:Rectangle;
 		private var oldCollBox:Rectangle;
 		internal var collEdgesSolidity:Array;
+
 		internal var standingNums:Array;
 		private var dynStandingList:LinkedList;
-		internal var isLadderUser:Boolean;
 
 		private var _static:Boolean;
 		internal var allowStateChange:Boolean;
@@ -92,11 +96,13 @@ package org.interguild.levels.objects {
 			collBox = new Rectangle(0, 0, 31, 31);
 			collEdgesSolidity = [0, 0, 0, 0];
 			standingNums = [0, 0, 0, 0];
+			maxSpeed = [0, 0, 0, 0];
+			friction = [0, 0, 0, 0];
 			allowStateChange = true;
-			accY = 1;
-			maxSpeedY = 100;
 
 			def = god;
+			if (def.behavior != null)
+				def.behavior.add(this);
 		}
 
 
@@ -144,30 +150,56 @@ package org.interguild.levels.objects {
 			newX = x;
 			newY = y;
 
-			// increment speeds
-			if (currentSpeedX < maxSpeedX && currentSpeedX > -maxSpeedX) {
+			// update horizontal speed
+			if (accX == 0) { // if not accelerating, then decelerate
+				if (currentSpeedX > 0) {
+					currentSpeedX += friction[RIGHT];
+					if (currentSpeedX < 0)
+						currentSpeedX = 0;
+				} else if (currentSpeedX < 0) {
+					currentSpeedX += friction[LEFT];
+					if (currentSpeedX > 0)
+						currentSpeedX = 0;
+				}
+			} else { // else, accelerate
 				currentSpeedX += accX;
-				if (currentSpeedX > maxSpeedX || currentSpeedX < -maxSpeedX) {
-					currentSpeedX = maxSpeedX;
-				}
 			}
-			if (currentSpeedY < maxSpeedY && currentSpeedY > -maxSpeedY) {
+			// update vertical speed
+			if (accY == 0) { // if not accelerating, then decelerate
+				if (currentSpeedY > 0) {
+					currentSpeedY += friction[DOWN];
+					if (currentSpeedY < 0)
+						currentSpeedY = 0;
+				} else if (currentSpeedY < 0) {
+					currentSpeedY += friction[UP];
+					if (currentSpeedY > 0)
+						currentSpeedY = 0;
+				}
+			} else { // else, accelerate
 				currentSpeedY += accY;
-				if (currentSpeedY > maxSpeedY || currentSpeedY < -maxSpeedY) {
-					currentSpeedY = maxSpeedY;
-				}
 			}
+
+			// check horizontal max speeds
+			if (maxSpeed[RIGHT] != 0 && currentSpeedX > 0 && currentSpeedX > maxSpeed[RIGHT])
+				currentSpeedX = maxSpeed[RIGHT];
+			else if (maxSpeed[LEFT] != 0 && currentSpeedX < 0 && currentSpeedX < maxSpeed[LEFT])
+				currentSpeedX = maxSpeed[LEFT];
+			// check vertical max speeds
+			if (maxSpeed[DOWN] != 0 && currentSpeedY > maxSpeed[DOWN])
+				currentSpeedY = maxSpeed[DOWN];
+			else if (maxSpeed[UP] != 0 && currentSpeedY < maxSpeed[UP])
+				currentSpeedY = maxSpeed[UP];
 
 			// update positions
 			newX += currentSpeedX;
 			newY += currentSpeedY;
 		}
-		
-		
+
+
 		/**
 		 * This is called by LevelArea, when any state changes have been confirmed.
 		 */
-		public function resetSpeed():void{
+		public function resetSpeed():void {
 			currentSpeedX = currentSpeedY = 0;
 		}
 
@@ -402,12 +434,56 @@ package org.interguild.levels.objects {
 				case "hitbox-offset-y":
 					collBox.y = Number(val);
 					break;
+				case "accelerate-x":
+					accX = Number(val);
+					break;
+				case "accelerate-y":
+					accY = Number(val);
+					break;
+				case "max-speed":
+					maxSpeed[RIGHT] = maxSpeed[DOWN] = Number(val);
+					maxSpeed[UP] = maxSpeed[LEFT] = -maxSpeed[RIGHT];
+					break;
+				case "max-speed-up":
+					maxSpeed[UP] = Number(val);
+					break;
+				case "max-speed-down":
+					maxSpeed[DOWN] = Number(val);
+					break;
+				case "max-speed-right":
+					maxSpeed[RIGHT] = Number(val);
+					break;
+				case "max-speed-left":
+					maxSpeed[LEFT] = Number(val);
+					break;
+				case "friction":
+					friction[UP] = friction[LEFT] = Number(val);
+					friction[RIGHT] = friction[DOWN] = -friction[UP];
+					break;
+				case "friction-right":
+					friction[RIGHT] = Number(val);
+					break;
+				case "friction-left":
+					friction[LEFT] = Number(val);
+					break;
+				case "friction-up":
+					friction[UP] = Number(val);
+					break;
+				case "friction-down":
+					friction[DOWN] = Number(val);
+					break;
 				case 'init-state':
 					if (!stylesInitialized)
 						isStatic = val;
 					break;
 				case 'set-state':
 					isStatic = val;
+					break;
+				case "set-speed-x":
+					currentSpeedX = Number(val);
+					break;
+				case "set-speed-y":
+					currentSpeedY = Number(val);
 					break;
 				case 'allow-state-change':
 					allowStateChange = val;
@@ -433,6 +509,12 @@ package org.interguild.levels.objects {
 				case "coll-edge-left-solidity":
 					collEdgesSolidity[3] = val;
 					break;
+				case "allow-jump":
+					canJump = val;
+					break;
+				case "mid-air-jump-limit":
+					jumpLimit = Number(val);
+					break;
 			}
 		}
 
@@ -441,10 +523,10 @@ package org.interguild.levels.objects {
 
 
 		private function TESTdrawBox():void {
-			if (normalTriggers.getMoveRight())
-				color = 0xCC0000; // TESTING
-			else
-				color = 0x00CC00;
+//			if (this.normalTriggers.getJumping() != 0)
+//				color = 0xCC0000; // TESTING
+//			else
+//				color = 0x00CC00;
 
 			// for testing purposes:
 			graphics.clear();
@@ -511,6 +593,11 @@ package org.interguild.levels.objects {
 				res += GameObjectDefinition(classes.next).id;
 			}
 			return res + "[x:" + x + " y:" + y + "]";
+		}
+
+
+		public function get aa_id():String {
+			return toString();
 		}
 	}
 }

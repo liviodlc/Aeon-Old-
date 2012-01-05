@@ -90,7 +90,6 @@ package org.interguild.levels.objects {
 							obj1.addtoStandingList(obj2, GameObject.UP);
 						obj1.newY += curBox2.top - curBox1.bottom;
 						obj1.currentSpeedY = 0;
-						obj1.currentSpeedX = 0;
 					}
 					/*
 					TODO check whether obj2 is static or dynamic

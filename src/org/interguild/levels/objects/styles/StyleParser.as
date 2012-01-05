@@ -239,6 +239,9 @@ package org.interguild.levels.objects.styles {
 							case "crawling":
 								result.setCrawling();
 								break;
+							case "jumping":
+								result.setJumping();
+								break;
 							case "preview":
 								result.setPreview();
 								break;
@@ -262,25 +265,88 @@ package org.interguild.levels.objects.styles {
 		private function parseRule(prop:String, val:String, map:Object):void {
 			var a:Array, un:uint;
 			switch (prop) {
-				case "hitbox-width":
-					map[prop] = checkNum(val);
-					break;
-				case "hitbox-height":
-					map[prop] = checkNum(val);
-					break;
 				case "hitbox-size":
 					a = check2Nums(val);
 					map["hitbox-width"] = a[0];
 					map["hitbox-height"] = a[1];
 					break;
-				case "hitbox-offset-x":
-				case "hitbox-offset-y":
-					map[prop] = checkNum(val);
-					break;
 				case "hitbox-offset":
 					a = check2Nums(val);
 					map["hitbox-offset-x"] = a[0];
 					map["hitbox-offset-y"] = a[1];
+					break;
+				case "accelerate":
+					a = check2Nums(val);
+					map["accelerate-x"] = a[0];
+					map["accelerate-y"] = a[1];
+					break;
+				case "set-speed":
+					a = check2Nums(val);
+					map["set-speed-x"] = a[0];
+					map["set-speed-y"] = a[1];
+					break;
+				case "max-speed-left":
+				case "max-speed-up":
+				case "friction-right":
+				case "friction-down":
+					map[prop] = -checkNum(val);
+					break;
+				case "friction-up":
+				case "friction-left":
+				case "max-speed-right":
+				case "max-speed-down":
+				case "hitbox-offset-x":
+				case "hitbox-offset-y":
+				case "hitbox-width":
+				case "hitbox-height":
+				case "accelerate-x":
+				case "accelerate-y":
+				case "set-speed-y":
+				case "set-speed-x":
+				case "mid-air-jump-limit":
+					map[prop] = checkNum(val);
+					break;
+				case "max-speed-x":
+					a = check2Nums(val);
+					map["max-speed-left"] = -a[0];
+					map["max-speed-right"] = a[1];
+					break;
+				case "max-speed-y":
+					a = check2Nums(val);
+					map["max-speed-up"] = -a[0];
+					map["max-speed-down"] = a[1];
+					break;
+				case "max-speed":
+					a = check4Nums(val);
+					if (a.length == 1)
+						map[prop] = a[0];
+					else {
+						map["max-speed-up"] = -a[0];
+						map["max-speed-right"] = a[1];
+						map["max-speed-down"] = a[2];
+						map["max-speed-left"] = -a[3];
+					}
+					break;
+				case "friction-x":
+					a = check2Nums(val);
+					map["friction-left"] = a[0];
+					map["friction-right"] = -a[1];
+					break;
+				case "friction-y":
+					a = check2Nums(val);
+					map["friction-up"] = a[0];
+					map["friction-down"] = -a[1];
+					break;
+				case "friction":
+					a = check4Nums(val);
+					if (a.length == 1)
+						map[prop] = a[0];
+					else {
+						map["friction-up"] = a[0];
+						map["friction-right"] = -a[1];
+						map["friction-down"] = -a[2];
+						map["friction-left"] = a[3];
+					}
 					break;
 				case "init-state":
 				case "set-state":
@@ -293,10 +359,14 @@ package org.interguild.levels.objects.styles {
 					break;
 				case "allow-state-change":
 				case "allow-collisions":
+				case "allow-jump":
 				case "can-use-ladder":
-					if (checkTrueFalse(prop, val))
-						map[prop] = getTrueFalse(val);
-					trace(prop + " " + map[prop]);
+					if (val != "true" && val != "false")
+						level.addError(syntaxError(i) + "The only valid values for the '" + prop + "' property are 'true' or 'false'.");
+					else if (val == "true")
+						map[prop] = true;
+					else
+						map[prop] = false;
 					break;
 				case "coll-edge-top-solidity":
 				case "coll-edge-right-solidity":
@@ -323,22 +393,6 @@ package org.interguild.levels.objects.styles {
 					level.addError(syntaxError(i) + "Invalid property: '" + prop + "'");
 					break;
 			}
-		}
-
-
-		private function checkTrueFalse(prop:String, val:String):Boolean {
-			if (val != "true" && val != "false") {
-				level.addError(syntaxError(i) + "The only valid values for the '" + prop + "' property are 'true' or 'false'.");
-				return false;
-			}
-			return true;
-		}
-
-
-		private function getTrueFalse(s:String):Boolean {
-			if (s == "true")
-				return true;
-			return false;
 		}
 
 
@@ -378,6 +432,32 @@ package org.interguild.levels.objects.styles {
 					a[1] = 1;
 				else
 					a[1] = 0;
+
+			return a;
+		}
+
+
+		/**
+		 * Returns an array of 4 parsed numbers. If all numbers are the same, the
+		 * resulting array may only be of size 1.
+		 */
+		private function check4Nums(s:String, notZero:Boolean = false):Array {
+			var a:Array = s.split(" ", 4);
+
+			if (a.length == 1) {
+				a[0] = checkNum(a[0]);
+				return [a[0]];
+			} else if (a.length == 2) {
+				a[0] = a[2] = checkNum(a[0]);
+				a[1] = a[3] = checkNum(a[1]);
+				return a;
+			} else {
+				a[0] = checkNum(a[0]);
+				a[1] = checkNum(a[1]);
+				a[2] = checkNum(a[2]);
+				a[3] = checkNum(a[3]);
+				return a;
+			}
 
 			return a;
 		}

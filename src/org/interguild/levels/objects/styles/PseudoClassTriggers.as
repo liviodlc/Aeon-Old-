@@ -6,7 +6,7 @@ package org.interguild.levels.objects.styles {
 	public class PseudoClassTriggers implements TriggerTracker {
 
 		private var global:uint = 0; // 4 bits
-		private var triggers:uint = 0; // 16 bits
+		private var triggers:uint = 0; // 17 bits
 		private var test1:uint;
 		private var test2:uint;
 		private var b:uint = 0;
@@ -150,13 +150,30 @@ package org.interguild.levels.objects.styles {
 		public function getCrawling():Boolean {
 			return get(2);
 		}
+		
+		
+		/**
+		 * x:jumping
+		 */
+		public function setJumping(on:Boolean = true):void {
+			set(3, on);
+			c++;
+		}
+		
+		
+		/**
+		 * x:jumping
+		 */
+		public function getJumping():Boolean {
+			return get(3);
+		}
 
 
 		/**
 		 * x:standing-on-down
 		 */
 		public function setStandingDown(on:Boolean = true):void {
-			set(3, on);
+			set(4, on);
 			c++;
 		}
 
@@ -165,7 +182,7 @@ package org.interguild.levels.objects.styles {
 		 * x:standing-on-down
 		 */
 		public function getStandingDown():Boolean {
-			return get(3);
+			return get(4);
 		}
 
 
@@ -173,7 +190,7 @@ package org.interguild.levels.objects.styles {
 		 * x:standing-on-up
 		 */
 		public function setStandingUp(on:Boolean = true):void {
-			set(4, on);
+			set(5, on);
 			c++;
 		}
 
@@ -182,7 +199,7 @@ package org.interguild.levels.objects.styles {
 		 * x:standing-on-up
 		 */
 		public function getStandingUp():Boolean {
-			return get(4);
+			return get(5);
 		}
 
 
@@ -190,7 +207,7 @@ package org.interguild.levels.objects.styles {
 		 * x:standing-on-right
 		 */
 		public function setStandingRight(on:Boolean = true):void {
-			set(5, on);
+			set(6, on);
 			c++;
 		}
 
@@ -199,7 +216,7 @@ package org.interguild.levels.objects.styles {
 		 * x:standing-on-right
 		 */
 		public function getStandingRight():Boolean {
-			return get(5);
+			return get(6);
 		}
 
 
@@ -207,7 +224,7 @@ package org.interguild.levels.objects.styles {
 		 * x:standing-on-left
 		 */
 		public function setStandingLeft(on:Boolean = true):void {
-			set(6, on);
+			set(7, on);
 			c++;
 		}
 
@@ -216,7 +233,7 @@ package org.interguild.levels.objects.styles {
 		 * x:standing-on-left
 		 */
 		public function getStandingLeft():Boolean {
-			return get(6);
+			return get(7);
 		}
 
 
@@ -224,9 +241,9 @@ package org.interguild.levels.objects.styles {
 		 * x:left
 		 */
 		public function setMoveLeft(on:Boolean = true, updating:Boolean = true):void {
-			set(7, on);
+			set(8, on);
 			if (updating)
-				set(12);
+				set(13);
 			c++;
 		}
 
@@ -235,7 +252,7 @@ package org.interguild.levels.objects.styles {
 		 * x:left
 		 */
 		public function getMoveLeft():Boolean {
-			return get(7);
+			return get(8);
 		}
 
 
@@ -243,9 +260,9 @@ package org.interguild.levels.objects.styles {
 		 * x:right
 		 */
 		public function setMoveRight(on:Boolean = true, updating:Boolean = true):void {
-			set(8, on);
+			set(9, on);
 			if (updating)
-				set(12, false);
+				set(13, false);
 			c++;
 		}
 
@@ -254,7 +271,7 @@ package org.interguild.levels.objects.styles {
 		 * x:right
 		 */
 		public function getMoveRight():Boolean {
-			return get(8);
+			return get(9);
 		}
 
 
@@ -262,9 +279,9 @@ package org.interguild.levels.objects.styles {
 		 * x:up
 		 */
 		public function setMoveUp(on:Boolean = true, updating:Boolean = true):void {
-			set(9, on);
+			set(10, on);
 			if (updating)
-				set(11);
+				set(12);
 			c++;
 		}
 
@@ -273,7 +290,7 @@ package org.interguild.levels.objects.styles {
 		 * x:up
 		 */
 		public function getMoveUp():Boolean {
-			return get(9);
+			return get(10);
 		}
 
 
@@ -281,9 +298,9 @@ package org.interguild.levels.objects.styles {
 		 * x:down
 		 */
 		public function setMoveDown(on:Boolean = true, updating:Boolean = true):void {
-			set(10, on);
+			set(11, on);
 			if (updating)
-				set(11, false);
+				set(12, false);
 			c++;
 		}
 
@@ -292,7 +309,7 @@ package org.interguild.levels.objects.styles {
 		 * x:down
 		 */
 		public function getMoveDown():Boolean {
-			return get(10);
+			return get(11);
 		}
 
 
@@ -300,7 +317,7 @@ package org.interguild.levels.objects.styles {
 		 * x:face-down
 		 */
 		public function setFaceDown(on:Boolean = true):void {
-			set(11, !on);
+			set(12, !on);
 			c++;
 		}
 
@@ -309,7 +326,7 @@ package org.interguild.levels.objects.styles {
 		 * x:face-down
 		 */
 		public function getFaceDown():Boolean {
-			return !get(11);
+			return !get(12);
 		}
 
 
@@ -317,23 +334,6 @@ package org.interguild.levels.objects.styles {
 		 * x:face-down
 		 */
 		public function setFaceUp(on:Boolean = true):void {
-			set(11, on);
-			c++;
-		}
-
-
-		/**
-		 * x:face-up
-		 */
-		public function getFaceUp():Boolean {
-			return get(11);
-		}
-
-
-		/**
-		 * x:face-down
-		 */
-		public function setFaceLeft(on:Boolean = true):void {
 			set(12, on);
 			c++;
 		}
@@ -342,7 +342,7 @@ package org.interguild.levels.objects.styles {
 		/**
 		 * x:face-up
 		 */
-		public function getFaceLeft():Boolean {
+		public function getFaceUp():Boolean {
 			return get(12);
 		}
 
@@ -350,8 +350,25 @@ package org.interguild.levels.objects.styles {
 		/**
 		 * x:face-down
 		 */
+		public function setFaceLeft(on:Boolean = true):void {
+			set(13, on);
+			c++;
+		}
+
+
+		/**
+		 * x:face-up
+		 */
+		public function getFaceLeft():Boolean {
+			return get(13);
+		}
+
+
+		/**
+		 * x:face-down
+		 */
 		public function setFaceRight(on:Boolean = true):void {
-			set(12, !on);
+			set(13, !on);
 			c++;
 		}
 
@@ -360,7 +377,7 @@ package org.interguild.levels.objects.styles {
 		* x:face-up
 		*/
 		public function getFaceRight():Boolean {
-			return !get(12);
+			return !get(13);
 		}
 
 
@@ -368,7 +385,7 @@ package org.interguild.levels.objects.styles {
 		 * x:static
 		 */
 		public function setStatic(on:Boolean = true):void {
-			set(13, on);
+			set(14, on);
 			b++;
 		}
 
@@ -377,7 +394,7 @@ package org.interguild.levels.objects.styles {
 		 * x:static
 		 */
 		public function getStatic():Boolean {
-			return get(13);
+			return get(14);
 		}
 
 
@@ -385,7 +402,7 @@ package org.interguild.levels.objects.styles {
 		 * x:nonstatic
 		 */
 		public function setNonstatic(on:Boolean = true):void {
-			set(14, on);
+			set(15, on);
 			b++;
 		}
 
@@ -394,7 +411,7 @@ package org.interguild.levels.objects.styles {
 		 * x:nonstatic
 		 */
 		public function getNonstatic():Boolean {
-			return get(14);
+			return get(15);
 		}
 
 
@@ -402,7 +419,7 @@ package org.interguild.levels.objects.styles {
 		 * x:destroyed
 		 */
 		public function setDestroyed(on:Boolean = true):void {
-			set(15, on);
+			set(16, on);
 			b++;
 		}
 
@@ -411,7 +428,7 @@ package org.interguild.levels.objects.styles {
 		 * x:destroyed
 		 */
 		public function getDestroyed():Boolean {
-			return get(15);
+			return get(16);
 		}
 
 
