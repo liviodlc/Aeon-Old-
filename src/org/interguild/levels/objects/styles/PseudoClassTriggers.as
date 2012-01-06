@@ -5,10 +5,12 @@ package org.interguild.levels.objects.styles {
 	 */
 	public class PseudoClassTriggers implements TriggerTracker {
 
-		private var global:uint = 0; // 4 bits
-		private var triggers:uint = 0; // 17 bits
+		public var globalTriggers:uint = 0; // 4 bits
+		public var normalTriggers:uint = 0; // 17 bits
 		private var test1:uint;
 		private var test2:uint;
+		private var test1Tracker:uint = 0;
+		private var test2Tracker:uint = 0;
 		private var b:uint = 0;
 		private var c:uint = 0;
 
@@ -22,41 +24,41 @@ package org.interguild.levels.objects.styles {
 		 * Returns true if 'this' has the same conditions as 'other'.
 		 */
 		public function equals(other:PseudoClassTriggers):Boolean {
-			return (this.global == other.global && this.triggers == other.triggers);
+			return (this.globalTriggers == other.globalTriggers && this.normalTriggers == other.normalTriggers);
 		}
 
 
 		private function set(bit:uint, on:Boolean = true):void {
 			var u:uint = 0x1 << bit;
 			if (on) {
-				triggers = triggers | u;
+				normalTriggers = normalTriggers | u;
 			} else {
 				u = ~u;
-				triggers = triggers & u;
+				normalTriggers = normalTriggers & u;
 			}
 		}
 
 
 		private function get(bit:uint):Boolean {
 			var u:uint = 0x1 << bit;
-			return ((triggers & u) != 0);
+			return ((normalTriggers & u) != 0);
 		}
 
 
 		private function set2(bit:uint, on:Boolean = true):void {
 			var u:uint = 0x1 << bit;
 			if (on) {
-				global = global | u;
+				globalTriggers = globalTriggers | u;
 			} else {
 				u = ~u;
-				global = global & u;
+				globalTriggers = globalTriggers & u;
 			}
 		}
 
 
 		private function get2(bit:uint):Boolean {
 			var u:uint = 0x1 << bit;
-			return ((global & u) != 0);
+			return ((globalTriggers & u) != 0);
 		}
 
 
@@ -66,8 +68,8 @@ package org.interguild.levels.objects.styles {
 		 * stored by a StyleDefinition.
 		 */
 		public function update():void {
-			test1 = triggers;
-			test2 = global;
+			test1 = normalTriggers;
+			test2 = globalTriggers;
 			b = c = 0; //don't let these numbers get too big.
 		}
 
@@ -75,9 +77,17 @@ package org.interguild.levels.objects.styles {
 		/**
 		 * Returns true if any of these triggers have changed since the last call
 		 * to reset(). Returns false otherwise.
+		 * 
+		 * @param strict:Boolean Set to true to check changes in all the triggers.
+		 * Set to false if you only want to check the tirggers that the tile cares
+		 * about.
 		 */
-		public function hasChanged():Boolean {
-			return (test1 != triggers || test2 != global);
+		public function hasChanged(strict:Boolean = false):Boolean {
+			if (strict)
+				return (test1 != normalTriggers || test2 != globalTriggers);
+			else
+				return ((test1 & test1Tracker) != (normalTriggers & test1Tracker) || (test2 & test1Tracker) != (globalTriggers & test2Tracker));
+
 		}
 
 
@@ -150,8 +160,8 @@ package org.interguild.levels.objects.styles {
 		public function getCrawling():Boolean {
 			return get(2);
 		}
-		
-		
+
+
 		/**
 		 * x:jumping
 		 */
@@ -159,8 +169,8 @@ package org.interguild.levels.objects.styles {
 			set(3, on);
 			c++;
 		}
-		
-		
+
+
 		/**
 		 * x:jumping
 		 */
@@ -507,7 +517,7 @@ package org.interguild.levels.objects.styles {
 		 * compare it with.
 		 */
 		public function isStyleActiveNormal(style:PseudoClassTriggers):Boolean {
-			return (style.triggers == 0 || (style.triggers & this.triggers) == style.triggers);
+			return (style.normalTriggers == 0 || (style.normalTriggers & this.normalTriggers) == style.normalTriggers);
 		}
 
 
@@ -517,7 +527,16 @@ package org.interguild.levels.objects.styles {
 		 * compare it with.
 		 */
 		public function isStyleActiveGlobal(style:PseudoClassTriggers):Boolean {
-			return (style.global == 0 || style.global == this.global);
+			return (style.globalTriggers == 0 || style.globalTriggers == this.globalTriggers);
+		}
+
+
+		/**
+		 * Tells this instance to only track changes in the active triggers in the input oject.
+		 */
+		public function track(other:PseudoClassTriggers):void {
+			test1Tracker = test1Tracker | other.normalTriggers;
+			test2Tracker = test2Tracker | other.globalTriggers;
 		}
 
 

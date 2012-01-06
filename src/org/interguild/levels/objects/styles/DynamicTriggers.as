@@ -32,8 +32,12 @@ package org.interguild.levels.objects.styles {
 		/**
 		 * Returns true if any of these triggers have changed since the last call
 		 * to reset(). Returns false otherwise.
+		 * 
+		 * @param strict:Boolean Set to true to check changes in all the triggers.
+		 * Set to false if you only want to check the tirggers that the tile cares
+		 * about.
 		 */
-		public function hasChanged():Boolean {
+		public function hasChanged(strict:Boolean = false):Boolean {
 			//TODO implement function
 			return false;
 		}

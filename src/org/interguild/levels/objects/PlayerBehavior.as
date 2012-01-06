@@ -20,12 +20,14 @@ package org.interguild.levels.objects {
 				o.normalTriggers.setMoveLeft(keyMan.isActionDown(KeyMan.LEFT));
 				o.normalTriggers.setMoveDown(keyMan.isActionDown(KeyMan.DOWN));
 				o.normalTriggers.setMoveUp(keyMan.isActionDown(KeyMan.UP));
-				if (o.canJump && keyMan.isActionDown(KeyMan.JUMP, true) && (o.jumpLimit == 0 || o.numJumps < o.jumpLimit)) {
-					o.normalTriggers.setJumping();
-					if (!o.normalTriggers.getStandingDown())
-						o.numJumps++;
-					else
+				if (o.canJump && keyMan.isActionDown(KeyMan.JUMP, true)) {
+					if (o.normalTriggers.getStandingDown()) {
+						o.normalTriggers.setJumping();
 						o.numJumps = 0;
+					} else if (o.jumpLimit == -1 || o.numJumps < o.jumpLimit) {
+						o.normalTriggers.setJumping();
+						o.numJumps++;
+					}
 				} else {
 					o.normalTriggers.setJumping(false);
 					if (o.normalTriggers.getStandingDown())

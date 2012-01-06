@@ -4,16 +4,20 @@ package org.interguild.levels.hud {
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
+	import flash.utils.getTimer;
 	
 	import org.interguild.Aeon;
 	import org.interguild.levels.Level;
-	import org.interguild.levels.LevelHUD;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 
 	public class DefaultHUD extends LevelHUD {
 
 		private var titleText:TextField;
 		private var toStart:TextField;
+		
+		private var text:TextField;
+		private var last:uint;
+		private var data:Array;
 
 
 		public function DefaultHUD(levelstate:PseudoClassTriggers, title:String) {
@@ -21,6 +25,8 @@ package org.interguild.levels.hud {
 
 			initTitle(title);
 			initJumpToStart();
+			initText();
+			data = [];
 		}
 
 
@@ -48,7 +54,6 @@ package org.interguild.levels.hud {
 				backgroundColor = 0x000000;
 				selectable = true;
 				x = 0;
-				alpha = .75;
 			}
 			page_start.addChild(titleText);
 		}
@@ -73,10 +78,51 @@ package org.interguild.levels.hud {
 			}
 			page_start.addChild(toStart);
 		}
+		
+		private function initText():void{
+			var format:TextFormat = new TextFormat("Arial", 30, 0xFFFFFF);
+			text = new TextField();
+			format.align = TextFormatAlign.LEFT;
+			with (text) {
+				wordWrap = false;
+				multiline = true;
+				autoSize = TextFieldAutoSize.LEFT;
+				defaultTextFormat = format;
+				text = "No\nData";
+				background = true;
+				backgroundColor = 0x0;
+				selectable = false;
+				x = 10;
+				y = theStage.stageHeight - height - 10;
+			}
+			this.addChild(text);
+		}
 
+		
 
 		public override function onLoadComplete():void {
 			toStart.visible = true;
+			data = [];
+		}
+		
+		public override function onGameLoop():void{
+			super.onGameLoop();
+			var cur:uint = getTimer();
+			var elapsed:uint = cur - last;
+			var n:uint = data.length;
+			if(n < 10){
+				data.push(elapsed);
+			}else{
+				var avg:Number = 0;
+				for(var i:uint = 0; i < n; i++){
+					avg += data[i]
+				}
+				avg = avg / n;
+				var fps:Number = Math.round(1 / (avg / 1000));
+				text.text = Math.round(avg) +" / 33 ms\n"+fps+" fps";
+				data = [];
+			}
+			last = cur;
 		}
 	}
 }

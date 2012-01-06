@@ -113,6 +113,27 @@ package org.interguild.utils {
 				}
 			}
 		}
+
+
+		/**
+		 * Returns a LinkedList that is an exact duplicate of this one.
+		 */
+		public function clone():LinkedList {
+			var result:LinkedList = new LinkedList();
+			var stack:LinkedList = new LinkedList();
+
+			this.beginIteration();
+			while (this.hasNext()) {
+				stack.add(this.next);
+			}
+
+			stack.beginIteration();
+			while (stack.hasNext()) {
+				result.add(stack.next);
+			}
+
+			return result;
+		}
 	}
 }
 

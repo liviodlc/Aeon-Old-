@@ -13,6 +13,6 @@ package org.interguild.levels.objects.styles {
 		 * Returns true if any of these triggers have changed since the last call
 		 * to reset(). Returns false otherwise.
 		 */
-		function hasChanged():Boolean;
+		function hasChanged(strict:Boolean = false):Boolean;
 	}
 }

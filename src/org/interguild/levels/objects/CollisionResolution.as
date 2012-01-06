@@ -77,7 +77,8 @@ package org.interguild.levels.objects {
 
 //				obj2.color = 0xCC0000; // TESTING
 				//collide on bottom
-				if (oldBox1.bottom <= oldBox2.top && curBox1.bottom > curBox2.top) {
+				var side:uint = getSide(curBox1, curBox2);
+				if (side == GameObject.DOWN) {
 					if (obj2.isStatic) {
 						if (obj1.allowStateChange)
 							obj1.isStatic = true;
@@ -91,12 +92,49 @@ package org.interguild.levels.objects {
 						obj1.newY += curBox2.top - curBox1.bottom;
 						obj1.currentSpeedY = 0;
 					}
-					/*
-					TODO check whether obj2 is static or dynamic
-						 set new positions
-					*/
+				} else if (side == GameObject.UP) {
+					if (obj2.isStatic) {
+						if (obj1.allowStateChange)
+							obj1.isStatic = true;
+						obj1.setStanding(GameObject.UP, obj1.isStatic);
+						obj2.setStanding(GameObject.DOWN, obj1.isStatic);
+						obj2.markToUpdate();
+						if (obj1.isStatic)
+							obj1.markToUpdate();
+						else
+							obj1.addtoStandingList(obj2, GameObject.DOWN);
+						obj1.newY += curBox2.bottom - curBox1.top;
+						obj1.currentSpeedY = 0;
+					}
+				} else if (side == GameObject.RIGHT) {
+					if (obj2.isStatic) {
+						if (obj1.allowStateChange)
+							obj1.isStatic = true;
+						obj1.setStanding(GameObject.RIGHT, obj1.isStatic);
+						obj2.setStanding(GameObject.LEFT, obj1.isStatic);
+						obj2.markToUpdate();
+						if (obj1.isStatic)
+							obj1.markToUpdate();
+						else
+							obj1.addtoStandingList(obj2, GameObject.LEFT);
+						obj1.newX += curBox2.left - curBox1.right;
+						obj1.currentSpeedX = 0;
+					}
+				} else if (side == GameObject.LEFT) {
+					if (obj2.isStatic) {
+						if (obj1.allowStateChange)
+							obj1.isStatic = true;
+						obj1.setStanding(GameObject.LEFT, obj1.isStatic);
+						obj2.setStanding(GameObject.RIGHT, obj1.isStatic);
+						obj2.markToUpdate();
+						if (obj1.isStatic)
+							obj1.markToUpdate();
+						else
+							obj1.addtoStandingList(obj2, GameObject.RIGHT);
+						obj1.newX += curBox2.right - curBox1.left;
+						obj1.currentSpeedX = 0;
+					}
 				}
-
 				if (!obj1.isStatic)
 					obj1.collidedWith(obj2);
 			} else if (wasValid()) { // would've been a valid collision
@@ -154,6 +192,79 @@ package org.interguild.levels.objects {
 			if (n1 < n2)
 				return n1;
 			return n2;
+		}
+
+
+		/**
+		 * Returns the direction in which obj1 has collided with obj2.
+		 * This function compares the object's previous position with
+		 * its most up-to-date position.
+		 *
+		 * Returns one of the directional values stored in GameObject's
+		 * static variable, or if no valid direction was dedected, zero
+		 * is returned.
+		 */
+		private function getSide(curBox1:Rectangle, curBox2:Rectangle):uint {
+			var bottom:Boolean = false;
+			var right:Boolean = false;
+			var left:Boolean = false;
+			var top:Boolean = false;
+			var y:Number;
+
+			// initial tests
+			if (oldBox1.bottom <= oldBox2.top && curBox1.bottom > curBox2.top)
+				bottom = true;
+			if (oldBox1.right <= oldBox2.left && curBox1.right > curBox2.left)
+				right = true;
+			if (oldBox1.left >= oldBox2.right && curBox1.left < curBox2.right)
+				left = true;
+			if (oldBox1.top >= oldBox2.bottom && curBox1.top < curBox2.bottom)
+				top = true;
+
+			// resolve inaccuracies
+			if (bottom) {
+				if (right) {
+					y = getYatIntersection(curBox1, curBox2, curBox2.left);
+					if (y <= curBox2.top)
+						return GameObject.DOWN;
+					else
+						return GameObject.RIGHT;
+				} else if (left) {
+					y = getYatIntersection(curBox1, curBox2, curBox2.right);
+					if (y <= curBox2.top)
+						return GameObject.DOWN;
+					else
+						return GameObject.LEFT;
+				} else {
+					return GameObject.DOWN;
+				}
+			} else if (top) {
+				if (right) {
+					y = getYatIntersection(curBox1, curBox2, curBox2.left);
+					if (y >= curBox2.bottom)
+						return GameObject.UP;
+					else
+						return GameObject.RIGHT;
+				} else if (left) {
+					y = getYatIntersection(curBox1, curBox2, curBox2.right);
+					if (y >= curBox2.bottom)
+						return GameObject.UP;
+					else
+						return GameObject.LEFT;
+				} else {
+					return GameObject.UP;
+				}
+			} else if (right) {
+				return GameObject.RIGHT;
+			} else if (left) {
+				return GameObject.LEFT;
+			}
+			return 0;
+		}
+
+
+		private function getYatIntersection(curBox1:Rectangle, curBox2:Rectangle, x:Number):Number {
+			return ((curBox1.y - oldBox1.y) / (curBox1.x - oldBox1.x)) * (x - curBox1.x) + curBox1.y;
 		}
 	}
 }

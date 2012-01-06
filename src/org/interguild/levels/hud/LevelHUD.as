@@ -1,4 +1,4 @@
-package org.interguild.levels {
+package org.interguild.levels.hud {
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
@@ -75,7 +75,7 @@ package org.interguild.levels {
 		 * Called by Level.onGameLoop(evt:TimerEvent)
 		 */
 		public function onGameLoop():void {
-			if (levelState.hasChanged()) {
+			if (levelState.hasChanged(true)) {
 				if (levelState.getPreview()) {
 					page_start.visible = true;
 					page_play.visible = false;

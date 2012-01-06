@@ -46,7 +46,7 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 	"jump-strength: 22;" +
 	"allow-jump: true;" +
 	"allow-enter-crawl: false;" +
-	"mid-air-jump-limit: 0;" +
+	"mid-air-jump-limit: -1;" +
 "}" +
 "#:standing-on-down {" +
 	"allow-enter-crawl: true;" +
@@ -59,10 +59,10 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 "#:jumping:standing-on-down{" +
 	"set-speed-y: -22;" +
 "}" +
-"#:jumping:right{" +
+"#:jumping:right {" +
 	"set-speed-x: 10;" +
 "}" +
-"#:jumping:left{" +
+"#:jumping:left {" +
 	"set-speed-x: -10;" +
 "}" +
 "#:right{" +

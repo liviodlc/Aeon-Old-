@@ -42,25 +42,26 @@ level{
 	frame-rate: 60;
 	window-size: 600 300;
 }
-.a{
+x{
+	init-state: static;
+}
+
+y{
 	hitbox-size:15;
 	init-state:nonstatic;
 	accelerate-y:1;
 	max-speed-y:1;
-}
-.a:preview{
-	hitbox-size:32;
-}
-y{
-	hitbox-height:64;
-}
-.a:standing-on-down{
-	
+	allow-state-change:true;
 }
 ]]></styles>
-<levelcode><![CDATA[
-=5;x
-	x x yy.a  #	x=86;
+<levelcode><![CDATA[x=100;
+ =8;x  x
+ =8;x  x
+ =8;x  x
+ =8;x  x
+
+ =8;x  x
+	x.a x   #	x=86;
  xx =11;x=86;
 x=5; =3;x=5; x=86;
 	=4;x=84;

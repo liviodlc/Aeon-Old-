@@ -6,6 +6,7 @@ package org.interguild.levels.objects {
 	import org.interguild.levels.objects.styles.DynamicTriggers;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 	import org.interguild.levels.objects.styles.StyleDefinition;
+	import org.interguild.levels.objects.styles.TriggerTracker;
 	import org.interguild.utils.Comparable;
 	import org.interguild.utils.LinkedList;
 	import org.interguild.utils.OrderedList;
@@ -16,16 +17,16 @@ package org.interguild.levels.objects {
 	public class GameObject extends Sprite implements Comparable {
 
 
-		public static var NO_WALL:uint = 0x0; //anything can pass through boundaries
-		public static var SOLID_WALL:uint = 0x1; //nothing can pass through boundaries
-		public static var PSEUDO_WALL:uint = 0x2; //only arrows and dynamite may pass through boundaries
-		public static var SOLID_LADDER:uint = 0x3; //only ladder users may pass through boundaries
-		public static var PSEUDO_LADDER:uint = 0x4; //only ladder users, arrows, and dynamite may pass through boundaries
+		public static var NO_WALL:uint = 0; //anything can pass through boundaries
+		public static var SOLID_WALL:uint = 1; //nothing can pass through boundaries
+		public static var PSEUDO_WALL:uint = 2; //only arrows and dynamite may pass through boundaries
+		public static var SOLID_LADDER:uint = 3; //only ladder users may pass through boundaries
+		public static var PSEUDO_LADDER:uint = 4; //only ladder users, arrows, and dynamite may pass through boundaries
 
-		public static var UP:uint = 0x0;
-		public static var RIGHT:uint = 0x1;
-		public static var DOWN:uint = 0x2;
-		public static var LEFT:uint = 0x3;
+		public static var UP:uint = 1;
+		public static var RIGHT:uint = 2;
+		public static var DOWN:uint = 3;
+		public static var LEFT:uint = 4;
 		/**
 		 * This is set to the Level.state of whichever level is currently in focus.
 		 */
@@ -72,6 +73,8 @@ package org.interguild.levels.objects {
 		private var collMemory:LinkedList;
 		private var resolutions:OrderedList;
 
+		private var checkpoints:LinkedList;
+
 		/**
 		 * tracks whether or not this object has been collision-tested during this loop.
 		 */
@@ -87,6 +90,7 @@ package org.interguild.levels.objects {
 			classes = new LinkedList();
 			collMemory = new LinkedList();
 			dynStandingList = new LinkedList();
+			checkpoints = new LinkedList();
 			normalTriggers = new PseudoClassTriggers();
 			dynamicTriggers = new DynamicTriggers();
 
@@ -373,9 +377,11 @@ package org.interguild.levels.objects {
 		 *
 		 * @param init:Boolean Mark this as true if you want to update styles as
 		 * part of this object's initialization, as opposed to part of the game loop.
+		 * The initialization also records to see which triggers this object is
+		 * looking for.
 		 */
 		public function updateStyles(init:Boolean = false):void {
-			if (init || normalTriggers.hasChanged() || dynamicTriggers.hasChanged() || LEVEL_STATE.hasChanged()) {
+			if (init || normalTriggers.hasChanged() || dynamicTriggers.hasChanged() || LEVEL_STATE.hasChanged(true)) {
 				applyStyles(def);
 				classes.beginIteration();
 				while (classes.hasNext()) {
@@ -409,6 +415,9 @@ package org.interguild.levels.objects {
 			var n:uint = list.length;
 			for (var i:uint = 0; i < n; i++) {
 				var styleDef:StyleDefinition = StyleDefinition(list.get(i));
+				if (!stylesInitialized) {
+					normalTriggers.track(styleDef.normalTriggers);
+				}
 				if (normalTriggers.isStyleActiveNormal(styleDef.normalTriggers) && LEVEL_STATE.isStyleActiveGlobal(styleDef.normalTriggers)) {
 					var rules:Object = styleDef.rulesArray;
 					for (var key:String in rules) {
@@ -523,10 +532,10 @@ package org.interguild.levels.objects {
 
 
 		private function TESTdrawBox():void {
-//			if (this.normalTriggers.getJumping() != 0)
-//				color = 0xCC0000; // TESTING
-//			else
-//				color = 0x00CC00;
+			if (this.def.id == "#")
+				color = 0xCC0000; // TESTING
+			else
+				color = 0x00CC00;
 
 			// for testing purposes:
 			graphics.clear();
@@ -578,6 +587,95 @@ package org.interguild.levels.objects {
 				_static = b;
 				normalTriggers.setStatic(b);
 			}
+		}
+
+
+		/*
+				public static var TO_UPDATE:LinkedList = new LinkedList();
+				internal var dynamicTriggers:DynamicTriggers;
+
+				private var resolutions:OrderedList;
+
+				private var checkpoints:LinkedList;
+		*/
+		/**
+		 * Resets all of the object's values to the last checkpoint.
+		 */
+		public function restart():void {
+			checkpoints.beginIteration();
+			var check:Object = checkpoints.next;
+			var a:Array, n:uint, i:uint;
+			for (var key:String in check) {
+				switch (key) {
+					case "maxSpeed": // arrays
+					case "friction":
+					case "collEdgesSolidity":
+					case "standingNums":
+						a = check[key];
+						for (i = 0; i < n; i++)
+							this[key][i] = a[i];
+						break;
+					case "collBox": // rectangles
+						this[key] = (check[key] as Rectangle).clone();
+						break;
+					case "dynStandingList": // LinkedList
+//					case "gridsOccupied":
+					case "collMemory":
+						this[key] = (check[key] as LinkedList).clone();
+						break;
+					case "normalTriggers": // PsuedoClassTriggers
+						this.normalTriggers.normalTriggers = check[key];
+						// TODO dynamic triggers
+						break;
+					default:
+						this[key] = check[key];
+						break;
+				}
+			}
+		}
+
+
+		/**
+		 * Sets a new checkpoint for this object.
+		 */
+		public function checkpoint():void {
+			var check:Object = new Object();
+			var a:Array, n:uint, i:uint;
+			check["maxSpeed"] = duplicateArray(maxSpeed);
+			check["friction"] = duplicateArray(friction);
+			check["collEdgesSolidity"] = duplicateArray(collEdgesSolidity);
+			check["standingNums"] = duplicateArray(standingNums);
+			check["collBox"] = collBox.clone();
+			check["dynStandingList"] = dynStandingList.clone();
+//			check["gridsOccupied"] = gridsOccupied.clone();
+			check["collMemory"] = collMemory.clone();
+			check["normalTriggers"] = normalTriggers.normalTriggers;
+			check["toUpdateMarked"] = toUpdateMarked;
+			check["stylesInitialized"] = stylesInitialized;
+			check["newX"] = newX;
+			check["newY"] = newY;
+			check["currentSpeedX"] = currentSpeedX;
+			check["currentSpeedY"] = currentSpeedY;
+			check["accX"] = accX;
+			check["accY"] = accY;
+			check["canJump"] = canJump;
+			check["jumpLimit"] = jumpLimit;
+			check["numJumps"] = numJumps;
+			check["isLadderUser"] = isLadderUser;
+			check["_static"] = _static;
+			check["allowStateChange"] = allowStateChange;
+			check["collideable"] = collideable;
+
+			checkpoints.add(check);
+		}
+
+
+		private function duplicateArray(a:Array):Array {
+			var b:Array = new Array(a.length);
+			var n:uint = a.length;
+			for (var i:uint = 0; i < n; i++)
+				b[i] = a[i];
+			return b;
 		}
 
 

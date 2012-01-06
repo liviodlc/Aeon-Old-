@@ -1,5 +1,6 @@
 package org.interguild.levels {
 	import flash.display.Sprite;
+	import flash.events.Event;
 
 	import org.interguild.levels.objects.Behavior;
 	import org.interguild.levels.objects.CollisionGrid;
@@ -25,6 +26,8 @@ package org.interguild.levels {
 		private var destroyedObjs:LinkedList;
 		private var stateChanged:LinkedList;
 
+		private var checkpoints:LinkedList;
+
 
 		public function LevelArea(width:uint, height:uint, lvlstate:PseudoClassTriggers) {
 			levelState = lvlstate;
@@ -33,6 +36,7 @@ package org.interguild.levels {
 			nonstaticObjs = [];
 			stateChanged = new LinkedList();
 			destroyedObjs = new LinkedList();
+			checkpoints = new LinkedList();
 		}
 
 
@@ -102,7 +106,7 @@ package org.interguild.levels {
 		 * Called by Level.onGameLoop()
 		 */
 		public function onGameLoop():void {
-			if (levelState.hasChanged()) {
+			if (levelState.hasChanged(true)) {
 				if (levelState.getPreview()) {
 					// camera zoom fit
 					updateAllStylesAndViews();
@@ -136,9 +140,59 @@ package org.interguild.levels {
 		 * last checkpoint state.
 		 */
 		public function restart():void {
+			var o:GameObject;
+			for each (o in staticObjs) {
+				o.restart();
+				if (!o.isStatic)
+					stateChanged.add(o);
+			}
+			for each (o in nonstaticObjs) {
+				o.restart();
+				if (o.isStatic)
+					stateChanged.add(o);
+			}
+			updateStates(true);
+
+			checkpoints.beginIteration();
+			var check:Object = checkpoints.next;
+			for (var key:String in check) {
+				switch (key) {
+					case "levelState":
+						levelState.normalTriggers = check["levelState"];
+						break;
+					case "TO_UPDATE": // LinkedList
+						GameObject.TO_UPDATE = (check["TO_UPDATE"] as LinkedList).clone();
+						break;
+					default:
+						this[key] = check[key];
+						break;
+				}
+			}
+			
 			levelState.setPreview();
 			levelState.setEnding(false); // make sure we're not on win screen
 
+			// TODO go through destroyedObjs:LinkedList;
+			dispatchEvent(new Event(Event.COMPLETE));
+		}
+
+
+		/**
+		 * Creates a new checkpoint
+		 */
+		private function checkpoint():void {
+			var check:Object = new Object();
+			check["levelState"] = levelState.normalTriggers;
+			check["TO_UPDATE"] = GameObject.TO_UPDATE.clone();
+			checkpoints.add(check);
+
+			var o:GameObject;
+			for each (o in staticObjs) {
+				o.checkpoint();
+			}
+			for each (o in nonstaticObjs) {
+				o.checkpoint();
+			}
 		}
 
 
@@ -176,8 +230,10 @@ package org.interguild.levels {
 				if (!o.isStatic) {
 					stateChanged.add(o);
 				}
+				o.checkpoint();
 			}
 			updateStates();
+			checkpoint();
 		}
 
 
@@ -238,7 +294,7 @@ package org.interguild.levels {
 		 * the rest of the bits store the index in the array in wich it is
 		 * stored.
 		 */
-		private function updateStates():void {
+		private function updateStates(restarting:Boolean = false):void {
 			stateChanged.beginIteration();
 			while (stateChanged.hasNext()) {
 				var o:GameObject = stateChanged.next as GameObject;
@@ -254,12 +310,19 @@ package org.interguild.levels {
 					if (i != -1) {
 						nonstaticObjs.splice(i, 1);
 						staticObjs.push(o);
-						o.resetSpeed();
-						o.clearGrids();
-						grid.add(o);
+						if (!restarting) {
+							o.resetSpeed();
+							o.clearGrids();
+							grid.add(o);
+						}
 					}
 				}
-				o.switchGridStates();
+				if (!restarting)
+					o.switchGridStates();
+				else{
+					o.clearGrids();
+					grid.add(o);
+				}
 			}
 			stateChanged.clear();
 		}
