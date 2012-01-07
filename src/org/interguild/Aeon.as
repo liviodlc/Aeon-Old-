@@ -9,6 +9,7 @@ package org.interguild {
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.*;
 	
+	import tests.GetSideTest;
 	import tests.TestOrderedList;
 	import tests.TestUtils;
 
@@ -45,6 +46,7 @@ package org.interguild {
 		public function Aeon() {
 //			new TestUtils();
 //			new TestOrderedList();
+//			new GetSideTest();
 			
 			thisInstance = this;
 			allowStageResize();

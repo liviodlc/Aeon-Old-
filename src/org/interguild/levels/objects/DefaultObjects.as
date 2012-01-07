@@ -29,7 +29,7 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 "# {" +
 	"hitbox-width: 30;" +
 	"hitbox-height: 42;" +
-	"hitbox-offset: 1 -10;" +
+	"hitbox-offset: 1 -22;" +
 	"accelerate-y: 2;" +
 	"accelerate-x: 0;" +
 	"max-speed-x: 10;" +
@@ -53,6 +53,10 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 	"allow-jump: true;" +
 	"friction-x:3;" +
 "}" +
+"#:crawling {" +
+	"hitbox-height: 30;" +
+	"hitbox-offset-y: 22;" +
+"}" +
 "#:jumping{" +
 	"set-speed-y: -16;" +
 "}" +
@@ -66,10 +70,10 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 	"set-speed-x: -10;" +
 "}" +
 "#:right{" +
-	"accelerate-x: 2;" +
+	"accelerate-x: 10;" +
 "}" +
 "#:left{" +
-	"accelerate-x: -2;" +
+	"accelerate-x: -10;" +
 "}" +
 ".a{" +
 	"animate:megaman;" +

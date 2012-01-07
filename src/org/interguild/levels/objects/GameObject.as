@@ -135,6 +135,16 @@ package org.interguild.levels.objects {
 		}
 
 
+		public function get hitboxOffsetX():Number {
+			return collBox.x;
+		}
+
+
+		public function get hitboxOffsetY():Number {
+			return collBox.y;
+		}
+
+
 		public function get oldHitbox():Rectangle {
 			return oldCollBox.clone();
 		}

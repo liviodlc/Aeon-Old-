@@ -1,7 +1,7 @@
 package org.interguild.levels {
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
-	
+
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -11,7 +11,7 @@ package org.interguild.levels {
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
-	
+
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.hud.LevelHUD;
 	import org.interguild.levels.keys.KeyMan;
@@ -278,14 +278,15 @@ package org.interguild.levels {
 				quit();
 
 			// if while playing or after winning, player wants to restart, restart level
-			if (!_state.getPreview() && _keys.isActionDown(KeyMan.RESTART, true)){
+			if (!_state.getPreview() && _keys.isActionDown(KeyMan.RESTART, true)) {
 				timer.stop();
-				lvl.addEventListener(Event.COMPLETE,onRestartComplete, false, 0, true);
+				lvl.addEventListener(Event.COMPLETE, onRestartComplete, false, 0, true);
 				lvl.restart();
 			}
 		}
-		
-		private function onRestartComplete(evt:Event):void{
+
+
+		private function onRestartComplete(evt:Event):void {
 			timer.start();
 		}
 
