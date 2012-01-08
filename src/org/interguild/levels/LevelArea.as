@@ -1,6 +1,7 @@
 package org.interguild.levels {
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.geom.Rectangle;
 
 	import org.interguild.levels.objects.Behavior;
 	import org.interguild.levels.objects.CollisionGrid;
@@ -14,6 +15,8 @@ package org.interguild.levels {
 
 		private var grid:CollisionGrid;
 		internal var behaviors:Object;
+		private var camera:LevelCamera;
+		private var player:GameObject;
 
 		/* we may want to reconsider the choice of data structures here.
 		 * I only picked Arrays for the first two because I knew we'd be
@@ -58,36 +61,18 @@ package org.interguild.levels {
 
 
 		public function get levelWidth():uint {
-			return grid.width;
+			return grid.width * 32;
 		}
 
-
-		/**
-		 * Will add or remove space in the level to make it match the given width.
-		 *
-		 * @param w The number of tiles wide you want the level to be.
-		 *
-		 */
-		public function set levelWidth(w:uint):void {
-			grid.width = w;
-		}
 
 
 		public function get levelHeight():uint {
-			return grid.height;
+			return grid.height * 32;
 		}
 
 
-		/**
-		 * Will add or remove space in the level to make it match the given height.
-		 *
-		 * NOTE: It's more efficient to change the levelHeight BEFORE changing the levelWidth!
-		 *
-		 * @param h The number of tiles tall you want the level to be.
-		 *
-		 */
-		public function set levelHeight(h:uint):void {
-			grid.height = h;
+		public function setCamera(c:LevelCamera):void {
+			camera = c;
 		}
 
 
@@ -128,6 +113,7 @@ package org.interguild.levels {
 				updateStylesAndViews(); // TODO mark animated objects as TO_UPDATE
 				updateStates();
 			}
+			updateCamera();
 		}
 
 
@@ -168,7 +154,7 @@ package org.interguild.levels {
 						break;
 				}
 			}
-			
+
 			levelState.setPreview();
 			levelState.setEnding(false); // make sure we're not on win screen
 
@@ -226,11 +212,17 @@ package org.interguild.levels {
 			var n:uint = staticObjs.length;
 			for (var i:uint = 0; i < n; i++) {
 				var o:GameObject = staticObjs[i];
+				var b:Rectangle = o.hitbox;
 				o.updateStyles(true)
 				if (!o.isStatic) {
 					stateChanged.add(o);
+				} else if (!b.equals(o.hitbox)) {
+					o.clearGrids();
+					grid.add(o);
 				}
 				o.checkpoint();
+				if (o.isPlayer)
+					player = o;
 			}
 			updateStates();
 			checkpoint();
@@ -276,15 +268,33 @@ package org.interguild.levels {
 				if (o.isStatic)
 					stateChanged.add(o);
 				o.updateView();
+				updateZIndex(o);
 			}
 		}
 
 
 		private function updateStaticStylesAndViews(o:GameObject):void {
+			var h:Rectangle = o.hitbox;
 			o.updateStyles();
 			if (!o.isStatic)
 				stateChanged.add(o);
+			else if (!h.equals(o.hitbox)) {
+				o.clearGrids();
+				grid.add(o);
+			}
 			o.updateView();
+			updateZIndex(o);
+		}
+
+
+		private function updateZIndex(o:GameObject):void {
+			if (o.zIndex == "front") {
+				addChildAt(o, numChildren - 1);
+				o.zIndex = "";
+			} else if (o.zIndex == "back") {
+				addChildAt(o, 0);
+				o.zIndex = "";
+			}
 		}
 
 
@@ -319,7 +329,7 @@ package org.interguild.levels {
 				}
 				if (!restarting)
 					o.switchGridStates();
-				else{
+				else {
 					o.clearGrids();
 					grid.add(o);
 				}
@@ -351,5 +361,15 @@ package org.interguild.levels {
 //				o.updateView();
 //			}
 //		}
+
+
+		private function updateCamera():void {
+			if (player != null) {
+				var hitbox:Rectangle = player.hitbox;
+				var focusX:Number = hitbox.x + hitbox.width / 2;
+				var focusY:Number = hitbox.y + hitbox.height / 2;
+				camera.onGameLoop(focusX, focusY);
+			}
+		}
 	}
 }

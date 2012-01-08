@@ -1,8 +1,8 @@
-package org.interguild.levels.objects {
+package org.interguild.levels.objects.styles {
 	import flash.display.BitmapData;
 
-	import org.interguild.levels.objects.styles.StyleDefinition;
 	import org.interguild.utils.OrderedList;
+	import org.interguild.levels.objects.Behavior;
 
 	/**
 	 * This class stores all of the information associated with any one GameObject

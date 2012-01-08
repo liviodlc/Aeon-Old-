@@ -3,7 +3,6 @@ package org.interguild.levels.objects.styles {
 
 	import org.interguild.levels.Level;
 	import org.interguild.levels.objects.GameObject;
-	import org.interguild.levels.objects.GameObjectDefinition;
 	import org.interguild.utils.LinkedList;
 
 	/**
@@ -304,6 +303,22 @@ package org.interguild.levels.objects.styles {
 				case "set-speed-y":
 				case "set-speed-x":
 				case "mid-air-jump-limit":
+				case "coll-edge-top-buffer":
+				case "coll-edge-right-buffer":
+				case "coll-edge-bottom-buffer":
+				case "coll-edge-left-buffer":
+				case "coll-edge-top-bounce":
+				case "coll-edge-right-bounce":
+				case "coll-edge-bottom-bounce":
+				case "coll-edge-left-bounce":
+				case "coll-edge-top-recoil":
+				case "coll-edge-right-recoil":
+				case "coll-edge-bottom-recoil":
+				case "coll-edge-left-recoil":
+				case "auto-crawl-top":
+				case "auto-crawl-bottom":
+				case "auto-crawl-right":
+				case "auto-crawl-left":
 					map[prop] = checkNum(val);
 					break;
 				case "max-speed-x":
@@ -348,6 +363,50 @@ package org.interguild.levels.objects.styles {
 						map["friction-left"] = a[3];
 					}
 					break;
+				case "auto-crawl":
+					a = check4Nums(val);
+					if (a.length == 1)
+						map[prop] = a[0];
+					else {
+						map["auto-crawl-top"] = a[0];
+						map["auto-crawl-right"] = a[1];
+						map["auto-crawl-bottom"] = a[2];
+						map["auto-crawl-left"] = a[3];
+					}
+					break;
+				case "coll-edge-buffer":
+					a = check4Nums(val);
+					if (a.length == 1)
+						map[prop] = a[0];
+					else {
+						map["coll-edge-top-buffer"] = a[0];
+						map["coll-edge-right-buffer"] = a[1];
+						map["coll-edge-bottom-buffer"] = a[2];
+						map["coll-edge-left-buffer"] = a[3];
+					}
+					break;
+				case "coll-edge-bounce":
+					a = check4Nums(val);
+					if (a.length == 1)
+						map[prop] = a[0];
+					else {
+						map["coll-edge-top-bounce"] = a[0];
+						map["coll-edge-right-bounce"] = a[1];
+						map["coll-edge-bottom-bounce"] = a[2];
+						map["coll-edge-left-bounce"] = a[3];
+					}
+					break;
+				case "coll-edge-recoil":
+					a = check4Nums(val);
+					if (a.length == 1)
+						map[prop] = a[0];
+					else {
+						map["coll-edge-top-recoil"] = a[0];
+						map["coll-edge-right-recoil"] = a[1];
+						map["coll-edge-bottom-recoil"] = a[2];
+						map["coll-edge-left-recoil"] = a[3];
+					}
+					break;
 				case "init-state":
 				case "set-state":
 					if (val != "static" && val != "nonstatic")
@@ -357,10 +416,20 @@ package org.interguild.levels.objects.styles {
 					else
 						map[prop] = false;
 					break;
+				case "z-index":
+					if (val != "front" && val != "back")
+						level.addError(syntaxError(i) + "For now, the only valid values for the '" + prop + "' property are 'front' and 'back'.");
+					else
+						map[prop] = val;
+					break;
 				case "allow-state-change":
 				case "allow-collisions":
 				case "allow-jump":
 				case "can-use-ladder":
+				case "coll-effect-ladder":
+				case "coll-effect-water":
+				case "allow-be-in-crawl":
+				case "allow-enter-crawl":
 					if (val != "true" && val != "false")
 						level.addError(syntaxError(i) + "The only valid values for the '" + prop + "' property are 'true' or 'false'.");
 					else if (val == "true")

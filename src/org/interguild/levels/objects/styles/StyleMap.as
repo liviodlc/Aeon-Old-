@@ -1,7 +1,7 @@
 package org.interguild.levels.objects.styles {
 	import org.interguild.levels.Level;
+	import org.interguild.levels.LevelCamera;
 	import org.interguild.levels.objects.Behavior;
-	import org.interguild.levels.objects.GameObjectDefinition;
 	import org.interguild.levels.objects.PlayerBehavior;
 	import org.interguild.utils.LinkedList;
 
@@ -33,6 +33,7 @@ package org.interguild.levels.objects.styles {
 			behaviorsMap["player"] = new PlayerBehavior(lvl.keys);
 //			stylesMap["level"] = new GameObjectDefinition(id, editorIcon);
 //			stylesMap["global"] = new GameObjectDefinition(id, editorIcon);
+			stylesMap["camera"] = new LevelCamera(level);
 
 			include "../DefaultObjects.as";
 
@@ -156,7 +157,13 @@ package org.interguild.levels.objects.styles {
 			return stylesMap[id];
 		}
 		
-		public function get behaviors():Object{
+		
+		public function get camera():LevelCamera{
+			return stylesMap["camera"];
+		}
+
+
+		public function get behaviors():Object {
 			return behaviorsMap;
 		}
 	}

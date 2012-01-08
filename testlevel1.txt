@@ -53,14 +53,17 @@ y{
 	max-speed-y:1;
 	allow-state-change:true;
 }
+~ {
+	hitbox-size: 190;
+}
 ]]></styles>
 <levelcode><![CDATA[x=100;
- =8;x  x
- =8;x  x
- =8;x  x
- =8;x  x
-
- =8;x  x
+ =4;H   x  x  x x	~
+ =4;H   x  x  x x
+ =4;H   x  x
+ =4;H   x  x
+ =4;H
+ =4;H   x  x
 	x.a x   #	x=86;
  xx =11;x=86;
 x=5; x =3;x=5; x=84;

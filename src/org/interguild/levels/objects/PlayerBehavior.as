@@ -12,6 +12,12 @@ package org.interguild.levels.objects {
 		}
 
 
+		public override function add(o:GameObject):void {
+			super.add(o);
+			o.isPlayer = true;
+		}
+
+
 		public override function onGameLoop():void {
 			list.beginIteration();
 			while (list.hasNext()) {
@@ -33,6 +39,18 @@ package org.interguild.levels.objects {
 					if (o.normalTriggers.getStandingDown())
 						o.numJumps = 0;
 				}
+				if (o.canBeInCrawl && keyMan.isActionDown(KeyMan.DOWN)) {
+					var crawling:Boolean = o.normalTriggers.getCrawling();
+					if (crawling || (!crawling && o.canEnterCrawl))
+						o.normalTriggers.setCrawling();
+					else
+						o.normalTriggers.setCrawling(false);
+				} else {
+					o.normalTriggers.setCrawling(false);
+				}
+				if (o.crawlCollision)
+					trace("autoCrawl");
+				o.crawlCollision = false;
 			}
 		}
 	}

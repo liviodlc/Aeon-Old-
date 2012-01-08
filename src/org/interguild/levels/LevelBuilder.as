@@ -17,7 +17,7 @@ package org.interguild.levels {
 	import org.interguild.levels.hud.DefaultHUD;
 	import org.interguild.levels.keys.KeyMan;
 	import org.interguild.levels.objects.GameObject;
-	import org.interguild.levels.objects.GameObjectDefinition;
+	import org.interguild.levels.objects.styles.GameObjectDefinition;
 	import org.interguild.levels.objects.styles.StyleMap;
 	import org.interguild.pages.GamePage;
 	import org.interguild.resize.WindowResizer;
@@ -259,6 +259,7 @@ package org.interguild.levels {
 			initKeys();
 			initStylesMap();
 			level.levelArea.behaviors = stylesMap.behaviors;
+			level.levelArea.setCamera(stylesMap.camera);
 
 			builder = new Timer(0);
 			builder.addEventListener(TimerEvent.TIMER, onLevelBuild);
@@ -375,13 +376,13 @@ package org.interguild.levels {
 		}
 
 
-		private function initStylesMap():void {
-			stylesMap = new StyleMap(xml.objects, String(xml.styles), level);
+		private function initLevelArea(width:uint, height:uint):void {
+			level.levelArea = new LevelArea(width, height, level.state);
 		}
 
 
-		private function initLevelArea(width:uint, height:uint):void {
-			level.levelArea = new LevelArea(width, height, level.state);
+		private function initStylesMap():void {
+			stylesMap = new StyleMap(xml.objects, String(xml.styles), level);
 		}
 
 

@@ -2,8 +2,9 @@ package org.interguild.levels.objects {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.levels.objects.styles.DynamicTriggers;
+	import org.interguild.levels.objects.styles.GameObjectDefinition;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
 	import org.interguild.levels.objects.styles.StyleDefinition;
 	import org.interguild.levels.objects.styles.TriggerTracker;
@@ -23,10 +24,10 @@ package org.interguild.levels.objects {
 		public static var SOLID_LADDER:uint = 3; //only ladder users may pass through boundaries
 		public static var PSEUDO_LADDER:uint = 4; //only ladder users, arrows, and dynamite may pass through boundaries
 
-		public static var UP:uint = 1;
-		public static var RIGHT:uint = 2;
-		public static var DOWN:uint = 3;
-		public static var LEFT:uint = 4;
+//		public static var UP:uint = 0;
+//		public static var RIGHT:uint = 1;
+//		public static var DOWN:uint = 2;
+//		public static var LEFT:uint = 3;
 		/**
 		 * This is set to the Level.state of whichever level is currently in focus.
 		 */
@@ -47,20 +48,32 @@ package org.interguild.levels.objects {
 		//for collision detection
 		internal var newX:Number = 0;
 		internal var newY:Number = 0;
+		public var zIndex:String;
+		private var lastZIndex:String;
 		internal var currentSpeedX:Number = 0;
 		internal var currentSpeedY:Number = 0;
 		private var maxSpeed:Array;
 		private var friction:Array;
 		private var accX:Number = 0;
 		private var accY:Number = 0;
+
 		internal var canJump:Boolean;
 		internal var jumpLimit:int;
 		internal var numJumps:int;
+		internal var canBeInCrawl:Boolean;
+		internal var canEnterCrawl:Boolean;
+		internal var autoCrawl:Array;
+		internal var crawlCollision:Boolean;
 		internal var isLadderUser:Boolean;
 
 		private var collBox:Rectangle;
 		private var oldCollBox:Rectangle;
 		internal var collEdgesSolidity:Array;
+		internal var collEdgesBuffer:Array;
+		internal var collEdgesBounce:Array;
+		internal var collEdgesRecoil:Array;
+		internal var collEffectLadder:Boolean;
+		internal var collEffectWater:Boolean;
 
 		internal var standingNums:Array;
 		private var dynStandingList:LinkedList;
@@ -74,9 +87,10 @@ package org.interguild.levels.objects {
 		private var resolutions:OrderedList;
 
 		private var checkpoints:LinkedList;
+		public var isPlayer:Boolean;
 
 		/**
-		 * tracks whether or not this object has been collision-tested during this loop.
+		 * tracks whether or not this object has been collision-ed during this loop.
 		 */
 		public var tested:Boolean = false;
 
@@ -99,10 +113,13 @@ package org.interguild.levels.objects {
 			collideable = true;
 			collBox = new Rectangle(0, 0, 31, 31);
 			collEdgesSolidity = [0, 0, 0, 0];
+			collEdgesBuffer = [0, 0, 0, 0];
+			collEdgesBounce = [0, 0, 0, 0];
+			collEdgesRecoil = [0, 0, 0, 0];
 			standingNums = [0, 0, 0, 0];
 			maxSpeed = [0, 0, 0, 0];
 			friction = [0, 0, 0, 0];
-			allowStateChange = true;
+			autoCrawl = [0, 0, 0, 0];
 
 			def = god;
 			if (def.behavior != null)
@@ -167,11 +184,11 @@ package org.interguild.levels.objects {
 			// update horizontal speed
 			if (accX == 0) { // if not accelerating, then decelerate
 				if (currentSpeedX > 0) {
-					currentSpeedX += friction[RIGHT];
+					currentSpeedX += friction[1];
 					if (currentSpeedX < 0)
 						currentSpeedX = 0;
 				} else if (currentSpeedX < 0) {
-					currentSpeedX += friction[LEFT];
+					currentSpeedX += friction[3];
 					if (currentSpeedX > 0)
 						currentSpeedX = 0;
 				}
@@ -181,11 +198,11 @@ package org.interguild.levels.objects {
 			// update vertical speed
 			if (accY == 0) { // if not accelerating, then decelerate
 				if (currentSpeedY > 0) {
-					currentSpeedY += friction[DOWN];
+					currentSpeedY += friction[2];
 					if (currentSpeedY < 0)
 						currentSpeedY = 0;
 				} else if (currentSpeedY < 0) {
-					currentSpeedY += friction[UP];
+					currentSpeedY += friction[0];
 					if (currentSpeedY > 0)
 						currentSpeedY = 0;
 				}
@@ -194,15 +211,15 @@ package org.interguild.levels.objects {
 			}
 
 			// check horizontal max speeds
-			if (maxSpeed[RIGHT] != 0 && currentSpeedX > 0 && currentSpeedX > maxSpeed[RIGHT])
-				currentSpeedX = maxSpeed[RIGHT];
-			else if (maxSpeed[LEFT] != 0 && currentSpeedX < 0 && currentSpeedX < maxSpeed[LEFT])
-				currentSpeedX = maxSpeed[LEFT];
+			if (maxSpeed[1] != 0 && currentSpeedX > 0 && currentSpeedX > maxSpeed[1])
+				currentSpeedX = maxSpeed[1];
+			else if (maxSpeed[3] != 0 && currentSpeedX < 0 && currentSpeedX < maxSpeed[3])
+				currentSpeedX = maxSpeed[3];
 			// check vertical max speeds
-			if (maxSpeed[DOWN] != 0 && currentSpeedY > maxSpeed[DOWN])
-				currentSpeedY = maxSpeed[DOWN];
-			else if (maxSpeed[UP] != 0 && currentSpeedY < maxSpeed[UP])
-				currentSpeedY = maxSpeed[UP];
+			if (maxSpeed[2] != 0 && currentSpeedY > maxSpeed[2])
+				currentSpeedY = maxSpeed[2];
+			else if (maxSpeed[0] != 0 && currentSpeedY < maxSpeed[0])
+				currentSpeedY = maxSpeed[0];
 
 			// update positions
 			newX += currentSpeedX;
@@ -307,16 +324,16 @@ package org.interguild.levels.objects {
 				var o:GameObject = a[0] as GameObject;
 				if (o.standingNums[a[1]] == 0) {
 					switch (a[1]) {
-						case UP:
+						case 0:
 							o.normalTriggers.setStandingUp(false);
 							break;
-						case RIGHT:
+						case 1:
 							o.normalTriggers.setStandingRight(false);
 							break;
-						case DOWN:
+						case 2:
 							o.normalTriggers.setStandingDown(false);
 							break;
-						case LEFT:
+						case 3:
 							o.normalTriggers.setStandingLeft(false);
 							break;
 					}
@@ -331,23 +348,23 @@ package org.interguild.levels.objects {
 		 * Updates the appropriate pseudo-classes, and if the object is dynamic,
 		 * will make the object static.
 		 *
-		 * @param direction:uint Use GameObject.TOP, GameObject.RIGHT, GameObject.LEFT,
-		 * or GameObject.BOTTOM.
+		 * @param direction:uint Use GameObject.UP, GameObject.RIGHT, GameObject.LEFT,
+		 * or GameObject.DOWN.
 		 * @param fromStatic:Boolean Set true if the object marking this is static as a
 		 * result of this collision.
 		 */
 		internal function setStanding(direction:uint, fromStatic:Boolean):void {
 			switch (direction) {
-				case UP:
+				case 0:
 					normalTriggers.setStandingUp();
 					break;
-				case RIGHT:
+				case 1:
 					normalTriggers.setStandingRight();
 					break;
-				case DOWN:
+				case 2:
 					normalTriggers.setStandingDown();
 					break;
-				case LEFT:
+				case 3:
 					normalTriggers.setStandingLeft();
 					break;
 				default:
@@ -359,11 +376,34 @@ package org.interguild.levels.objects {
 		}
 
 
+		internal function getStanding(direction:uint):void {
+			switch (direction) {
+				case 0:
+					normalTriggers.getStandingUp();
+					break;
+				case 1:
+					normalTriggers.getStandingRight();
+					break;
+				case 2:
+					normalTriggers.getStandingDown();
+					break;
+				case 3:
+					normalTriggers.getStandingLeft();
+					break;
+				default:
+					new Error("Invalid Arguments");
+					break;
+			}
+		}
+
+
 		public function clearStandings():void {
 			normalTriggers.setStandingDown(false);
 			normalTriggers.setStandingLeft(false);
 			normalTriggers.setStandingRight(false);
 			normalTriggers.setStandingUp(false);
+			normalTriggers.setOnLadder(false);
+			normalTriggers.setUnderwater(false);
 		}
 
 
@@ -460,40 +500,42 @@ package org.interguild.levels.objects {
 					accY = Number(val);
 					break;
 				case "max-speed":
-					maxSpeed[RIGHT] = maxSpeed[DOWN] = Number(val);
-					maxSpeed[UP] = maxSpeed[LEFT] = -maxSpeed[RIGHT];
+					maxSpeed[1] = maxSpeed[2] = Number(val);
+					maxSpeed[0] = maxSpeed[3] = -maxSpeed[1];
 					break;
 				case "max-speed-up":
-					maxSpeed[UP] = Number(val);
+					maxSpeed[0] = Number(val);
 					break;
 				case "max-speed-down":
-					maxSpeed[DOWN] = Number(val);
+					maxSpeed[2] = Number(val);
 					break;
 				case "max-speed-right":
-					maxSpeed[RIGHT] = Number(val);
+					maxSpeed[1] = Number(val);
 					break;
 				case "max-speed-left":
-					maxSpeed[LEFT] = Number(val);
+					maxSpeed[3] = Number(val);
 					break;
 				case "friction":
-					friction[UP] = friction[LEFT] = Number(val);
-					friction[RIGHT] = friction[DOWN] = -friction[UP];
+					friction[0] = friction[3] = Number(val);
+					friction[1] = friction[2] = -friction[0];
 					break;
 				case "friction-right":
-					friction[RIGHT] = Number(val);
+					friction[1] = Number(val);
 					break;
 				case "friction-left":
-					friction[LEFT] = Number(val);
+					friction[3] = Number(val);
 					break;
 				case "friction-up":
-					friction[UP] = Number(val);
+					friction[0] = Number(val);
 					break;
 				case "friction-down":
-					friction[DOWN] = Number(val);
+					friction[2] = Number(val);
 					break;
 				case 'init-state':
 					if (!stylesInitialized)
 						isStatic = val;
+					if (isStatic == false)
+						color = 0xCC0000;
 					break;
 				case 'set-state':
 					isStatic = val;
@@ -528,11 +570,73 @@ package org.interguild.levels.objects {
 				case "coll-edge-left-solidity":
 					collEdgesSolidity[3] = val;
 					break;
+				case "coll-edge-buffer":
+					collEdgesBuffer[0] = collEdgesBuffer[1] = collEdgesBuffer[2] = collEdgesBuffer[3] = val;
+					break;
+				case "coll-edge-top-buffer":
+					collEdgesBuffer[0] = val;
+					break;
+				case "coll-edge-right-buffer":
+					collEdgesBuffer[1] = val;
+					break;
+				case "coll-edge-bottom-buffer":
+					collEdgesBuffer[2] = val;
+					break;
+				case "coll-edge-left-buffer":
+					collEdgesBuffer[3] = val;
+					break;
+				case "coll-edge-bounce":
+					collEdgesBounce[0] = collEdgesBounce[1] = collEdgesBounce[2] = collEdgesBounce[3] = val;
+					break;
+				case "coll-edge-top-bounce":
+					collEdgesBounce[0] = val;
+					break;
+				case "coll-edge-right-bounce":
+					collEdgesBounce[1] = val;
+					break;
+				case "coll-edge-bottom-bounce":
+					collEdgesBounce[2] = val;
+					break;
+				case "coll-edge-left-bounce":
+					collEdgesBounce[3] = val;
+				case "coll-edge-recoil":
+					collEdgesRecoil[0] = collEdgesRecoil[1] = collEdgesRecoil[2] = collEdgesRecoil[3] = val;
+					break;
+				case "coll-edge-top-recoil":
+					collEdgesRecoil[0] = val;
+					break;
+				case "coll-edge-right-recoil":
+					collEdgesRecoil[1] = val;
+					break;
+				case "coll-edge-bottom-recoil":
+					collEdgesRecoil[2] = val;
+					break;
+				case "coll-edge-left-recoil":
+					collEdgesRecoil[3] = val;
+					break;
+				case "coll-effect-ladder":
+					collEffectLadder = val;
+					break;
+				case "coll-effect-water":
+					collEffectWater = val;
+					break;
 				case "allow-jump":
 					canJump = val;
 					break;
 				case "mid-air-jump-limit":
 					jumpLimit = Number(val);
+					break;
+				case "allow-be-in-crawl":
+					canBeInCrawl = val;
+					break;
+				case "allow-enter-crawl":
+					canEnterCrawl = val;
+				case "auto-crawl":
+					autoCrawl[0] = autoCrawl[1] = autoCrawl[2] = autoCrawl[3] = val;
+				case "z-index":
+					var s:String = String(val);
+					if (lastZIndex != s)
+						zIndex = lastZIndex = s;
 					break;
 			}
 		}
@@ -541,9 +645,9 @@ package org.interguild.levels.objects {
 		public var color:uint = 0x00CC00;
 
 
-		private function TESTdrawBox():void {
-			if (this.def.id == "#")
-				color = 0xCC0000; // TESTING
+		public function TESTdrawBox():void {
+			if (isPlayer)
+				color = 0xCC0000;
 			else
 				color = 0x00CC00;
 
@@ -620,7 +724,11 @@ package org.interguild.levels.objects {
 					case "maxSpeed": // arrays
 					case "friction":
 					case "collEdgesSolidity":
+					case "collEdgesBuffer":
+					case "collEdgesBounce":
+					case "collEdgesRecoil":
 					case "standingNums":
+					case "autoCrawl":
 						a = check[key];
 						for (i = 0; i < n; i++)
 							this[key][i] = a[i];
@@ -654,6 +762,11 @@ package org.interguild.levels.objects {
 			check["maxSpeed"] = duplicateArray(maxSpeed);
 			check["friction"] = duplicateArray(friction);
 			check["collEdgesSolidity"] = duplicateArray(collEdgesSolidity);
+			check["collEdgesBuffer"] = duplicateArray(collEdgesBuffer);
+			check["collEdgesBounce"] = duplicateArray(collEdgesBounce);
+			check["collEdgesRecoil"] = duplicateArray(collEdgesRecoil);
+			check["autoCrawl"] = duplicateArray(autoCrawl);
+			check["collEffectLadder"] = collEffectLadder;
 			check["standingNums"] = duplicateArray(standingNums);
 			check["collBox"] = collBox.clone();
 			check["dynStandingList"] = dynStandingList.clone();
@@ -671,10 +784,13 @@ package org.interguild.levels.objects {
 			check["canJump"] = canJump;
 			check["jumpLimit"] = jumpLimit;
 			check["numJumps"] = numJumps;
+			check["canBeInCrawl"] = canBeInCrawl;
+			check["allow-enter-crawl"] = canEnterCrawl;
 			check["isLadderUser"] = isLadderUser;
 			check["_static"] = _static;
 			check["allowStateChange"] = allowStateChange;
 			check["collideable"] = collideable;
+			check["zIndex"] = zIndex;
 
 			checkpoints.add(check);
 		}
