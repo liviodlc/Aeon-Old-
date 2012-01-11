@@ -23,38 +23,19 @@ package org.interguild.levels.objects.styles {
 		 */
 		public function StyleParser(s:String, lvl:Level, _map:StyleMap) {
 			map = _map;
-			styles = s.split("}");
-			n = styles.length;
-			level = lvl;
-			if (StringUtil.trim(styles[n - 1]).length == 0) {
-				styles.pop();
-				n--;
+			if(StringUtil.trim(s).length!=0){
+				styles = s.split("}");
+				n = styles.length;
+				level = lvl;
+				if (StringUtil.trim(styles[n - 1]).length == 0) {
+					styles.pop();
+					n--;
+				}
+				//parse everything!
+				while (hasNext()) {
+					next();
+				}
 			}
-			//parse everything!
-			while (hasNext()) {
-				next();
-			}
-		/*
-		scanning conditions:
-		class and tile names should only be 1 or 2 chars.
-		if next char is '['
-			then scan for known variables, including global variables
-			then scan for operator
-			then scan for value, which depends on variable?
-			then finally scan for ']'
-		then scan for more dynamic conditions
-		if next char is ':'
-			then scan for known psuedo classes
-		then scan for more psuedo classes
-
-		also scan for commas separating multiple conditions
-
-		Order:
-		scan next rule definition{
-			scan next conditions
-			scan property/values
-		}
-		*/
 		}
 
 
@@ -96,13 +77,20 @@ package org.interguild.levels.objects.styles {
 			return i < n;
 		}
 
+		private var framesMap:Object;
+
 
 		/**
 		 * Parses the next style definition and adds it to the StyleMap for
 		 * all relevant IDs.
 		 */
 		private function next():void {
+			framesMap = new Object();
 			var cur:String = String(styles[i]);
+			if (StringUtil.trim(cur) == "") {
+				i++;
+				return;
+			}
 			var point:int = cur.indexOf("{");
 			if (point == -1) {
 				level.addError(syntaxError(i) + "Expecting '{' symbol before '}'.");
@@ -141,7 +129,7 @@ package org.interguild.levels.objects.styles {
 					else {
 						//TODO: add parseDynamicConditions();
 						var p:PseudoClassTriggers = parsePseudoClasses(s.substr(id.length));
-						objdef.addStyles(new StyleDefinition(p, null, rules /*, (id.charAt(0) == ".")*/));
+						objdef.addStyles(new StyleDefinition(p, null, rules, framesMap));
 					}
 				}
 			}
@@ -238,7 +226,7 @@ package org.interguild.levels.objects.styles {
 							case "crawling":
 								result.setCrawling();
 								break;
-							case "jumping":
+							case "jump":
 								result.setJumping();
 								break;
 							case "preview":
@@ -264,6 +252,12 @@ package org.interguild.levels.objects.styles {
 		private function parseRule(prop:String, val:String, map:Object):void {
 			var a:Array, un:uint;
 			switch (prop) {
+				case "animate":
+					if (level.assets.checkID(val)) {
+						map[prop] = val;
+						framesMap[val] = true;
+					}
+					break;
 				case "hitbox-size":
 					a = check2Nums(val);
 					map["hitbox-width"] = a[0];
@@ -430,6 +424,7 @@ package org.interguild.levels.objects.styles {
 				case "coll-effect-water":
 				case "allow-be-in-crawl":
 				case "allow-enter-crawl":
+				case "show-hitbox":
 					if (val != "true" && val != "false")
 						level.addError(syntaxError(i) + "The only valid values for the '" + prop + "' property are 'true' or 'false'.");
 					else if (val == "true")
@@ -458,10 +453,28 @@ package org.interguild.levels.objects.styles {
 						map["coll-edge-left-solidity"] = a[3];
 					}
 					break;
+				case "hitbox-color":
+					map[prop] = checkHex(val);
+					break;
 				default:
 					level.addError(syntaxError(i) + "Invalid property: '" + prop + "'");
 					break;
 			}
+		}
+
+
+		/**
+		 * Parses the string into a color. Input string may or may not start with "0x"
+		 */
+		private function checkHex(color:String):uint {
+			if (color.substr(0, 1) == "#")
+				color = color.substr(1);
+			if (color.substr(0, 2) != "0x")
+				color = "0x" + color;
+			var result:uint = uint(color);
+			if (isNaN(result))
+				result = 0; // default color: black
+			return result;
 		}
 
 

@@ -282,30 +282,30 @@ package org.interguild.levels.objects {
 					//left buffer
 					if (curBox1.right < curBox2.left + obj2.collEdgesBuffer[3] && curBox1.right > curBox2.left) {
 						obj1.newX += curBox2.left - curBox1.right;
-						trace("left buffer");
+//						trace("left buffer");
 						return false;
 					}
 					//right buffer
 					if (curBox1.left > curBox2.right - obj2.collEdgesBuffer[1] && curBox1.left < curBox2.right) {
 						obj1.newX += curBox2.right - curBox1.left;
-						trace("right buffer");
+//						trace("right buffer");
 						return false;
 					}
 				} else {
 					//top buffer
 					if (curBox1.bottom < curBox2.top + obj2.collEdgesBuffer[0] && curBox1.bottom > curBox2.top) {
 						obj1.newY += curBox2.top - curBox1.bottom;
-						obj2.color += 0xFF;
-						obj2.TESTdrawBox();
-						trace("top buffer");
+//						obj2.color += 0xFF;
+//						obj2.TESTdrawBox();
+//						trace("top buffer");
 						return false;
 					}
 					//bottom buffer
 					if (curBox1.top > curBox2.bottom - obj2.collEdgesBuffer[2] && curBox1.top < curBox2.bottom) {
 						obj1.newY += curBox2.bottom - curBox1.top;
-						obj2.color += 0xFF;
-						obj2.TESTdrawBox();
-						trace("bottom buffer");
+//						obj2.color += 0xFF;
+//						obj2.TESTdrawBox();
+//						trace("bottom buffer");
 						return false;
 					}
 				}

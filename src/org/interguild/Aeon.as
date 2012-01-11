@@ -26,6 +26,7 @@ package org.interguild {
 		private static var CREDITS_PAGE:uint = 0x2;
 		private static var LEVELS_PAGE:uint = 0x3;
 		private static var GAME_PAGE:uint = 0x4;
+		private static var FAKE_PAGE:uint = 0x5;
 		private var curPage:uint;
 
 		private static var thisInstance:Aeon = null;
@@ -41,6 +42,7 @@ package org.interguild {
 		private var credits:Page;
 		private var levels:Page;
 		private var game:Page;
+		private var fakeEditor:Page;
 
 
 		public function Aeon() {
@@ -78,11 +80,13 @@ package org.interguild {
 			credits = new CreditsPage();
 			levels = new LevelsPage();
 			game = new GamePage();
+			fakeEditor = new FakeEditorPage();
 
 			addChild(home);
 			addChild(credits);
 			addChild(game);
 			addChild(levels);
+			addChild(fakeEditor);
 		}
 
 
@@ -111,6 +115,9 @@ package org.interguild {
 					case GAME_PAGE:
 						game.close();
 						break;
+					case FAKE_PAGE:
+						fakeEditor.close();
+						break;
 				}
 				curPage = HOME_PAGE;
 				home.open();
@@ -132,6 +139,9 @@ package org.interguild {
 						break;
 					case GAME_PAGE:
 						game.close();
+						break;
+					case FAKE_PAGE:
+						fakeEditor.close();
 						break;
 				}
 				curPage = CREDITS_PAGE;
@@ -155,6 +165,9 @@ package org.interguild {
 					case GAME_PAGE:
 						game.close();
 						break;
+					case FAKE_PAGE:
+						fakeEditor.close();
+						break;
 				}
 				curPage = LEVELS_PAGE;
 				levels.open();
@@ -177,9 +190,34 @@ package org.interguild {
 					case LEVELS_PAGE:
 						levels.close();
 						break;
+					case FAKE_PAGE:
+						fakeEditor.close();
+						break;
 				}
 				curPage = GAME_PAGE;
 				game.open();
+			}
+		}
+		
+		
+		public function gotoFakeEditorPage():void{
+			if (curPage != FAKE_PAGE) {
+				switch (curPage) {
+					case HOME_PAGE:
+						home.close();
+						break;
+					case CREDITS_PAGE:
+						credits.close();
+						break;
+					case LEVELS_PAGE:
+						levels.close();
+						break;
+					case GAME_PAGE:
+						game.close();
+						break;
+				}
+				curPage = FAKE_PAGE;
+				fakeEditor.open();
 			}
 		}
 	}

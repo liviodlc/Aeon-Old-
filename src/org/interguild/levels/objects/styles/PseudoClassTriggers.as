@@ -250,7 +250,7 @@ package org.interguild.levels.objects.styles {
 		/**
 		 * x:left
 		 */
-		public function setMoveLeft(on:Boolean = true, updating:Boolean = true):void {
+		public function setMoveLeft(on:Boolean = true, updating:Boolean = false):void {
 			set(8, on);
 			if (updating)
 				set(13);
@@ -269,7 +269,7 @@ package org.interguild.levels.objects.styles {
 		/**
 		 * x:right
 		 */
-		public function setMoveRight(on:Boolean = true, updating:Boolean = true):void {
+		public function setMoveRight(on:Boolean = true, updating:Boolean = false):void {
 			set(9, on);
 			if (updating)
 				set(13, false);
@@ -288,7 +288,7 @@ package org.interguild.levels.objects.styles {
 		/**
 		 * x:up
 		 */
-		public function setMoveUp(on:Boolean = true, updating:Boolean = true):void {
+		public function setMoveUp(on:Boolean = true, updating:Boolean = false):void {
 			set(10, on);
 			if (updating)
 				set(12);
@@ -307,7 +307,7 @@ package org.interguild.levels.objects.styles {
 		/**
 		 * x:down
 		 */
-		public function setMoveDown(on:Boolean = true, updating:Boolean = true):void {
+		public function setMoveDown(on:Boolean = true, updating:Boolean = false):void {
 			set(11, on);
 			if (updating)
 				set(12, false);

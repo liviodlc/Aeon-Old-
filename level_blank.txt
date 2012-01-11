@@ -1,0 +1,24 @@
+<level demo="4.0">
+
+<title><![CDATA[Untitled]]></title>
+
+<level size="20 20" framerate="30" windowSize="0 0" loadDefaultSettings="true" background="" />
+
+<assets>
+	
+</assets>
+<content>
+	
+</content>
+<animation>
+	
+</animation>
+<objects>
+	
+</objects>
+<styles><![CDATA[
+
+]]></styles>
+<levelcode><![CDATA[
+]]></levelcode>
+</level>

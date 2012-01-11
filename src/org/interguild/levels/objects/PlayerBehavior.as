@@ -22,10 +22,10 @@ package org.interguild.levels.objects {
 			list.beginIteration();
 			while (list.hasNext()) {
 				var o:GameObject = list.next as GameObject;
-				o.normalTriggers.setMoveRight(keyMan.isActionDown(KeyMan.RIGHT));
-				o.normalTriggers.setMoveLeft(keyMan.isActionDown(KeyMan.LEFT));
-				o.normalTriggers.setMoveDown(keyMan.isActionDown(KeyMan.DOWN));
-				o.normalTriggers.setMoveUp(keyMan.isActionDown(KeyMan.UP));
+				o.normalTriggers.setMoveLeft(keyMan.isActionDown(KeyMan.LEFT), keyMan.isActionDown(KeyMan.LEFT));
+				o.normalTriggers.setMoveRight(keyMan.isActionDown(KeyMan.RIGHT), keyMan.isActionDown(KeyMan.RIGHT));
+				o.normalTriggers.setMoveDown(keyMan.isActionDown(KeyMan.DOWN), keyMan.isActionDown(KeyMan.DOWN));
+				o.normalTriggers.setMoveUp(keyMan.isActionDown(KeyMan.UP), keyMan.isActionDown(KeyMan.UP));
 				if (o.canJump && keyMan.isActionDown(KeyMan.JUMP, true)) {
 					if (o.normalTriggers.getStandingDown()) {
 						o.normalTriggers.setJumping();

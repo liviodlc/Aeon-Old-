@@ -1,5 +1,6 @@
 package org.interguild.levels {
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.geom.Rectangle;
 
 	import org.interguild.Aeon;
@@ -23,6 +24,8 @@ package org.interguild.levels {
 		private var boxRelative:Array;
 		private var isRelative:Boolean;
 
+		private var s:Stage;
+
 
 		public function LevelCamera(level:Level) {
 			lvl = level.levelArea;
@@ -34,22 +37,34 @@ package org.interguild.levels {
 			normalStyles = new OrderedList();
 			dynamicStyles = new OrderedList();
 
-			var s:Stage = Aeon.instance.stage;
+			s = Aeon.instance.stage;
 			box = new Rectangle(0, 0, s.stageWidth, s.stageHeight);
 			boxRelative = [0, 0, 0, 0];
+			s.addEventListener(Event.RESIZE, onStageResize, false, 0, true);
 		}
 
 
 		public function onGameLoop(focusX:Number, focusY:Number):void {
 			lvl.x = int(-focusX + box.x + box.width / 2);
 			lvl.y = int(-focusY + box.y + box.height / 2);
+
+			if ( /*lvl.x < 0 &&*/lvl.levelWidth + lvl.x < box.width) {
+				lvl.x = int(box.width - lvl.levelWidth);
+			}
+			if ( /*lvl.y < 0 &&*/lvl.levelHeight + lvl.y < box.height) {
+				lvl.y = int(box.height - lvl.levelHeight);
+			}
+			if(lvl.x > 0){
+				lvl.x = 0;
+			}
+			if(lvl.y > 0){
+				lvl.y = 0;
+			}
 		}
 
 
-		public function onStageResize(sw:int, sh:int):void {
-			if (boxRelative) {
-				box = new Rectangle(boxRelative[3], boxRelative[0], sw + boxRelative[3] + boxRelative[1], sh + boxRelative[0] + boxRelative[2]);
-			}
+		public function onStageResize(evt:Event):void {
+			box = new Rectangle(boxRelative[3], boxRelative[0], s.stageWidth + boxRelative[3] + boxRelative[1], s.stageHeight + boxRelative[0] + boxRelative[2]);
 		}
 
 

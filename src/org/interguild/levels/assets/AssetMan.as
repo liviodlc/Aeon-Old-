@@ -4,7 +4,7 @@ package org.interguild.levels.assets {
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
-	
+
 	import org.interguild.levels.Level;
 
 	/**
@@ -142,6 +142,14 @@ package org.interguild.levels.assets {
 		}
 
 
+		/**
+		 * Returns true if the id exists.
+		 */
+		public function checkID(assetID:String):Boolean {
+			return (assets[assetID] != null && assets[assetID] != false);
+		}
+
+
 		private function runSetChecks(id:String, value:Object):void {
 			if (assets[id] == null) {
 				throw new Error("Asset ID '" + id + "' not registered yet.");
@@ -170,6 +178,8 @@ package org.interguild.levels.assets {
 		 * "animation".
 		 */
 		private function runGetChecks(id:String, tag:String):Boolean {
+			if (id == "")
+				return false;
 			if (assets[id] == null) {
 				level.addError("You failed to define the ID '" + id + "' under the <" + tag + "> tag.");
 				return false;
@@ -192,9 +202,9 @@ package org.interguild.levels.assets {
 			if (test) {
 				var thing:Object = assets[id];
 				if (thing is BitmapData) {
-					return BitmapData(thing);
+					return thing as BitmapData;
 				}
-				level.addError("The Asset ID '" + id + "' is not an image and could not be instantiated.");
+				level.addError("The Asset ID '" + id + "' is not an image and could not be retrieved.");
 			}
 			return null;
 		}
@@ -207,9 +217,39 @@ package org.interguild.levels.assets {
 		public function getImageBox(id:String, box:Rectangle):BitmapData {
 			var img:BitmapData = getImage(id);
 			if (img != null) {
-				var imgcopy:BitmapData = new BitmapData(box.width, box.height, true);
+				var imgcopy:BitmapData = new BitmapData(box.width, box.height, true, 0x00000000);
 				imgcopy.copyPixels(img, box, new Point());
 				return imgcopy;
+			}
+			return null;
+		}
+
+
+		private var visited:Object;
+
+
+		public function getFrame(id:String):AnimationFrame {
+			visited = new Object();
+			return duplicateFrame(id);
+		}
+
+
+		private function duplicateFrame(id:String):AnimationFrame {
+			if (visited[id] != null)
+				return visited[id];
+			if (id == null || id == "")
+				return null;
+			var test:Boolean = runGetChecks(id, "assets");
+			if (test) {
+				var thing:Object = assets[id];
+				if (thing is AnimationFrame) {
+					var result:AnimationFrame = (thing as AnimationFrame).clone();
+					visited[id] = result;
+					if (result.nextID != "")
+						result.nextFrame = duplicateFrame(result.nextID);
+					return result;
+				}
+				level.addError("The Asset ID '" + id + "' is not an image and could not be retrieved.");
 			}
 			return null;
 		}

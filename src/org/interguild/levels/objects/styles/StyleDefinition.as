@@ -8,6 +8,7 @@ package org.interguild.levels.objects.styles {
 		private var pseudoConditions:PseudoClassTriggers;
 		private var dynamicConditions:DynamicTriggers;
 		private var rules:Object;
+		private var frames:Object;
 
 		private var a:uint;
 		private var b:uint;
@@ -20,8 +21,9 @@ package org.interguild.levels.objects.styles {
 		 * @param rules:Object An associative array of all of the rules that this definiton puts into effect
 		 * when valid. It holds the rule properties as keys and rule values as values.
 		 */
-		public function StyleDefinition(pseudo:PseudoClassTriggers, dynam:DynamicTriggers, rules:Object) {
+		public function StyleDefinition(pseudo:PseudoClassTriggers, dynam:DynamicTriggers, rules:Object, framesMap:Object) {
 			this.rules = rules;
+			frames = framesMap;
 			/*
 			Style precendence is calculated based on four numbers: a, b, c.
 				a = number of dynamic triggers this references
@@ -41,6 +43,11 @@ package org.interguild.levels.objects.styles {
 			} else {
 				pseudoConditions = new PseudoClassTriggers();
 			}
+		}
+
+
+		public function get framesMap():Object {
+			return frames;
 		}
 
 
@@ -105,8 +112,12 @@ package org.interguild.levels.objects.styles {
 		 * Dumps all of the rules 'other' into 'this', overwriting any conflicting rules.
 		 */
 		private function mergeWith(other:StyleDefinition):void {
-			for (var key:String in other.rules) {
+			var key:String;
+			for (key in other.rules) {
 				rules[key] = other.rules[key];
+			}
+			for (key in other.frames) {
+				frames[key] = other.frames[key];
 			}
 		}
 

@@ -1,115 +1,156 @@
 // DEFINING OBJECT IDs
-var $default_objects:XML = new XML("<xml><objects>" +
-	'<type id="x" name="Terrain" editoricon="" />' +
-	'<type id="#" name="Starting Position" behavior="player" editoricon="" />' +
-	'<type id="H" name="Ladder" editoricon="" />' +
-	'<type id="~" name="Water" editoricon="" />' +
-	'<type id="m" name="Floor Spike" editoricon="" />' +
-	'<type id="w" name="Ceiling Spike" editoricon="" />' +
-	'<type id=".a" name="Ceiling Spike" editoricon="" />' +
-"</objects></xml>");
+var $default_objects:XML = new XML('<xml><objects>' +
+	'<obj id="x" name="Indestructible Crate" />' +
+	'<obj id="#" behavior="player" name="Player" />' +
+	'<obj id="H" name="Wooden Ladder" />' +
+	'<obj id="h" inheritsFrom="H" name="Rope Ladder" />' +
+	'<obj id="-" name="Platform" />' +
+	'<obj id="_" name="Upside-down Platform" />' +
+	'<obj id="k" name="Falling Crate" />' +
+	'<obj id="b" name="Bounce Crate" />' +
+	'<obj id="g" name="Super Bounce Crate" />' +
+	'<obj id="~" name="Water" />' +
+'</objects></xml>');
 
 // DEFINING OBJECT STYLES
 var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
-// CUSTOM VARIABLES	
-"global {" +
-	"$gravity: 2.35;" +
-"}" +
-"H {" +
-	"hitbox-width: 32;" +
-	"hitbox-height: 32;" +
-	"coll-effect-ladder: true;" +
-"}" +
-"~ {" +
-	"hitbox-width: 32;" +
-	"hitbox-height: 32;" +
-	"coll-effect-water: true;" +
-"}" +
-// TERRAIN
 "x {" +
-	"hitbox-width: 32;" +
-	"hitbox-height:32;" +
-	"coll-edge-solidity: solid-wall;" +
-	"coll-edge-buffer: 5 5;" +
-	"coll-edge-bounce: 0;" +
-	"coll-edge-lethality: false;" +
-	"coll-edge-strength: true;" +
 	"init-state: static;" +
 	"allow-state-change: false;" +
-	"terrain: true;" +
-"}" +
-// PLAYER
-"# {" +
-	"hitbox-width: 30;" +
-	"hitbox-height: 42;" +
-	"hitbox-offset: 1 -22;" +
-	"accelerate-y: 2;" +
-	"accelerate-x: 0;" +
-	"max-speed-x: 10;" +
-	"max-speed-y: 30 22;" +
-	"friction-y: 0 1;" +
+	"hitbox-size: 32 32;" +
 	"coll-edge-solidity: solid-wall;" +
-	"coll-edge-lethality-smash: true;" +
-	"coll-edge-strength: false;" +
-	"coll-edge-strength-default-smash: true;" +
+	"coll-edge-buffer: 0 5;" +
+	"animate: indy;" +
+	"z-index: front;" +
+"}" +
+"H {" +
+	"init-state: static;" +
+	"allow-state-change: false;" +
+	"hitbox-size: 32 32;" +
+	"coll-edge-solidity: solid-ladder;" +
+	"coll-effect-ladder: true;" +
+	"animate: ladder_wood;" +
+	"z-index: back;" +
+"}" +
+"h {" +
+	"animate: ladder_rope;" +
+"}" +
+"- {" +
+	"hitbox-size: 32 16;" +
+	"coll-edge-top-solidity: solid-wall;" +
+	"animate: platform-top;" +
+"}" +
+"_ {" +
+	"hitbox-size: 32 16;" +
+	"hitbox-offset-y: 16;" +
+	"coll-edge-bottom-solidity: solid-wall;" +
+	"animate: platform-bottom;" +
+"}" +
+"k {" +
+	"init-state:static;" +
+	"allow-state-change: false;" +
+	"hitbox-size: 32;" +
+	"hitbox-offset-x: 0;" +
+	"coll-edge-solidity: solid-wall;" +
+	"coll-edge-buffer: 0 5;" +
+	"accelerate-y: 1;" +
+	"max-speed-y: 10;" +
+	"animate: light-steel;" +
+"}" +
+"k:standing-on-up {" +
+	"hitbox-offset-x: -32;" +
+	"hitbox-width: 96;" +
+	"animate: light-steel2;" +
+"}" +
+"b {" +
+	"init-state:static;" +
+	"allow-state-change: false;" +
+	"hitbox-size: 32;" +
+	"coll-edge-solidity: solid-wall;" +
+	"coll-edge-buffer: 0 5;" +
+	"coll-edge-bounce: 20;" +
+	"animate: wooden-crate;" +
+"}" +
+"g {" +
+	"init-state:static;" +
+	"allow-state-change: false;" +
+	"hitbox-size: 32;" +
+	"coll-edge-solidity: solid-wall;" +
+	"coll-edge-buffer: 0 5;" +
+	"coll-edge-bounce: 36;" +
+	"animate: gem;" +
+"}" +
+"~ {" +
+	"init-state:static;" +
+	"allow-state-change:false;" +
+	"hitbox-size: 928 256;" +
+	"coll-effect-water:true;" +
+	"animate: water;" +
+"}" +
+"# {" +
 	"init-state: nonstatic;" +
 	"allow-state-change: false;" +
-	"allow-be-in-crawl: true;" +
-	"allow-jump: true;" +
-	"allow-enter-crawl: false;" +
-	"mid-air-jump-limit: -1;" +
+	"animate: gerbil;" +
+	"z-index: back;" +
+	"hitbox-size: 26 38;" +
+	"hitbox-offset: 3 -5;" +
+	"coll-edge-solidity: solid-wall;" +
 	"can-use-ladder: true;" +
-	"z-index:front;" +
+	"allow-jump: false;" +
+	"friction-x: 2;" +
+	"accelerate-x: 0;" +
+	"accelerate-y: 2;" +
+	"max-speed-x: 10;" +
+	"max-speed-down: 20;" +
+	"max-speed-up:9001;" +
 "}" +
-"#:standing-on-down {" +
-	"allow-enter-crawl: true;" +
+"#:standing-on-down{" +
 	"allow-jump: true;" +
-	"friction-x:3;" +
 "}" +
-"#:crawling {" +
-	"hitbox-height: 30;" +
-	"hitbox-offset-y: -10;" +
-	"auto-crawl: 12 0 0 0;" +
+"#:face-left{" +
+	"animate: gerbil2;" +
 "}" +
-"#:jumping{" +
-	"set-speed-y: -16;" +
+"#:right {" +
+	"accelerate-x: 3;" +
+	"animate: gerbil-right1;" +
 "}" +
-"#:jumping:standing-on-down{" +
+"#:left {" +
+	"accelerate-x: -3;" +
+	"animate: gerbil-left1;" +
+"}" +
+"#:jump {" +
 	"set-speed-y: -22;" +
 "}" +
-"#:jumping:right {" +
-	"set-speed-x: 10;" +
+"#:jump:right{" +
+	"set-speed-x: 10" +
 "}" +
-"#:jumping:left {" +
+"#:jump:left{" +
 	"set-speed-x: -10;" +
 "}" +
-"#:right{" +
-	"accelerate-x: 2;" +
+"#:ladder {" +
+	"accelerate-y: 0;" +
+	"friction: 5;" +
+	"max-speed: 5;" +
 "}" +
-"#:left{" +
-	"accelerate-x: -2;" +
+"#:water {" +
+	"accelerate-y: -0.25;" +
+	"max-speed: 9001 8 8 8;" +
+	"allow-jump: true;" +
+	"friction: 2;" +
 "}" +
-"#:ladder{" +
-	"accelerate-y:0;" +
-	"friction-y: 4" +
-"}" +
-"#:water{" +
-	"accelerate-y:-0.2;" +
-	"friction-y: 4;" +
+"#:water:jump{" +
+	"set-speed-y: -12;" +
 "}" +
 "#:ladder:up, #:water:up{" +
-	"accelerate-y:-2;" +
+	"accelerate-y: -1.5;" +
 "}" +
 "#:ladder:down, #:water:down{" +
-	"accelerate-y:2;" +
+	"accelerate-y: 1.5;" +
 "}" +
-".a{" +
-	"animate:megaman;" +
+"#:ladder:right, #:water:right{" +
+	"accelerate-x: 1.5;" +
 "}" +
-".ab{" +
-	"animate:megaman;" +
-"}" +
-".B{" +
-	"animate:megaman;" +
+"#:ladder:left, #:water:left{" +
+	"accelerate-x: -1.5;" +
 "}" +
 "]]></styles></xml>");

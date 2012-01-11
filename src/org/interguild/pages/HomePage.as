@@ -121,7 +121,7 @@ package org.interguild.pages {
 
 
 		private function editorLinkClick(evt:MouseEvent):void {
-			//Aeon.instance.openPage("level", 1, true);
+			Aeon.instance.gotoFakeEditorPage();
 		}
 
 

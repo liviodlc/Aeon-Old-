@@ -1,7 +1,7 @@
-<level>
+<level demo="4.0">
 
 <title><![CDATA[Livio's Test Level]]></title>
-<level size="100 100" framerate="30" windowSize="0 0" loadDefaultSettings="true" />
+<level size="100 100" framerate="30" windowSize="0 0" loadDefaultSettings="true" background="steel" />
 <assets>
 	<image id="steel" src="http://img10.imageshack.us/img10/6178/crate2.png" />
 	<image id="sprite_sheet" src="http://www.sprites-inc.co.uk/files/X/X/x1sheet.gif" />

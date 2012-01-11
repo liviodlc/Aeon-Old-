@@ -314,6 +314,7 @@ package org.interguild.levels {
 					if (i != -1) {
 						staticObjs.splice(i, 1);
 						nonstaticObjs.push(o);
+						o.switchGridStates();
 					}
 				} else { //nonstaticObjs to staticObjs
 					i = nonstaticObjs.indexOf(o);
@@ -327,9 +328,7 @@ package org.interguild.levels {
 						}
 					}
 				}
-				if (!restarting)
-					o.switchGridStates();
-				else {
+				if (restarting) {
 					o.clearGrids();
 					grid.add(o);
 				}

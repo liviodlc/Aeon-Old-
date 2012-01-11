@@ -25,7 +25,7 @@ package org.interguild.levels.objects.styles {
 		 * @param lvl is the Level instance that this StyleMap is for, and passing this
 		 * reference allows StyleMap to log errors.
 		 */
-		public function StyleMap(xml:XMLList, styles:String, lvl:Level) {
+		public function StyleMap(xml:XMLList, styles:String, lvl:Level, loadDefaults:Boolean) {
 			level = lvl;
 			// initialize array:
 			stylesMap = new Object();
@@ -37,12 +37,12 @@ package org.interguild.levels.objects.styles {
 
 			include "../DefaultObjects.as";
 
-			if (level.loadDefaultSettings) {
+			if (loadDefaults) {
 				initObjects($default_objects.objects);
 			}
 			initObjects(xml);
 
-			if (level.loadDefaultSettings) {
+			if (loadDefaults) {
 				initStyles(String($default_styles.styles));
 			}
 			initStyles(styles);

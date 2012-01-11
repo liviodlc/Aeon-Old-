@@ -26,6 +26,7 @@
       </libraryPathEntry>
       <libraryPathEntry kind="3" linkType="1" path="v3.swc" useDefaultLinkType="false"/>
       <libraryPathEntry kind="3" linkType="1" path="flash.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="TextArea.swc" useDefaultLinkType="false"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>

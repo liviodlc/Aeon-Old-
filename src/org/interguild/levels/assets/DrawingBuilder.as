@@ -1,12 +1,13 @@
 package org.interguild.levels.assets {
 	import fl.motion.Color;
-	
+
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.xml.XMLNode;
-	
+
 	import org.interguild.levels.Level;
 
 	/**
@@ -23,7 +24,7 @@ package org.interguild.levels.assets {
 	 * 	gradient fills
 	 * 	consider allowing text to be rendered as part of Drawings, rather than their own thing.
 	 */
-	public class DrawingBuilder {
+	public class DrawingBuilder extends AssetBuilder {
 
 		private var xml:XML;
 		private var assets:AssetMan;
@@ -37,14 +38,16 @@ package org.interguild.levels.assets {
 
 		/**
 		 * The constructor takes the xml instructions, adds all of its errors to the Level's error
-		 * log, and then fixes those errors, so that getContent() can run as smoothly as possible.
+		 * log, and then fixes those errors.
 		 */
 		public function DrawingBuilder(xml:XML, lvl:Level) {
 			this.xml = xml;
 			level = lvl;
-			assets = level.assets;
+			assets = lvl.assets;
 
 			id = String(xml.@id);
+			if (id == "tilted-steel")
+				trace();
 			sp = new Sprite();
 
 			/* Possible errors to avoid:
@@ -66,9 +69,9 @@ package org.interguild.levels.assets {
 				// SET BORDER AND FILLS
 				sp.graphics.lineStyle(border[0], border[2], border[1]);
 				// may want to include more border options, such as caps, joints, and miterLimit
-				if (imageFill[0] != null) {
+				if (imageFill[0] != null)
 					sp.graphics.beginBitmapFill(imageFill[0], imageFill[1]);
-				} else
+				else
 					sp.graphics.beginFill(solidFill[0], solidFill[1]);
 
 				// FIGURE OUT WHICH SHAPE TO DRAW
@@ -249,14 +252,18 @@ package org.interguild.levels.assets {
 			a[0] = null;
 
 			// get BitmapData
-			var box:Rectangle = checkBox(xml.@box);
+			var box:String = String(xml.@box);
 			var assetid:String = String(xml.@assetid);
 			if (assetid.length == 0)
 				return a;
-			if(assetid == this.id){
-				level.addError("You are not allowed to include an asset within itself. You tried to do this with id: '"+ id + "'");
+			if (assetid == this.id) {
+				level.addError("You are not allowed to include an asset within itself. You tried to do this with id: '" + id + "'");
 			}
-			var bm:BitmapData = assets.getImageBox(assetid, box);
+			var bm:BitmapData;
+			if (box.length > 0)
+				bm = assets.getImageBox(assetid, checkBox(box));
+			else
+				bm = assets.getImage(assetid);
 			a[0] = bm;
 			if (a[0] == null) {
 				return a;
@@ -264,10 +271,14 @@ package org.interguild.levels.assets {
 
 			// get Matrix
 			var matrix:Matrix = new Matrix();
-			var angle:Number = checkAngle(String(xml.@rotate));
-			matrix.rotate(angle);
-			var scale:Array = checkScale(String(xml.@scale));
-			matrix.scale(scale[0], scale[1]);
+			if (String(xml.@rotate) != "") {
+				var angle:Number = checkAngle(String(xml.@rotate));
+				matrix.rotate(angle);
+			}
+			if (String(xml.@scale) != "") {
+				var scale:Array = checkScale(String(xml.@scale));
+				matrix.scale(scale[0], scale[1]);
+			}
 			a[1] = matrix;
 
 			// get alpha
@@ -278,6 +289,8 @@ package org.interguild.levels.assets {
 
 			// get tint strength
 			var tintStrength:Number = checkAlpha(String(xml.@tintAlpha));
+			if(String(xml.@tintAlpha)=="")
+				tintStrength = 0;
 
 			var trans:Color = new Color();
 			trans.alphaOffset = alpha * 255 - 255;
@@ -292,6 +305,8 @@ package org.interguild.levels.assets {
 		 * Parses the string into a color. Input string may or may not start with "0x"
 		 */
 		private function checkHex(color:String):uint {
+			if (color.substr(0, 1) == "#")
+				color = color.substr(1);
 			if (color.substr(0, 2) != "0x")
 				color = "0x" + color;
 			var result:uint = uint(color);
@@ -303,7 +318,7 @@ package org.interguild.levels.assets {
 
 		private function checkAlpha(s:String):Number {
 			var num:Number = Number(s);
-			if (isNaN(num)) {
+			if (isNaN(num) || s=="") {
 				num = 100;
 			} else if (num > 100) {
 				num = 100;
@@ -356,41 +371,12 @@ package org.interguild.levels.assets {
 		}
 
 
-		/**
-		 * Parses the box="1 2 3 4" text and returns a Rectangle with valid values.
-		 */
-		private function checkBox(box:String):Rectangle {
-			var a:Array = box.split(" ", 4);
-			var n:uint = a.length;
-			for (var i:uint = 0; i < n; i++) {
-				a[i] = Number(a[i]);
-				if (i < 2) {
-					if (isNaN(a[i])) {
-						a[i] = 0;
-					}
-				} else {
-					if (isNaN(a[i]) || a[i] < 0) {
-						a[i] = 1;
-					}
-				}
-			}
-			if (n == 3)
-				a.push(1);
-			else if (n == 2)
-				a.push(1, 1);
-			else if (n == 1)
-				a.push(0, 1, 1);
-
-			return new Rectangle(a[0], a[1], a[2], a[3]);
-		}
-		
-		
-		public function getBitmapData():BitmapData{
+		public function getBitmapData():BitmapData {
 			var result:BitmapData = new BitmapData(sp.width, sp.height, true, 0x00000000);
 			var m:Matrix = new Matrix();
 			m.createBox(1, 1, 0, -offsetX, -offsetY);
 			result.draw(sp, m);
-			
+
 			return result;
 		}
 	}

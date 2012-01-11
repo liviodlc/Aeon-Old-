@@ -25,8 +25,8 @@ package org.interguild.levels.hud {
 
 			initTitle(title);
 			initJumpToStart();
-			initText();
-			data = [];
+//			initText();
+//			data = [];
 		}
 
 
@@ -48,7 +48,7 @@ package org.interguild.levels.hud {
 				multiline = true;
 				autoSize = TextFieldAutoSize.CENTER;
 				width = theStage.stageWidth;
-				text = title;
+				text = title.split("\r\n").join("\r");
 				setTextFormat(titleFormat);
 				background = true;
 				backgroundColor = 0x000000;
@@ -102,27 +102,27 @@ package org.interguild.levels.hud {
 
 		public override function onLoadComplete():void {
 			toStart.visible = true;
-			data = [];
+//			data = [];
 		}
 		
 		public override function onGameLoop():void{
 			super.onGameLoop();
-			var cur:uint = getTimer();
-			var elapsed:uint = cur - last;
-			var n:uint = data.length;
-			if(n < 10){
-				data.push(elapsed);
-			}else{
-				var avg:Number = 0;
-				for(var i:uint = 0; i < n; i++){
-					avg += data[i]
-				}
-				avg = avg / n;
-				var fps:Number = Math.round(1 / (avg / 1000));
-				text.text = Math.round(avg) +" / 33 ms\n"+fps+" fps";
-				data = [];
-			}
-			last = cur;
+//			var cur:uint = getTimer();
+//			var elapsed:uint = cur - last;
+//			var n:uint = data.length;
+//			if(n < 10){
+//				data.push(elapsed);
+//			}else{
+//				var avg:Number = 0;
+//				for(var i:uint = 0; i < n; i++){
+//					avg += data[i]
+//				}
+//				avg = avg / n;
+//				var fps:Number = Math.round(1 / (avg / 1000));
+//				text.text = Math.round(avg) +" / 33 ms\n"+fps+" fps";
+//				data = [];
+//			}
+//			last = cur;
 		}
 	}
 }

@@ -2,6 +2,7 @@ package org.interguild.gui {
 
 	import flash.display.*;
 	import flash.events.MouseEvent;
+	import flash.filters.DropShadowFilter;
 	import flash.geom.Matrix;
 	import flash.text.*;
 	import flash.ui.Mouse;
@@ -28,7 +29,7 @@ package org.interguild.gui {
 		private static const BG_COLOR:uint = 0x000000; //0 is black
 		private static const BG_COLOR_ONCLICK:uint = 0x990000;
 
-		public function BtnRecText(txtlbl:String):void {
+		public function BtnRecText(txtlbl:String, dropShadow:Boolean = false):void {
 			//initialize variables:
 			canvas = new Sprite();
 			canvas2 = new Sprite();
@@ -46,6 +47,9 @@ package org.interguild.gui {
 			lblText.setTextFormat(lblFormat);
 			// center the label
 			lblText.x = -(lblText.width / 2);
+			
+			if(dropShadow)
+				lblText.filters = [new DropShadowFilter()];
 
 			//a little optimization:
 			var btnWidth:Number = lblText.width + BUFFER;

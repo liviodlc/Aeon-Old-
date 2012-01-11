@@ -1,10 +1,9 @@
 package org.interguild.levels.keys {
 	import flash.display.Stage;
 	import flash.events.KeyboardEvent;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.levels.Level;
-
 	import org.interguild.utils.LinkedList;
 
 	/**
@@ -174,7 +173,7 @@ package org.interguild.levels.keys {
 		 *
 		 * @param xml:XMLList the XMLList for <keys>...</keys>
 		 */
-		public function KeyMan(lvl:Level, xml:XMLList) {
+		public function KeyMan(lvl:Level, xml:XMLList, loadDefaults:Boolean) {
 			theStage = Aeon.instance.stage;
 			level = lvl;
 			strictKeys = new LinkedList();
@@ -182,7 +181,7 @@ package org.interguild.levels.keys {
 			var esc:uint = 27;
 			keys[esc - SMALLEST_KEYCODE] = PAUSE;
 
-			if (level.loadDefaultSettings) {
+			if (loadDefaults) {
 				include "DefaultKeys.as";
 				parseXML(dKeys);
 			}

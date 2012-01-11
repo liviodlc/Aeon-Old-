@@ -12,10 +12,12 @@ package org.interguild.levels {
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
 
+	import org.interguild.levels.assets.AnimationFrame;
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.hud.LevelHUD;
 	import org.interguild.levels.keys.KeyMan;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
+	import org.interguild.levels.pause.Pause;
 	import org.interguild.log.LoadingBox;
 	import org.interguild.pages.GamePage;
 
@@ -34,6 +36,8 @@ package org.interguild.levels {
 
 		private var _assets:AssetMan;
 		private var _keys:KeyMan;
+		private var _pause:Pause;
+		private var _isPaused:Boolean;
 
 		private var finishedLoading:Boolean;
 		private var _errorLog:String;
@@ -42,8 +46,6 @@ package org.interguild.levels {
 
 		private var timer:Timer;
 		private var _frameRate:Number;
-
-		public var loadDefaultSettings:Boolean = true;
 
 
 		/**
@@ -59,6 +61,15 @@ package org.interguild.levels {
 			_state.setLoading();
 			if (!inEditor)
 				_state.setPreview();
+		}
+
+
+		/**
+		 * This must be initialized after the levels' custom window size is put into effect.
+		 */
+		internal function initPause(w:Number, h:Number):void {
+			_pause = new Pause(this, w, h);
+			addChild(_pause);
 		}
 
 
@@ -200,7 +211,7 @@ package org.interguild.levels {
 
 		public function setHUD(_hud:LevelHUD):void {
 			hud = _hud;
-			addChild(hud);
+			addChildAt(hud, 0);
 		}
 
 
@@ -229,18 +240,17 @@ package org.interguild.levels {
 //				b2.x = b2.y = 200;
 //				addChild(b1);
 //				addChild(b2);
-
-				// if there are errors, show them.
-//				if (_errorLog.length > 2) {
-//					// this is temporary code. Ideally, the Pause Menu would load the error log
-//					trace("//ERROR LOG");
-//					trace(_errorLog);
-//					trace("//END ERROR LOG");
-//				}
+//				var f:AnimationFrame = assets.getFrame("run-right1");
+//				addChild(f);
 
 				timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 				_keys.activate();
 				timer.start();
+				
+				// if there are errors, show them.
+				if (_errorLog.length > 2) {
+					pause(true);
+				}
 			}
 		}
 
@@ -256,22 +266,28 @@ package org.interguild.levels {
 		private function onGameLoop(evt:TimerEvent):void {
 			updateState();
 
-			lvl.onGameLoop();
-			hud.onGameLoop();
-			_keys.onGameLoop();
+			if (!_isPaused) {
+				lvl.onGameLoop();
+				hud.onGameLoop();
+				_state.update();
+			}
 
-			_state.update();
+			_keys.onGameLoop();
 		}
 
 
 		private function updateState():void {
 			// if on jump-to-start screen and player jumps, then start level
-			if (_state.getPreview() && _keys.isActionDown(KeyMan.JUMP, true))
+			if (!_isPaused && _state.getPreview() && _keys.isActionDown(KeyMan.JUMP, true))
 				_state.setPreview(false);
 
 			// if on any screen, the player presses pause, open pause menu
-//			if(_keys.isActionDown(KeyMan.PAUSE,true)
-//				open pasue menu
+			if (_keys.isActionDown(KeyMan.PAUSE, true) || (_isPaused && _keys.isActionDown(KeyMan.JUMP, true))) {
+				if (!_isPaused || (_isPaused && _pause.canUnpauseOnKey())) {
+					pause();
+					_keys.onGameLoop();
+				}
+			}
 
 			// if on any screen, the player presses quit, quit the level
 			if (_keys.isActionDown(KeyMan.QUIT, true))
@@ -279,10 +295,37 @@ package org.interguild.levels {
 
 			// if while playing or after winning, player wants to restart, restart level
 			if (!_state.getPreview() && _keys.isActionDown(KeyMan.RESTART, true)) {
-				timer.stop();
-				lvl.addEventListener(Event.COMPLETE, onRestartComplete, false, 0, true);
-				lvl.restart();
+				if (_isPaused)
+					pause();
+				restart();
 			}
+		}
+
+
+		/**
+		 * Toggles whether or not the level is currently paused.
+		 */
+		public function pause(showErrors:Boolean = false):void {
+			if (_isPaused) {
+				_isPaused = false;
+				_pause.hide();
+			} else {
+				_isPaused = true;
+				if (showErrors)
+					_pause.showError("ERROR LOG:\n\n" + _errorLog);
+				else
+					_pause.show();
+			}
+		}
+
+
+		/**
+		 * Resets the level for another attempt.
+		 */
+		public function restart():void {
+			timer.stop();
+			lvl.addEventListener(Event.COMPLETE, onRestartComplete, false, 0, true);
+			lvl.restart();
 		}
 
 
@@ -291,7 +334,10 @@ package org.interguild.levels {
 		}
 
 
-		private function quit():void {
+		/**
+		 * Closes the level and prepares it for gargabe collection.
+		 */
+		public function quit():void {
 			timer.stop();
 			timer.removeEventListener(TimerEvent.TIMER, onGameLoop);
 			gamepage.closeLevel(this);

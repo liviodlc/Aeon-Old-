@@ -4,7 +4,10 @@ package org.interguild.levels {
 	import br.com.stimuli.loading.BulkProgressEvent;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
 
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.ErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
@@ -12,6 +15,8 @@ package org.interguild.levels {
 	import flash.utils.Timer;
 
 	import org.interguild.Aeon;
+	import org.interguild.levels.assets.AnimationBuilder;
+	import org.interguild.levels.assets.AnimationFrame;
 	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.assets.DrawingBuilder;
 	import org.interguild.levels.hud.DefaultHUD;
@@ -21,6 +26,7 @@ package org.interguild.levels {
 	import org.interguild.levels.objects.styles.StyleMap;
 	import org.interguild.pages.GamePage;
 	import org.interguild.resize.WindowResizer;
+	import org.interguild.utils.LinkedList;
 
 	/**
 	 * LevelBuilder is in charge of taking the level code, interpreting it, and then building the level.
@@ -39,6 +45,9 @@ package org.interguild.levels {
 
 		private var gamepage:GamePage;
 		private var level:Level;
+		private var loadDefaults:Boolean;
+		private var lvlWidth:uint;
+		private var lvlHeight:uint;
 
 		private var loader:BulkLoader;
 		private var assets:AssetMan;
@@ -64,10 +73,17 @@ package org.interguild.levels {
 			try {
 				xml = new XML(level.levelCode);
 			} catch (error:TypeError) {
-				level.addError("Could not parse level code. Malformed XML.");
-//				trace("malformed xml");
+				gamepage.loadingText = "Could not parse level code. Malformed XML.";
 			}
 			if (xml != null) {
+				if (xml.@demo != "4.0")
+					level.addError("Unrecognized version number. Please start your level code with: '<level demo=\"4.0\">'");
+
+				if (xml.level.@loadDefaultSettings == "true")
+					loadDefaults = true;
+				else
+					loadDefaults = false;
+
 				gamepage.loadingText = "Loading Assets: 0%";
 				gamepage.loadingButton.text = "Skip";
 
@@ -86,7 +102,8 @@ package org.interguild.levels {
 
 			include "assets/DefaultAssets.as";
 			var isAny:Boolean;
-			isAny = parseAssets($default_assets.assets);
+			if (loadDefaults)
+				isAny = parseAssets($default_assets.assets);
 			isAny = parseAssets(xml.assets);
 			if (isAny) {
 				loadAssets();
@@ -204,15 +221,16 @@ package org.interguild.levels {
 
 
 		/**
-		 * Iterates through all tags under <content>, creates the appropriate factory,
+		 * Iterates through all tags under <content>, creates the appropriate builder,
 		 * and gives it to AssetMan for storage.
 		 */
 		private function loadCustomContent():void {
 			include "assets/DefaultContent.as";
-			parseContentXML($default_content.content);
+			if (loadDefaults)
+				parseContentXML($default_content.content);
 			parseContentXML(xml.content);
 
-			buildHUD();
+			loadCustomAnimation();
 		}
 
 
@@ -229,6 +247,32 @@ package org.interguild.levels {
 						default:
 							level.addError("Invalid <content> type: <" + type + ">");
 							break;
+					}
+				}
+			}
+		}
+
+
+		private function loadCustomAnimation():void {
+			include "assets/DefaultAnimation.as";
+			if (loadDefaults)
+				parseAnimationXML($default_animation.animation);
+			parseAnimationXML(xml.animation);
+
+			buildHUD();
+		}
+
+
+		private function parseAnimationXML(xmlFrames:XMLList):void {
+			for each (var el:XML in xmlFrames.elements()) {
+				var type:String = String(el.name());
+				var id:String = el.@id;
+				if (assets.addID(id)) {
+					if (type == "frame") {
+						var frame:AnimationBuilder = new AnimationBuilder(el, level);
+						assets.setAsset(id, frame.getFrame());
+					} else {
+						level.addError("Invalid <animation> tag type: <" + type + ">. Only <frame> tags are valid.");
 					}
 				}
 			}
@@ -277,14 +321,19 @@ package org.interguild.levels {
 
 
 		private function initLevel(xml:XMLList):void {
-			if (String(xml.@loadDefaultSettings) == "false")
-				level.loadDefaultSettings = false;
-
 			var size:Array = checkLevelSize(xml.@size);
 			initLevelArea(size[0], size[1]);
 
+			initBackground(String(xml.@background));
+
 			size = checkWindowSize(xml.@windowSize);
 			initWindowSize(size[0], size[1]);
+			var stage:Stage = Aeon.instance.stage;
+			if (size[0] == 0)
+				size[0] = stage.stageWidth;
+			if (size[1] == 0)
+				size[1] = stage.stageHeight;
+			level.initPause(size[0], size[1]);
 
 			initFrameRate(String(xml.@framerate));
 		}
@@ -346,7 +395,7 @@ package org.interguild.levels {
 		 * Gets keys info from XML and gives them to KeyMan.
 		 */
 		private function initKeys():void {
-			var keys:KeyMan = new KeyMan(level, xml.keys);
+			var keys:KeyMan = new KeyMan(level, xml.keys, loadDefaults);
 			level.keys = keys;
 		}
 
@@ -377,12 +426,27 @@ package org.interguild.levels {
 
 
 		private function initLevelArea(width:uint, height:uint):void {
+			lvlWidth = width;
+			lvlHeight = height;
 			level.levelArea = new LevelArea(width, height, level.state);
 		}
 
 
+		private function initBackground(id:String):void {
+			var data:BitmapData = assets.getImage(id);
+			if (data != null) {
+				var bg:Sprite = new Sprite();
+				bg.graphics.beginBitmapFill(data);
+				bg.graphics.drawRect(0, 0, level.levelArea.levelWidth, level.levelArea.levelHeight);
+				bg.graphics.endFill();
+				level.addChildAt(bg, 0);
+			}
+			level.addChildAt(new Background(), 0);
+		}
+
+
 		private function initStylesMap():void {
-			stylesMap = new StyleMap(xml.objects, String(xml.styles), level);
+			stylesMap = new StyleMap(xml.objects, String(xml.styles), level, loadDefaults);
 		}
 
 
@@ -423,7 +487,7 @@ package org.interguild.levels {
 				i++;
 			}
 			if (i >= n) {
-				gamepage.loadingText = "Building Level: 100%";
+				gamepage.loadingText = "Initializing Level...";
 			}
 		}
 
@@ -445,10 +509,13 @@ package org.interguild.levels {
 				var def:GameObjectDefinition = stylesMap.get(s);
 				if (def == null) {
 					level.addError("Unrecognized symbol in level code: '" + s + "'");
+					addSpace();
 				} else if (s.charAt(0) == ".") {
 					lastGO.addStyleClass(def);
 				} else {
-					lastGO = new GameObject(def, markerX, markerY)
+					if (markerX < 0 || markerX >= level.levelArea.levelWidth || markerY < 0 || markerY >= level.levelArea.levelHeight)
+						level.addError("Warning: You're placing objects outside the level grid, at (" + (markerX / 32 + 1) + "," + (markerY / 32 + 1) + ") on a " + lvlWidth + "x" + lvlHeight + " grid. Objects placed outside the grid will not have their collisions detected.");
+					lastGO = new GameObject(def, markerX, markerY, assets)
 					level.levelArea.add(lastGO);
 					addSpace();
 				}

@@ -2,7 +2,9 @@ package org.interguild.levels.objects {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-	
+
+	import org.interguild.levels.assets.AnimationFrame;
+	import org.interguild.levels.assets.AssetMan;
 	import org.interguild.levels.objects.styles.DynamicTriggers;
 	import org.interguild.levels.objects.styles.GameObjectDefinition;
 	import org.interguild.levels.objects.styles.PseudoClassTriggers;
@@ -44,6 +46,15 @@ package org.interguild.levels.objects {
 		private var classes:LinkedList;
 		internal var normalTriggers:PseudoClassTriggers;
 		internal var dynamicTriggers:DynamicTriggers;
+
+		//for animation
+		private var frameToShow:AnimationFrame;
+		private var lastFrameSet:AnimationFrame;
+		private var currentFrame:AnimationFrame;
+		private var delayCount:uint;
+
+		private var collBoxColor:uint;
+		private var showCollBox:Boolean;
 
 		//for collision detection
 		internal var newX:Number = 0;
@@ -94,10 +105,15 @@ package org.interguild.levels.objects {
 		 */
 		public var tested:Boolean = false;
 
+		private var framesMap:Object;
+		private var assets:AssetMan
 
-		public function GameObject(god:GameObjectDefinition, posX:Number, posY:Number) {
+
+		public function GameObject(god:GameObjectDefinition, posX:Number, posY:Number, assets:AssetMan) {
 			x = newX = posX;
 			y = newY = posY;
+			this.assets = assets;
+			framesMap = new Object();
 
 			// initialize stuff
 			gridsOccupied = new LinkedList();
@@ -111,6 +127,8 @@ package org.interguild.levels.objects {
 			//set defaults:
 			isStatic = true;
 			collideable = true;
+			canJump = true;
+			jumpLimit = -1;
 			collBox = new Rectangle(0, 0, 31, 31);
 			collEdgesSolidity = [0, 0, 0, 0];
 			collEdgesBuffer = [0, 0, 0, 0];
@@ -467,6 +485,9 @@ package org.interguild.levels.objects {
 				var styleDef:StyleDefinition = StyleDefinition(list.get(i));
 				if (!stylesInitialized) {
 					normalTriggers.track(styleDef.normalTriggers);
+					for (var s:String in styleDef.framesMap) {
+						framesMap[s] = assets.getFrame(s);
+					}
 				}
 				if (normalTriggers.isStyleActiveNormal(styleDef.normalTriggers) && LEVEL_STATE.isStyleActiveGlobal(styleDef.normalTriggers)) {
 					var rules:Object = styleDef.rulesArray;
@@ -481,6 +502,9 @@ package org.interguild.levels.objects {
 		private function applyStyle(prop:String, val:Object, styleDef:StyleDefinition):void {
 			// TODO implement function
 			switch (prop) {
+				case "animate":
+					frameToShow = framesMap[val as String];
+					break;
 				case 'hitbox-width':
 					collBox.width = Number(val) - 1;
 					break;
@@ -534,8 +558,6 @@ package org.interguild.levels.objects {
 				case 'init-state':
 					if (!stylesInitialized)
 						isStatic = val;
-					if (isStatic == false)
-						color = 0xCC0000;
 					break;
 				case 'set-state':
 					isStatic = val;
@@ -638,22 +660,21 @@ package org.interguild.levels.objects {
 					if (lastZIndex != s)
 						zIndex = lastZIndex = s;
 					break;
+				case "show-hitbox":
+					showCollBox = val;
+					break;
+				case "hitbox-color":
+					collBoxColor = val as uint;
+					break;
 			}
 		}
 
 
-		public var color:uint = 0x00CC00;
-
-
 		public function TESTdrawBox():void {
-			if (isPlayer)
-				color = 0xCC0000;
-			else
-				color = 0x00CC00;
 
 			// for testing purposes:
 			graphics.clear();
-			graphics.beginFill(color);
+			graphics.beginFill(collBoxColor);
 			graphics.drawRect(collBox.x, collBox.y, collBox.width, collBox.height);
 			graphics.endFill();
 		}
@@ -686,8 +707,25 @@ package org.interguild.levels.objects {
 			y = newY;
 			oldCollBox = hitbox;
 
-			TESTdrawBox();
-			//TODO update visuals based on styles and animation sequences
+			if (frameToShow != lastFrameSet) {
+				delayCount = 0;
+				if (currentFrame != null)
+					removeChild(currentFrame);
+				currentFrame = lastFrameSet = frameToShow;
+				if (currentFrame != null)
+					addChild(currentFrame);
+			} else if (currentFrame != null) {
+				delayCount++;
+				if (currentFrame.nextFrame != null && delayCount >= currentFrame.delay) {
+					delayCount = 0;
+					removeChild(currentFrame);
+					currentFrame = currentFrame.nextFrame;
+					addChild(currentFrame);
+				}
+			}
+
+			if (showCollBox)
+				TESTdrawBox();
 		}
 
 
@@ -716,6 +754,8 @@ package org.interguild.levels.objects {
 		 * Resets all of the object's values to the last checkpoint.
 		 */
 		public function restart():void {
+			if (currentFrame != null)
+				removeChild(currentFrame);
 			checkpoints.beginIteration();
 			var check:Object = checkpoints.next;
 			var a:Array, n:uint, i:uint;
@@ -785,12 +825,17 @@ package org.interguild.levels.objects {
 			check["jumpLimit"] = jumpLimit;
 			check["numJumps"] = numJumps;
 			check["canBeInCrawl"] = canBeInCrawl;
-			check["allow-enter-crawl"] = canEnterCrawl;
+			check["canEnterCrawl"] = canEnterCrawl;
 			check["isLadderUser"] = isLadderUser;
 			check["_static"] = _static;
 			check["allowStateChange"] = allowStateChange;
 			check["collideable"] = collideable;
 			check["zIndex"] = zIndex;
+			check["frameToShow"] = frameToShow;
+			check["lastFrameSet"] = lastFrameSet;
+			check["currentFrame"] = currentFrame;
+			check["collBoxColor"] = collBoxColor;
+			check["showCollBox"] = showCollBox;
 
 			checkpoints.add(check);
 		}
