@@ -1,5 +1,5 @@
 // CUSTOM CONTENT
-var $default_content:XML = new XML('<content>' +
+var $default_content:XML = new XML('<xml><content>' +
 	'<drawing id="tinted-steel">' +
 		'<rectangle box="0 0 96 32">' +
 			'<imageFill assetid="aeon" box="0 0 32 32" tintColor="#DD0000" tintAlpha="50" />' +
@@ -10,7 +10,7 @@ var $default_content:XML = new XML('<content>' +
 			'<solidFill color="#009999" alpha="50" />' +
 		'</rectangle>' +
 	'</drawing>' +
-'</content>');
+'</content></xml>');
 //var $default_content:XML = new XML('<xml><content>' +
 //	'<drawing id="circleWithSquare">' +
 //		'<circle radius="30" center="40 40">' +

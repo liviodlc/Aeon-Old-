@@ -36,6 +36,11 @@
 			<solidFill color="#009999" alpha="50" />
 		</rectangle>
 	</drawing>
+	<drawing id="squish">
+		<rectangle box="0 0 31 32">
+			<imageFill assetid="aeon" box="0 52 31 42" scale="100 76.2"  />
+		</rectangle>
+	</drawing>
 </content>
 
 <animation>
@@ -47,6 +52,12 @@
 	</frame>
 	<frame id="gerbil2">
 		<image id="aeon" box="0 52 31 42" position="1 -10" flipX="true" />
+	</frame>
+	<frame id="gerbil-crawl1">
+		<image id="squish" />
+	</frame>
+	<frame id="gerbil-crawl2">
+		<image id="squish" flipX="true" />
 	</frame>
 	<frame id="ladder_wood">
 		<image id="aeon" box="336 44 32 32" />
@@ -189,6 +200,8 @@ g {
 	can-use-ladder: true;
 	
 	allow-jump: false;
+	allow-be-in-crawl: true;
+	allow-enter-crawl: false;
 	
 	friction-x: 2;
 	accelerate-x: 0;
@@ -199,17 +212,27 @@ g {
 }
 #:standing-on-down{
 	allow-jump: true;
+	allow-enter-crawl: true;
 }
 #:face-left{
 	animate: gerbil2;
 }
+#:crawling{
+	hitbox-height: 30;
+	hitbox-offset-y: 3;
+	max-speed-x: 5;
+}
+#:crawling:face-right{
+	animate: gerbil-crawl1;
+}
+#:crawling:face-left{
+	animate: gerbil-crawl2;
+}
 #:right {
 	accelerate-x: 3;
-	animate: gerbil-right1;
 }
 #:left {
 	accelerate-x: -3;
-	animate: gerbil-left1;
 }
 #:jump {
 	set-speed-y: -22;

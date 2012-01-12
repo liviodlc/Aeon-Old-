@@ -99,12 +99,12 @@ package org.interguild.levels.pause {
 			btn_resume.addEventListener(MouseEvent.CLICK, onResumeClick, false, 0, true);
 
 			//restart button:
-			btn_restart = new BtnRecText("Restart (R)", true);
+			btn_restart = new BtnRecText("Restart", true);
 			btn_restart.y = 60 - HEIGHT / 2;
 			btn_restart.addEventListener(MouseEvent.CLICK, onRestartClick, false, 0, true);
 
 			//quit button:
-			btn_quit = new BtnRecText("Quit (Q)", true);
+			btn_quit = new BtnRecText("Quit", true);
 			btn_quit.y = 90 - HEIGHT / 2;
 			btn_quit.addEventListener(MouseEvent.CLICK, onQuitClick, false, 0, true);
 

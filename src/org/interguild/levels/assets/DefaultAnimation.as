@@ -1,5 +1,5 @@
 // ANIMATION FRAMES
-var #default_animation:XML = new XML('<animation>' +
+var $default_animation:XML = new XML('<xml><animation>' +
 	'<frame id="indy">' +
 		'<image id="aeon" box="132 0 32 32" />' +
 	'</frame>' +
@@ -36,7 +36,7 @@ var #default_animation:XML = new XML('<animation>' +
 	'<frame id="water">' +
 		'<image id="blue" />' +
 	'</frame>' +
-'</animation>');
+'</animation></xml>');
 //var $default_animation:XML = new XML("<xml><animation>" +
 //	'<frame id="stand-right1" next="stand-right2" delay="90">' +
 //		'<image id="megaman" box="105 11 21 24" position="5 -10" />' +

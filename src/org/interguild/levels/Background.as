@@ -18,7 +18,7 @@ package org.interguild.levels {
 			graphics.drawRect(0, 0, 10, 10);
 			graphics.endFill();
 			onStageResize();
-//			theStage.addEventListener(Event.RESIZE, onStageResize, false, 0, true);
+			theStage.addEventListener(Event.RESIZE, onStageResize, false, 0, true);
 //			paint(theStage.stageWidth, theStage.stageHeight);
 		}
 

@@ -1,0 +1,37 @@
+<level demo="4.0">
+
+<title><![CDATA[Aeon Demo 4]]></title>
+
+<level size="34 30" framerate="30" windowSize="0 0" loadDefaultSettings="true" background="sky" />
+
+<levelcode><![CDATA[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxx                        x
+xxxxxxxxx                        x
+xxxxxxxxx                        x
+xxxxxbbbb                   ---  x
+x                                x
+x                         -      x
+x                                x
+xHxxxbbbbbb   k  k  k  -h--------x
+xH                      h        x
+xH                      h        x
+xH                      h        x
+xH                      h        x
+xH                      h        x
+xx               #               x
+xxx            xxxxx             x
+xxxx         xxxxxxxxx           x
+xxxx~                            x
+xxxx                             x
+xxxx                             x
+xxxx                             x
+xxxxxxxx                    x--xxx
+xxxxxxxx--xx            xxxxx  xxx
+xxxxxxxx  xxxxx      xxxxxxxx  xxx
+xxxxxxxx  xxxxxxx__xxxxxxxxxx  xxx
+xxxxxxxx--xxxxxxx  xxxxxxxxxx--xxx
+xxxxxxxx                       xxx
+xxxxxxxx                       xxx
+xxxxxxxxgxxxxxxxxxxxxxxxxxxxxxgxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]]></levelcode>
+</level>

@@ -246,7 +246,7 @@ package org.interguild.levels {
 				timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 				_keys.activate();
 				timer.start();
-				
+
 				// if there are errors, show them.
 				if (_errorLog.length > 2) {
 					pause(true);
@@ -289,15 +289,19 @@ package org.interguild.levels {
 				}
 			}
 
-			// if on any screen, the player presses quit, quit the level
-			if (_keys.isActionDown(KeyMan.QUIT, true))
-				quit();
+			if (!_isPaused || (_isPaused && _pause.canUnpauseOnKey())) {
 
-			// if while playing or after winning, player wants to restart, restart level
-			if (!_state.getPreview() && _keys.isActionDown(KeyMan.RESTART, true)) {
-				if (_isPaused)
-					pause();
-				restart();
+				// if on any screen, the player presses quit, quit the level
+				if (_keys.isActionDown(KeyMan.QUIT, true))
+					quit();
+
+				// if while playing or after winning, player wants to restart, restart level
+				if (!_state.getPreview() && _keys.isActionDown(KeyMan.RESTART, true)) {
+					if (_isPaused)
+						pause();
+					restart();
+				}
+
 			}
 		}
 

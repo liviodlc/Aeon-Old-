@@ -202,7 +202,7 @@ package org.interguild.levels.assets {
 			if (test) {
 				var thing:Object = assets[id];
 				if (thing is BitmapData) {
-					return thing as BitmapData;
+					return (thing as BitmapData).clone();
 				}
 				level.addError("The Asset ID '" + id + "' is not an image and could not be retrieved.");
 			}

@@ -14,6 +14,5 @@ var myXML:XML = new XML(
 	"<key key=\"82\">8</key>" +	// R		= RESTART
 	"<key key=\"16\">6</key>" +	// Shift	= PAUSE
 	"<key key=\"80\">6</key>" +	// P		= PAUSE
-"</keys></xml>"
-);
+"</keys></xml>");
 var dKeys:XMLList = myXML.keys

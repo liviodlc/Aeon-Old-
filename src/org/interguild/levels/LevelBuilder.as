@@ -104,7 +104,7 @@ package org.interguild.levels {
 			var isAny:Boolean;
 			if (loadDefaults)
 				isAny = parseAssets($default_assets.assets);
-			isAny = parseAssets(xml.assets);
+			isAny = isAny || parseAssets(xml.assets);
 			if (isAny) {
 				loadAssets();
 			} else {

@@ -38,7 +38,7 @@ package org.interguild.pages {
 			title.width = w - 175;
 			title.selectable = false;
 			title.multiline = true;
-			title.htmlText = "<b>For more info on how to edit level code, visit the following page:</b><br /><a href=\"http://www.interguild.org/aeon/\" target=\"_blank\"><u>http://www.interguild.org/aeon/</u></a>";
+			title.htmlText = "<b>For more info on how to edit level code, visit the following page:</b><br /><a href=\"http://www.interguild.org/news.php?id=1326308183\" target=\"_blank\"><u>http://www.interguild.org/news.php?id=1326308183</u></a>";
 			title.y = 40 - title.height / 2;
 			title.x = w / 2 - title.width / 2;
 

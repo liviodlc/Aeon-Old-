@@ -7,6 +7,7 @@ package org.interguild.pages {
 	
 	import org.interguild.Aeon;
 	import org.interguild.gui.Btn;
+	import org.interguild.gui.BtnRecSolid;
 	import org.interguild.gui.BtnRndGrad;
 
 	public class CreditsPage extends Page {
@@ -27,16 +28,16 @@ package org.interguild.pages {
 			//set body styles:
 			var body:Object = new Object();
 			body.fontFamily = "Arial";
-			body.fontSize = 13;
+			body.fontSize = 12;
 			body.color = "#EFEFEF";
 			body.textAlign = "center";
 			//set name css class:
 			var name:Object = new Object();
-			name.fontSize = 18;
+			name.fontSize = 17;
 			name.fontWeight = "bold";
 			name.color = "#FFFFFF";
 			var heading:Object = new Object();
-			heading.fontSize = 16;
+			heading.fontSize = 15;
 			heading.textDecoration = "underline";
 			//apply css classes:
 			css.setStyle("body", body);
@@ -51,17 +52,18 @@ package org.interguild.pages {
 			list.height = sh - 30;
 			list.htmlText =
 				"<body><p class='heading'>Programming:</p>\n\n<p class='name'>Livio</p>\n\n\n" +
+				"<p class='heading'>Repository Support:</p>\n\n<p class='name'>Rory</p>\n\n\n" +
 				"<p class='heading'>Artwork:</p>\n\n<p class='name'>Kittikiyana\njellsprout</p>\n\n\n" +
 				"<p class='heading'>Music and Sound:</p>\n\n<p class='name'>Dekudude\nthe_grimace</p>\n\n\n" +
 				"<p class='heading'>Special thanks to:</p>\n\n" +
-				"All the other members from <b>interguild.org</b> who participated in the discussions and shared in the dream behind Aeon</p>\n\n" +
+				"All of the members from <b>interguild.org</b> who contributed ideas, criticisim, and support for the dream behind Aeon.</p>\n\n" +
 				"</body>";
 			list.y = 20;
-			list.x = sw / 2 - 150;
+			list.x = 20;
 
 			//create exit button:
-			exit = new BtnRndGrad("Back to Main Menu");
-			exit.x = sw / 2;
+			exit = new BtnRecSolid("Back to Main");
+			exit.x = sw - exit.width / 2 - 20;
 			exit.y = sh - 28;
 			exit.addEventListener(MouseEvent.CLICK, onExitClick, false, 0, true);
 
@@ -72,8 +74,7 @@ package org.interguild.pages {
 		private function onStageResize(evt:Event):void {
 			var mid:Number = theStage.stageWidth / 2;
 			var end:int = theStage.stageHeight;
-			list.x = mid - 150;
-			exit.x = mid;
+			exit.x = theStage.stageWidth - exit.width / 2 - 20;
 			list.height = end - 30;
 			exit.y = end - 28;
 		}
