@@ -135,6 +135,7 @@ package org.interguild.levels {
 				if (assetURL == null || assetURL == "") {
 					level.addError("You've declared an asset without giving it a src URL");
 				} else {
+//					assetURL = "../proxy.php?url=" + assetURL; // IMPORTANT: this line must be in final release.
 					if (assetName == "image") {
 						if (assets.addID(assetID)) {
 							loader.add(assetURL, {id: assetID, type: BulkLoader.TYPE_IMAGE, preventCache: false});

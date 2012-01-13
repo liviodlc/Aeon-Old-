@@ -156,7 +156,7 @@ package org.interguild.levels.assets {
 			} else if (assets[id] != false) {
 				throw new Error("Asset ID '" + id + "' already has data in it!");
 			} else if (value == null) {
-				throw new Error("AssetMan rejects the addition of a null asset into his list.");
+//				throw new Error("AssetMan rejects the addition of a null asset into his list.");
 			}
 		}
 

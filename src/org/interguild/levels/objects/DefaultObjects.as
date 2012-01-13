@@ -110,6 +110,17 @@ var $default_styles:XML = new XML("<xml><styles><![CDATA[" +
 "#:face-left{" +
 	"animate: gerbil2;" +
 "}" +
+"#:crawling{" +
+	"hitbox-height: 30;" +
+	"hitbox-offset-y: 3;" +
+	"max-speed-x: 5;" +
+"}" +
+"#:crawling:face-right{" +
+	"animate: gerbil-crawl1;" +
+"}" +
+"#:crawling:face-left{" +
+	"animate: gerbil-crawl2;" +
+"}" +
 "#:right {" +
 	"accelerate-x: 3;" +
 	"animate: gerbil-right1;" +
